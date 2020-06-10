@@ -26,7 +26,7 @@ uint16_t pot1, pot2, pot3;
 
 bool buttons[3], switches[3];
 
-unsigned long button_downtime = 0L; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
+unsigned long button_down_time = 0L; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
 bool button_down = 0; // is the button in the encoder being pushed?
 int32_t rotary_counter = 0; // current "position" of rotary encoder (increments clockwise, decrements anticlockwise)
 
@@ -72,7 +72,7 @@ void receiveEvent(int howMany)
 void get_encoder()
 {
   button_down = Wire.read();
-  button_downtime = get_int32();
+  button_down_time = get_int32();
   rotary_counter = get_int32();
 }
 
@@ -103,7 +103,7 @@ void print_state()
 
   Serial.print("encoder:  ");
   Serial.print(button_down,DEC); Serial.print(" ");
-  Serial.print(button_downtime,DEC); Serial.print(" ");
+  Serial.print(button_down_time,DEC); Serial.print(" ");
   Serial.print(rotary_counter,DEC);
   Serial.println("");
 

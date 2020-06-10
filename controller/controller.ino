@@ -53,7 +53,7 @@ volatile bool rotary_change = false; // will turn true if rotary_counter has cha
 
 // button things
 volatile bool button_pressed = false; // will turn true if the button has been pushed
-volatile bool button_released = false; // will turn true if the button has been released (sets button_downtime)
+volatile bool button_released = false; // will turn true if the button has been released (sets button_down_time)
 volatile bool button_down = false;
 volatile unsigned long int button_down_start, button_down_time;
 volatile unsigned long int button_down_end;
@@ -180,8 +180,44 @@ void loop()
   ReadAll();
   SendAll();
   
+  print_state();
+
   delay(500);
 }
+
+
+void print_state()
+{
+
+  Serial.print("encoder:\t");
+  Serial.print(button_down,DEC); Serial.print("\t");
+  Serial.print(button_down_time,DEC); Serial.print("\t");
+  Serial.print(rotary_counter,DEC);
+  Serial.println("");
+
+  Serial.print("buttons:\t");
+  for (int ii=0; ii<3; ++ii){
+   Serial.print(buttons[ii]);
+  }
+  Serial.println("");
+
+
+  Serial.print("switches:\t");
+  for (int ii=0; ii<3; ++ii){
+   Serial.print(switches[ii]);
+  }
+  Serial.println("");
+
+
+  Serial.print("potentiometers:\t");
+  Serial.print(pot1);    Serial.print("\t");
+  Serial.print(pot2);    Serial.print("\t");
+  Serial.print(pot3);    Serial.print("\t");
+  Serial.println("");
+
+  Serial.println("");
+}
+
 
 
 void ReadAll()
