@@ -49,11 +49,17 @@ void setup() {
 
 // called ad nauseum
 void loop() {
-    red(10);
-    green(10);
-    blue(10);
-    white(10);
-    allLEDs(10);
+  //    red(10);
+  //    green(10);
+  //    blue(10);
+  //    magenta(10);
+  //    white(10);
+  //    allLEDs(10);
+
+  pixelColor(1, 255, 0, 0, 0); //(Pixel Number, green, red, blue, white)
+  pixToConeColor (8, 0, 255, 0, 0);
+  coneColor(3, 0, 0, 255, 0);
+
 }
 
 
@@ -78,14 +84,14 @@ void get_encoder()
 
 void get_buttons()
 {
-  for (int ii=0; ii<3; ++ii){
+  for (int ii = 0; ii < 3; ++ii) {
     buttons[ii] = Wire.read();
   }
 }
 
 void get_switches()
 {
-  for (int ii=0; ii<3; ++ii){
+  for (int ii = 0; ii < 3; ++ii) {
     switches[ii] = Wire.read();
   }
 }
@@ -102,21 +108,21 @@ void print_state()
 {
 
   Serial.print("encoder:  ");
-  Serial.print(button_down,DEC); Serial.print(" ");
-  Serial.print(button_down_time,DEC); Serial.print(" ");
-  Serial.print(rotary_counter,DEC);
+  Serial.print(button_down, DEC); Serial.print(" ");
+  Serial.print(button_down_time, DEC); Serial.print(" ");
+  Serial.print(rotary_counter, DEC);
   Serial.println("");
 
   Serial.print("buttons:  ");
-  for (int ii=0; ii<3; ++ii){
-   Serial.print(buttons[ii]);
+  for (int ii = 0; ii < 3; ++ii) {
+    Serial.print(buttons[ii]);
   }
   Serial.println("");
 
 
   Serial.print("switches:  ");
-  for (int ii=0; ii<3; ++ii){
-   Serial.print(switches[ii]);
+  for (int ii = 0; ii < 3; ++ii) {
+    Serial.print(switches[ii]);
   }
   Serial.println("");
 
@@ -162,6 +168,29 @@ int32_t get_int32()
   return r;
 }
 
+//Only sets ONE pixel to a certain color at a time
+void pixelColor(int pixnum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixnum = Pixel Number, g = green, r=red, b = blue, w = white
+  uint32_t color = pixels.Color(g, r, b, w); // make a color
+  pixels.setPixelColor(pixnum, color); //set a single pixel color
+  pixels.show(); //update the colors
+}   //end (Sam 6/15/2020)
+
+
+// accepts a pixel number, correlates the pixel's number to the cone its in and lights all of the pixels within that cone to the specfied color
+void pixToConeColor (int pixnum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
+  uint32_t color = pixels.Color(g, r, b, w); // make a color
+  int pixStart = (pixnum / 7) * 7; //determines which pixel out of 140 to fill
+  pixels.fill(color, pixStart, 7);
+  pixels.show(); //update the colors
+}   //end (Sam 6/20/2020)
+
+//accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
+void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
+  uint32_t color = pixels.Color(g, r, b, w); // make a color
+  int pixStart = (coneNum - 1) * 7; //determines which pixel out of 140 to fill
+  pixels.fill(color, pixStart, 7); //fills seven pixels with the desired color and specific location
+  pixels.show(); //update the colors
+}   //end (Sam 6/20/2020)
 
 
 void red(unsigned long period) {
@@ -176,9 +205,9 @@ void red(unsigned long period) {
       previousMillis = currentMillis;
 
       for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, 0, a, 0, 0);
+        pixels.setPixelColor(i, 0, a, 0, 0); //set a single pixel color
       }
-      pixels.show();
+      pixels.show(); //update the color
     } // if
   } // j
 } // fun
@@ -196,6 +225,25 @@ void blue(unsigned long period) {
 
       for (i = 0; i < pixels.numPixels(); i++) {
         pixels.setPixelColor(i, 0, 0, a, 0);
+      }
+      pixels.show();
+    } // if
+  } // j
+} // fun
+
+void magenta(unsigned long period) {
+  uint16_t i, j = 0;
+
+  uint16_t num_steps = 256;
+  uint8_t a = 1;
+  while (j < num_steps) {
+    currentMillis = millis();
+    if (currentMillis - previousMillis >= period) {
+      a = float(++j) / num_steps * 256;
+      previousMillis = currentMillis;
+
+      for (i = 0; i < pixels.numPixels(); i++) {
+        pixels.setPixelColor(i, 0, a, a, 0);
       }
       pixels.show();
     } // if
