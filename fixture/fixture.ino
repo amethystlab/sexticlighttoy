@@ -16,6 +16,11 @@
 #include <Adafruit_NeoPixel.h> // see https://github.com/adafruit/Adafruit_NeoPixel
 #include <Wire.h> // see https://www.arduino.cc/en/Tutorial/MasterReader
 
+void setGroupPresetColor(uint8_t *coneArray, uint8_t numberOfCones);
+void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone);
+void clear();
+void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w);
+
 #define NEOPIXEL_PIN 12
 
 // some global variables
@@ -46,6 +51,562 @@ uint8_t fiveFoldGroups [4][5] = {{1,2,3,4,5}, {14,12,10,8,6}, {9,7,15,13,11}, {1
 //{9,7,15,13,11} = r,g,b,w,y
 //{18,17,16,20,19} = r,g,b,w,y
 
+/*---------------------------------------------------------------------*/
+// MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
+#define MAX_UINT5 31
+#define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
+#define MIN_CONE_NUM 1
+#define MAX_CONE_NUM 20
+#define MAX_CONNECTION_NUM 2
+
+uint16_t connections[20] = {
+  CONNECTION_NUM_SETUP(0, 4) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 7),
+  CONNECTION_NUM_SETUP(0, 9) | CONNECTION_NUM_SETUP(1, 0) | CONNECTION_NUM_SETUP(2, 2),
+  CONNECTION_NUM_SETUP(0, 11) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 3),
+  CONNECTION_NUM_SETUP(0, 4) | CONNECTION_NUM_SETUP(1, 13) | CONNECTION_NUM_SETUP(2, 2),
+  CONNECTION_NUM_SETUP(0, 3) | CONNECTION_NUM_SETUP(1, 0) | CONNECTION_NUM_SETUP(2, 5),
+  CONNECTION_NUM_SETUP(0, 6) | CONNECTION_NUM_SETUP(1, 14) | CONNECTION_NUM_SETUP(2, 4),
+  CONNECTION_NUM_SETUP(0, 5) | CONNECTION_NUM_SETUP(1, 7) | CONNECTION_NUM_SETUP(2, 19),
+  CONNECTION_NUM_SETUP(0, 8) | CONNECTION_NUM_SETUP(1, 6) | CONNECTION_NUM_SETUP(2, 0),
+  CONNECTION_NUM_SETUP(0, 18) | CONNECTION_NUM_SETUP(1, 7) | CONNECTION_NUM_SETUP(2, 9),
+  CONNECTION_NUM_SETUP(0, 8) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 10),
+  CONNECTION_NUM_SETUP(0, 17) | CONNECTION_NUM_SETUP(1, 9) | CONNECTION_NUM_SETUP(2, 11),
+  CONNECTION_NUM_SETUP(0, 12) | CONNECTION_NUM_SETUP(1, 10) | CONNECTION_NUM_SETUP(2, 2),
+  CONNECTION_NUM_SETUP(0, 16) | CONNECTION_NUM_SETUP(1, 11) | CONNECTION_NUM_SETUP(2, 13),
+  CONNECTION_NUM_SETUP(0, 14) | CONNECTION_NUM_SETUP(1, 12) | CONNECTION_NUM_SETUP(2, 3),
+  CONNECTION_NUM_SETUP(0, 15) | CONNECTION_NUM_SETUP(1, 13) | CONNECTION_NUM_SETUP(2, 5),
+  CONNECTION_NUM_SETUP(0, 16) | CONNECTION_NUM_SETUP(1, 14) | CONNECTION_NUM_SETUP(2, 19),
+  CONNECTION_NUM_SETUP(0, 12) | CONNECTION_NUM_SETUP(1, 15) | CONNECTION_NUM_SETUP(2, 17),
+  CONNECTION_NUM_SETUP(0, 10) | CONNECTION_NUM_SETUP(1, 16) | CONNECTION_NUM_SETUP(2, 18),
+  CONNECTION_NUM_SETUP(0, 17) | CONNECTION_NUM_SETUP(1, 19) | CONNECTION_NUM_SETUP(2, 8),
+  CONNECTION_NUM_SETUP(0, 18) | CONNECTION_NUM_SETUP(1, 15) | CONNECTION_NUM_SETUP(2, 6),
+};
+/*
+ * Each uint16_t stores 3 numbers.
+ * The index represents a specific cone on the barth sextic,
+ * whereas the values stored inside the uint16_t hold the cone numbers
+ * that are connected
+ * 
+ * ________________________________________________________________________________
+ * | First Connected Cone | Second Connected Cone | Third Connected Cone  |        |
+ * |-------------------------------------------------------------------------------|
+ * | 5 Bytes              | 5 Bytes               | 5 Bytes               | 1 Byte |
+ * |-------------------------------------------------------------------------------|
+ * 
+ * The connections are ordered such that if you were to hold the geometric object
+ * from the cone specified by the index, the ordering of the connections would follow
+ * a circle around the cone, going from left to right.
+ * 
+ * This is packed into uint16_ts to save space, as the arduino platform is limited in memory.
+ * 
+*/
+
+
+uint8_t cycles[20];
+uint8_t num_per_rotation = 3;
+/*
+ * Array to store the cyclic groups of rotation and reflection
+*/
+
+#define CONE_DNE 255 // Error code returned by get_connection when provided a nonexistant cone number 
+#define CONNECTION_DNE 254; // Error code returned by get_connection when provided a connection number that is too large
+uint8_t get_connection(uint8_t cone, uint8_t connection_num)
+{
+  if(cone < MIN_CONE_NUM || cone > MAX_CONE_NUM) return CONE_DNE;
+  if(connection_num > MAX_CONNECTION_NUM) return CONNECTION_DNE;
+  
+  return ((connections[cone - 1] >> (5*connection_num)) & MAX_UINT5) + 1;
+}
+
+
+void diagnostic_check(){
+  // Store the current cone we are focusing on, as well as the 
+  // previous state of the switch
+  static int num = 1;
+  static bool prevState = false;
+
+  if(switches[0] != prevState){
+    // if the switch is flipped from its previous position
+    prevState = switches[0];
+    clear();
+
+    num = (num % MAX_CONE_NUM) + 1;
+    //Iterate to the next cone number
+    
+    Serial.print("NUM CONE: ");
+    Serial.println(num, DEC);
+
+    // Light up the current cone (cone number num) green
+    coneColor(num, 255, 0, 0, 0);
+    for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+      // Light up the cones connected to the current cone red
+      uint8_t conn = get_connection(num, i);
+      Serial.print("CONNECTED CONE: ");
+      Serial.println(conn, DEC);
+      coneColor(conn, 0, 255, 0, 0);
+    }
+
+    pixels.show();
+
+    
+  }
+}
+
+#define SRC_NEXT_UNCONNECTED_ERR 255
+#define POSITIVE 1
+#define NEGATIVE 0
+
+
+// Function used to find the third element (cone number) of a pentagon on
+// the geometric structure, given the cone oriented on top of the object,
+// the second cone in the pentagon sequence, and the direction around the
+// top oriented cone from the second cone to where the third should be found
+
+uint8_t findThird(uint8_t src, uint8_t next, uint8_t dir){
+  uint8_t third = SRC_NEXT_UNCONNECTED_ERR;
+  bool found = false;
+
+  for(int i = 0; i <= MAX_CONNECTION_NUM && !found; i++){
+    uint8_t conn = get_connection(src, i);
+
+    //find the "next" cone in the list of connections of the 
+    //source cone - if it does not exist, return an error
+    
+    if(conn == next){
+      // When we find the "next" cone in the list of connected cones
+      // find the cone that is oriented clockwise (negative) or counterclockwise
+      // (positive) from the "next" cone, when orienting the object
+      // such that the src cone is on top
+      
+      if(dir){
+        // if direction is 1 / positive
+
+        // As the list of connections is ordered to be the cycle around the cone
+        // specified by the index, we can simply take the next element in the list
+        third = get_connection(src, (i + 1) % MAX_CONNECTION_NUM);
+      }
+      else {
+        third = get_connection(src, (i - 1 + MAX_CONNECTION_NUM) % MAX_CONNECTION_NUM);
+      }
+      found = true;
+    }
+  }
+
+  return third;
+}
+
+
+#define THREEFOLD_AXIS_CONE_INDEX 0
+void set_threefold(uint8_t src){
+  // Set the seed for the threefold rotatoin
+  cycles[THREEFOLD_AXIS_CONE_INDEX] = src;
+}
+
+// Function to set an array of length five to the five elements of 
+// the pentagon defined by a source cone, a cone connected to that 
+// source cone, and the direction to iterate from there.
+void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir){
+
+  // Set initial three elements of the pentagon by using the set
+  // parameters, and the function used to find the third cone
+  // from the direction
+  arr[0] = next;
+  arr[1] = src;
+  arr[2] = findThird(src, next, dir);
+
+  //    Source Cone
+  //      /    \
+  //Next /      \  Third 
+  //Cone\       /  Cone
+  //     \_____/
+
+  // TODO: Investigate iterative path rather than
+  //       iterating through every single path of length
+  //       two from the cone in array location 0
+
+  uint8_t potentialConnectionsNext[2];
+  uint8_t potentialConnectionsThird[2];
+  int j = 0;
+
+  // Find the cones connected to the "next" cone
+  // that are not the source cone
+  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+    uint8_t conn = get_connection(cycles[0], i);
+    if(conn != src){
+      potentialConnectionsNext[j++] = conn;
+      if(j > 2) Serial.print("ERROR");
+    }
+  }
+
+  // Find the cones connected to the "third" cone
+  // that are not the source cone
+  j = 0;
+  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+    uint8_t conn = get_connection(cycles[2], i);
+    if(conn != src){
+      potentialConnectionsThird[j++] = conn;
+      if(j > 2) Serial.print("ERROR");
+    }
+  }
+
+  bool done = false;
+  for(int i = 0; i < 2 && !done; i++){
+    for(int j = 0; j <= MAX_CONNECTION_NUM && !done; j++){
+      // iterate over all of the connections of the cones that are
+      // connected to the "next" cone
+      uint8_t conn = get_connection(potentialConnectionsNext[i], j);
+      for(int k = 0; k < 2 && !done; k++){
+
+        // For each cone that is connected to a connection of the "next"
+        // cone, check if it is connected to the "third" cone. If it is,
+        // then you have found a path of length two from the "next" cone
+        // to the "third" cone, completing the pentagon
+        
+        Serial.print("PAIR: ");
+        Serial.print(potentialConnectionsNext[i], DEC);
+        Serial.println(conn, DEC);
+
+        if(conn == potentialConnectionsThird[k]){
+          arr[4] = potentialConnectionsNext[i];
+          arr[3] = conn;
+          done = true;
+        }
+      }
+    }
+  }
+}
+
+#define NO_SUCH_CONE_ERR 250
+
+// Find the cone that is connected to both coneOne and coneTwo
+uint8_t get_mutual_connection(uint8_t coneOne, uint8_t coneTwo){
+  
+  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+    // Iterate throught the connections of coneOne
+    uint8_t connOne = get_connection(coneOne, i);
+    for(int j = 0; j <= MAX_CONNECTION_NUM; j++){
+      // check to see if any of the connections of ConeTwo match
+      // with the current connection from cone one - if so, return
+      // the appropriate cone number
+      if(connOne == get_connection(coneTwo, j)) return connOne;
+    }
+  }
+
+  // if we found no mutual cones, none exist, and we return an error code
+  return NO_SUCH_CONE_ERR;
+}
+
+// Function used to iterate through the connections of a cone
+// specifically not returning those stored in specific indices
+// of the cycles array (ie cones that we already know their cycle)
+uint8_t find_connection_excluding_prev_cycles(int cone, uint8_t min_avoid, uint8_t max_avoid)
+{
+    for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+      uint8_t conn = get_connection(cone, i);
+
+      // find a connection of the cone in question
+      bool foundConnection = false;
+
+      // check if the cone connection is in any of the cycle array in the
+      // indices specified by the parameters
+      for(int j = min_avoid; j <= max_avoid && !foundConnection; j++){
+        if(conn == cycles[j]) foundConnection = true;
+      }
+
+      // if the cone is connected to the cone input in the parameter
+      // and is not stored in the cycles array within the specified indices
+      // return that cone number
+      if(!foundConnection) return conn;
+    }
+
+    // if no such cone exists, return an error code
+    return NO_SUCH_CONE_ERR;
+}
+
+// Given two cones one and two, find the two cones that create
+// a path of length two from cone one to cone two
+//
+// TODO: Replace code in set_pentagon with this function, as
+//       they are mostly equivalent
+uint8_t *find_middle_two(uint8_t coneOne, uint8_t coneTwo){
+  static uint8_t arr[2];
+  uint8_t conns[2][3];
+
+  // Find the cones connected to the coneOne
+  for(int i = 0; i < 3; i++){
+    conns[0][i] = get_connection(coneOne, i);
+  }
+  
+   // Find the cones connected to the coneTwo 
+  for(int i = 0; i < 3; i++){
+    conns[1][i] = get_connection(coneTwo, i);
+  }
+
+  bool done = false;
+  for(int i = 0; i < 3 && !done; i++){
+    for(int j = 0; j < 3 && !done; j++){
+      // iterate over all of the connections of the cones that are
+      // connected to coneOne
+      uint8_t conn = get_connection(conns[0][i], j);
+      for(int k = 0; k < 3 && !done; k++){
+
+        // For each cone that is connected to a connection of coneOne
+        // check if it is connected to the coneTwo cone. If it is,
+        // then you have found a path of length two from coneOne
+        // to coneTwo
+        
+        if(conn == conns[1][k]){
+          arr[0] = conns[0][i];
+          arr[1] = conn;
+          done = true;
+        }
+      }
+    }
+    
+  }
+
+  Serial.print("MIDDLE TWO OF "); Serial.print(coneOne, DEC); Serial.print(" and "); Serial.println(coneTwo, DEC);
+  Serial.print(arr[0], DEC); Serial.print(" and "); Serial.println(arr[1], DEC);
+  return arr;
+  
+}
+
+void set_threefold_cycles(){
+
+  // the first cycle is the cycle determined by the connections of the seed cone
+  for(int i = 0; i < 3; i++){
+    cycles[i + 1] = get_connection(cycles[THREEFOLD_AXIS_CONE_INDEX], i);
+  }
+
+  uint8_t *arr;
+
+  for(int i = 0; i < 3; i++){
+    // the next two sets of cycles are found by finding the sets of two
+    // cones in between the cones set in the above for loop
+    arr = find_middle_two(cycles[1 + i], cycles[1 + (i + 1) % 3]);
+
+    cycles[i + 4] = arr[0];
+    cycles[i + 7] = arr[1];
+  }
+
+  for(int i = 0; i < 3; i++){
+    // the next two sets of cycles are found by finding the sets of two
+    // cones in between the cones set in the above for loop
+    arr = find_middle_two(cycles[(i + 1) % 3 + 4], cycles[i + 7]);
+    cycles[i + 10] = arr[0];
+    cycles[i + 13] = arr[1];
+  }
+
+  for(int i = 0; i < 3; i++){
+    // the last cycle is generated by looking at the cones in the two previously 
+    // set cycles, and finding the mutual connection of the adjacent cones
+    cycles[i + 16] = get_mutual_connection(cycles[i + 10], cycles[(i + 1) % 3 + 13]);
+  }
+
+  // as the source is set as cycles[0], we must find the other axis cone
+  // and input it into the array, which is done in this function 
+  set_missing_in_cycles(19);
+}
+
+void set_pentagon_cycles(){
+  // This function sets the cycle array for five fold rotations, assuming the seed 
+  // pentagon has already been set
+  
+  for(int i = 0; i < 5; i++){
+    // As each cone in the first cycle is directly connected to a cone in the 
+    // second cycle in the same ordering, we can just find the connection
+    // of each cone in the first cycle that isn't in the first cycle
+    
+    cycles[5 + i] = find_connection_excluding_prev_cycles(cycles[i], 0, 4);
+  }
+
+  for(int i = 0; i < 5; i++){
+    // Using the previously set cycle, we can simply look at the mutual connections
+    // of the adjacent cones in the previously set cycle to find the next cycle
+    cycles[10 + i] = get_mutual_connection(cycles[5 + i], cycles[5 + ((i + 1) % 5)]);
+  }
+
+  for(int i = 0; i < 5; i++){
+    // As each cone in the fourth cycle is directly connected to a cone in the 
+    // third cycle in the same ordering, we can just find the connection
+    // of each cone in the first cycle that isn't in the first cycle
+    cycles[15 + i] = find_connection_excluding_prev_cycles(cycles[10 + i], 5, 9);
+  }
+}
+
+void set_cycle_presets(int offset){
+  int index = offset;
+  Serial.print("Setting ");
+  for(int i = 0; i < offset; i++){
+    // Before the offset (cones that are the axis cone / not in 
+    // cycles) set all cones to white
+    coneColor(cycles[i], 255, 255, 255, 255);
+    Serial.print(cycles[i]);
+    Serial.print(", ");
+  }
+
+  while(index + num_per_rotation <= MAX_CONE_NUM){
+    // set the remaining cycle groups to the preset colors
+    
+    setGroupPresetColor(cycles + index, num_per_rotation);
+    index += num_per_rotation;
+  }
+
+  for(int i = index; i < MAX_CONE_NUM; i++){
+    // set the remaining cones colors to white
+    coneColor(cycles[i], 255, 255, 255, 255);
+    Serial.print(cycles[i]);
+    Serial.print(", ");
+  }
+  Serial.println("to white");
+}
+
+
+void set_missing_in_cycles(uint8_t missingIndex){
+  // As we know the cycle array will contain the numbers 1-20
+  // we know the sum of the array will be  1 + 2 + 3 + ... + 20 = 210
+  // and that (Sum of the Array without one of those numbers) = 210 - that number
+  // giving us missing number = 210 - sum of the array without the missing number
+  
+  uint8_t sum_of_array = 0;
+  uint8_t sumFromOneToTwenty = 210;
+  for(int i = 0; i < MAX_CONE_NUM; i++){
+    if(i != missingIndex){
+      sum_of_array += cycles[i];
+    }
+  }
+
+  // once we have found the missing number, set it in the array
+  cycles[missingIndex] = sumFromOneToTwenty - sum_of_array;
+}
+
+void rotate(int offset){
+  int index = offset;
+
+  while(index + num_per_rotation <= MAX_CONE_NUM){
+    // iterate through the cycles array, rotating each group
+    nFoldRotateColor(cycles + index, num_per_rotation);
+    index += num_per_rotation;
+  }
+}
+
+void diagnostic_check_threefold(){
+  num_per_rotation = 3;
+
+  static int num = 1;
+  static bool prevState = false;
+  static bool prevStateTwo = false;
+
+  // Store the previous state of the switches
+  // as well as the current axis cone
+
+  if(switches[0] != prevState){
+    // if we flip the first switch
+    
+    prevState = switches[0];
+    clear();
+
+    num = (num % MAX_CONE_NUM) + 1;
+    // iterate the axis cone (so the center of rotation
+    // becomes cone two if it was cone one before, etc
+    
+    set_threefold(num);
+    // set the axis cone in the cycles array
+    set_threefold_cycles();
+    // set the appropriate cycles in the cycles array
+
+    Serial.print("Cycles: ");
+    for(int i = 0; i < 20; i++){
+      Serial.print(cycles[i], DEC);
+      Serial.print(", ");
+    }
+    Serial.println("");
+
+    set_cycle_presets(1);
+    // color the cones appropriately
+
+
+    pixels.show();
+
+    
+  }
+
+  if(switches[1] != prevStateTwo){
+    // if the second switch changes positions, perform
+    // a 3 fold "rotation" of the lights about the axis
+    rotate(1);
+    pixels.show();
+  }
+
+}
+
+void diagnostic_check_pentagons(){
+  num_per_rotation = 5;
+  
+    static int num = 1;
+  static bool prevState = false;
+  static bool prevStateTwo = false;
+
+  // Store the previous state of the switches
+  // as well as the current axis cone
+
+  if(switches[0] != prevState){
+    // if we flip the first switch
+    
+    prevState = switches[0];
+    clear();
+
+    num = (num % MAX_CONE_NUM) + 1;
+    // iterate the axis cone (so the center of rotation
+    // becomes cone two if it was cone one before, etc
+    Serial.print("NUM CONE: ");
+    Serial.println(num, DEC);
+
+    uint8_t next = get_connection(num, 0);
+    set_pentagon(cycles, num, next, POSITIVE);
+    // set the axis pentagon in the cycles array
+
+    set_pentagon_cycles();
+    // set the appropriate cycles in the cycles array
+    
+    Serial.print("PENTAGON: ");
+    for(int i = 0; i < 5; i++){
+      Serial.print(cycles[i], DEC);
+      Serial.print(", ");
+    }
+    Serial.println("");
+    Serial.print("Cycles: ");
+    for(int i = 0; i < 20; i++){
+      Serial.print(cycles[i], DEC);
+      Serial.print(", ");
+    }
+    Serial.println("");
+
+    set_cycle_presets(0);
+    // color the cones in the cycles appropriately
+    
+    pixels.show(); 
+  }
+
+  if(switches[1] != prevStateTwo){
+    // if the second switch changes positions, perform
+    // a 3 fold "rotation" of the lights about the axis
+    rotate(0);
+    pixels.show();
+  }
+
+}
+
+
+
+
+
+/*---------------------------------------------------------------------*/
+
+
+
+
+
 // called once at the beginning
 void setup() {
   pixels.begin();
@@ -65,9 +626,9 @@ void setup() {
   //  coneColor(18, 0, 0, 0, 255); //sets the axis for 3-fold to white
 
   //Five fold rotational symmetry set up
-  for (int i = 0; i < 4; i++) {
-    setGroupPresetColor(fiveFoldGroups[i], 5);
-  }
+//  for (int i = 0; i < 4; i++) {
+//    setGroupPresetColor(fiveFoldGroups[i], 5);
+//  }
 
 }
 
@@ -104,9 +665,16 @@ void loop() {
   //    nFoldRotateColor(coneArray, 5);
   //    delay(500);
   //  }
+
+
+
+
+  
   delay(100);
+  diagnostic_check_threefold();
+  //diagnostic_check_pentagons();
   //rotationalThreeFoldSymEncoder();
-  rotationalFiveFoldSymEncoder();
+  //rotationalFiveFoldSymEncoder();
 
 }
 
@@ -133,7 +701,7 @@ void receiveEvent(int howMany)
   get_switches();
   get_encoder();
 
-  print_state();
+  //print_state();
 }
 
 void get_encoder()
