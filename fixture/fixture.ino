@@ -1370,18 +1370,6 @@ void loop() {
 
   static int32_t previousEncoderValue = 0; 
 
-#ifdef WILLIAM_DEBUG
-  char c = Serial.read();
-  if(c == 'u'){
-    rotary_counter++;
-  }
-
-  else if(c == 'd'){
-    rotary_counter--;
-  }
-
-
-#endif
   static ObjectMode previousMode;
 
   if(switches[0]){
@@ -1554,11 +1542,7 @@ void get_encoder()
 {
   button_down = Wire.read(); //reads signal
   button_down_time = get_int32(); //time the button has been pressed down (starts over when button is released)
-#ifdef WILLIAM_DEBUG
-  get_int32();
-#else
   rotary_counter = get_int32(); //amount the dial has been turned
-#endif
 }
 
 void get_buttons()
