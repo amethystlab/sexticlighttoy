@@ -182,7 +182,7 @@ void loop()
   
   print_state();
 
-  delay(500);
+  delay(50);
 }
 
 
@@ -404,7 +404,7 @@ void rotaryIRQ()
   rotary_state |= (digitalRead(ROT_A) | (digitalRead(ROT_B) << 1));  // mask in current state
   rotary_state &= 0x0F; // zero upper nybble
 
-  if (rotary_state == 0x09) // from 10 to 01, increment counter. Also try 0x06 if unreliable
+  if (rotary_state == 0x06) // from 10 to 01, increment counter. Also try 0x09, 0x06 if unreliable
   {
     rotary_counter++;
     rotary_change = true;
@@ -417,17 +417,3 @@ void rotaryIRQ()
 //    Serial.println("decrease");
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

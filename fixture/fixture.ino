@@ -1514,12 +1514,12 @@ void loop() {
 }
 
 //sets the cones of the array to preset colors, works for 2, 3, and 5 fold
-void setGroupPresetColor(uint8_t *coneArray, uint8_t numberOfCones) {
-  if (numberOfCones > 5) {
-    Serial.println("Number of cones must be less than or equal to 5 in setGroupPresetColor function.");
+void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry) {
+  if (degreeOfSymmetry > 5) {
+    Serial.println("degreeOfSymmetry must be less than or equal to 5 in setGroupPresetColor function.");
   }
   else {
-    for (int i = 0; i < numberOfCones; i++) {
+    for (int i = 0; i < degreeOfSymmetry; i++) {
       uint32_t changeCone = colorPresets[i];
       coneColor(*coneArray, (changeCone >> 16) & 0xFF, (changeCone >> 8) & 0xFF, changeCone & 0xFF, (changeCone >> 24) & 0xFF); //moves color cone to cone
       coneArray++;
@@ -1536,7 +1536,7 @@ void receiveEvent(int howMany)
   get_switches();
   get_encoder();
 
-  //print_state();
+//  print_state();
 }
 void get_encoder()
 {
@@ -1569,7 +1569,7 @@ void get_pots()
 
 void print_state()
 {
-#ifdef DEBUG_PRINT
+//#ifdef DEBUG_PRINT
   Serial.print("encoder:  ");
   Serial.print(button_down, DEC); Serial.print(" ");
   Serial.print(button_down_time, DEC); Serial.print(" ");
@@ -1597,7 +1597,7 @@ void print_state()
   Serial.println("");
 
   Serial.println("");
-#endif
+//#endif
 }
 // this and the other `get` function (get_int32) could easily be replaced by one template function, and a sizeof call
 uint16_t get_uint16()
