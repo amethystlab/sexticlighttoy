@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with sexticlighttoy.  If not, see <https://www.gnu.org/licenses/>.
 
+//#define DEBUG_PRINT
+
 #include <Adafruit_NeoPixel.h> // see https://github.com/adafruit/Adafruit_NeoPixel
 #include <Wire.h> // see https://www.arduino.cc/en/Tutorial/MasterReader
 
@@ -21,10 +23,10 @@ void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone, bool reverse);
 void clear();
 void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w);
 
-#define NEOPIXEL_PIN 12
+#define NEOPIXEL_PIN 12 // Depends on which pin you used on your Arduino when wiring..
 
 // some global variables
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(140, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(140, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
 
 uint16_t pot1, pot2, pot3;
@@ -37,8 +39,23 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 #define FIXTURE_ADDRESS 4
 
-uint32_t colorPresets [5] = {0x00FF00, 0xFF0000, 0x0000FF, 0xFFFFFF, 0xFFFF00}; //use an array of 5 since at most we are looking at 5-fold rotational symmetry (g,r,b,w,y)
-//white hexa = FFFFFF, red hexa = FF0000, green hexa = 00FF00, blue hexa = 0000FF, yellow hexa = FFFF00, magenta hexa = FF00FF
+
+// define some hexadecimal colors.  Handy!
+#define WHITE 0xFFFFFF
+
+#define RED 0xFF0000
+#define GREEN 0x00FF00
+#define BLUE 0x0000FF
+
+#define YELLOW 0xFFFF00
+#define MAGENTA 0xFF00FF
+#define CYAN 0x00FFFF
+
+#define BLACK 0x000000
+
+uint32_t colorPresets [5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
+//use an array of 5 since at most we are looking at 5-fold rotational symmetry (g,r,b,w,y)
+
 
 
 //uint8_t threeFoldGroups [6][3] = {{5, 14, 2}, {15, 12, 4}, {6, 13, 3}, {7, 20, 10}, {8, 16, 11}, {17, 19, 9}}; //[6] indicates amount of arrays, [3] arrays in the array
@@ -49,7 +66,7 @@ uint32_t colorPresets [5] = {0x00FF00, 0xFF0000, 0x0000FF, 0xFFFFFF, 0xFFFF00}; 
 //{9,7,15,13,11} = r,g,b,w,y
 //{18,17,16,20,19} = r,g,b,w,y
 
-//#define DEBUG_PRINT
+
 
 typedef enum SymmetryType {
   TwoFold,
@@ -157,32 +174,73 @@ SymmetryType symmetry = TwoFold;
 /*---------------------------------------------------------------------*/
 // MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
 #define MAX_UINT5 31
+
 #define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
+#define MAKE_CONNECTION(a,b,c) CONNECTION_NUM_SETUP(0, a) | CONNECTION_NUM_SETUP(1, b) | CONNECTION_NUM_SETUP(2, c)
 
 #define MAX_CONNECTION_NUM 2
 
+
+#define FIXTURE 1  // select which physical wiring path you implemented.  
+// Maybe it's one of these?  Cross those fingers!  Explanation below.
+
+// define the connections between cones.
+#if FIXTURE==1 // Will's.  The first one silviana made.
 uint16_t connections[20] = {
-  CONNECTION_NUM_SETUP(0, 4) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 7),
-  CONNECTION_NUM_SETUP(0, 9) | CONNECTION_NUM_SETUP(1, 0) | CONNECTION_NUM_SETUP(2, 2),
-  CONNECTION_NUM_SETUP(0, 11) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 3),
-  CONNECTION_NUM_SETUP(0, 4) | CONNECTION_NUM_SETUP(1, 13) | CONNECTION_NUM_SETUP(2, 2),
-  CONNECTION_NUM_SETUP(0, 3) | CONNECTION_NUM_SETUP(1, 0) | CONNECTION_NUM_SETUP(2, 5),
-  CONNECTION_NUM_SETUP(0, 6) | CONNECTION_NUM_SETUP(1, 14) | CONNECTION_NUM_SETUP(2, 4),
-  CONNECTION_NUM_SETUP(0, 5) | CONNECTION_NUM_SETUP(1, 7) | CONNECTION_NUM_SETUP(2, 19),
-  CONNECTION_NUM_SETUP(0, 8) | CONNECTION_NUM_SETUP(1, 6) | CONNECTION_NUM_SETUP(2, 0),
-  CONNECTION_NUM_SETUP(0, 18) | CONNECTION_NUM_SETUP(1, 7) | CONNECTION_NUM_SETUP(2, 9),
-  CONNECTION_NUM_SETUP(0, 8) | CONNECTION_NUM_SETUP(1, 1) | CONNECTION_NUM_SETUP(2, 10),
-  CONNECTION_NUM_SETUP(0, 17) | CONNECTION_NUM_SETUP(1, 9) | CONNECTION_NUM_SETUP(2, 11),
-  CONNECTION_NUM_SETUP(0, 12) | CONNECTION_NUM_SETUP(1, 10) | CONNECTION_NUM_SETUP(2, 2),
-  CONNECTION_NUM_SETUP(0, 16) | CONNECTION_NUM_SETUP(1, 11) | CONNECTION_NUM_SETUP(2, 13),
-  CONNECTION_NUM_SETUP(0, 14) | CONNECTION_NUM_SETUP(1, 12) | CONNECTION_NUM_SETUP(2, 3),
-  CONNECTION_NUM_SETUP(0, 15) | CONNECTION_NUM_SETUP(1, 13) | CONNECTION_NUM_SETUP(2, 5),
-  CONNECTION_NUM_SETUP(0, 16) | CONNECTION_NUM_SETUP(1, 14) | CONNECTION_NUM_SETUP(2, 19),
-  CONNECTION_NUM_SETUP(0, 12) | CONNECTION_NUM_SETUP(1, 15) | CONNECTION_NUM_SETUP(2, 17),
-  CONNECTION_NUM_SETUP(0, 10) | CONNECTION_NUM_SETUP(1, 16) | CONNECTION_NUM_SETUP(2, 18),
-  CONNECTION_NUM_SETUP(0, 17) | CONNECTION_NUM_SETUP(1, 19) | CONNECTION_NUM_SETUP(2, 8),
-  CONNECTION_NUM_SETUP(0, 18) | CONNECTION_NUM_SETUP(1, 15) | CONNECTION_NUM_SETUP(2, 6),
+  MAKE_CONNECTION(4,1,7),
+  MAKE_CONNECTION(9,0,2),
+  MAKE_CONNECTION(11,1,3),
+  MAKE_CONNECTION(4,13,2),
+  MAKE_CONNECTION(3,0,5),
+
+  MAKE_CONNECTION(6,14,4),
+  MAKE_CONNECTION(5,7,19),
+  MAKE_CONNECTION(8,6,0),
+  MAKE_CONNECTION(18,7,9),
+  MAKE_CONNECTION(8,1,10),
+
+  MAKE_CONNECTION(17,9,11),
+  MAKE_CONNECTION(12,10,2),
+  MAKE_CONNECTION(16,11,13),
+  MAKE_CONNECTION(14,12,3),
+  MAKE_CONNECTION(15,13,5),
+
+  MAKE_CONNECTION(16,14,19),
+  MAKE_CONNECTION(12,15,17),
+  MAKE_CONNECTION(10,16,18),
+  MAKE_CONNECTION(17,19,8),
+  MAKE_CONNECTION(18,15,6)
 };
+
+#elif FIXTURE==2 // Samantha's
+uint16_t connections[20] = {
+  MAKE_CONNECTION(4,1,13),
+  MAKE_CONNECTION(0,2,11)
+  MAKE_CONNECTION(9,1,3),
+  MAKE_CONNECTION(7,2,4),
+  MAKE_CONNECTION(0,5,3),
+
+  MAKE_CONNECTION(14,6,4),
+  MAKE_CONNECTION(16,7,5),
+  MAKE_CONNECTION(8,3,6),
+  MAKE_CONNECTION(17,9,7),
+  MAKE_CONNECTION(10,2,8),
+
+  MAKE_CONNECTION(18,11,9),
+  MAKE_CONNECTION(12,1,10),
+  MAKE_CONNECTION(19,13,11),
+  MAKE_CONNECTION(14,0,12),
+  MAKE_CONNECTION(15,5,13),
+
+  MAKE_CONNECTION(19,16,14),
+  MAKE_CONNECTION(17,6,15),
+  MAKE_CONNECTION(18,8,16),
+  MAKE_CONNECTION(19,10,17),
+  MAKE_CONNECTION(15,12,18)
+};
+#endif
+
+
 /*
  * Each uint16_t stores 3 numbers.
  * The index represents a specific cone on the barth sextic,
@@ -197,13 +255,16 @@ uint16_t connections[20] = {
  * 
  * The connections are ordered such that if you were to hold the geometric object
  * from the cone specified by the index, the ordering of the connections would follow
- * a circle around the cone, going from left to right.
+ * a circle around the cone, ANTI-clockwise from above, looking from the point of the cone
+ * to the center of the fixture.
+ *
+ * Math question (combinatorics): How many valid numberings are there?
  * 
  * TODO: INDICATE ONE OFF INDEXING HANDLED BY GET_CONNECTION FUNCTION
  *  
  * This is packed into uint16_ts to save space, as the arduino platform is limited in memory.
  * 
-*/
+ */
 
 uint8_t cycles[20];
 uint8_t num_per_rotation = 3;
@@ -335,8 +396,8 @@ void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir){
   //    Source Cone
   //      /    \
   //Next /      \  Third 
-  //Cone\       /  Cone
-  //     \_____/
+  //Cone \      /  Cone
+  //      \____/
 
   // TODO: Investigate iterative path rather than
   //       iterating through every single path of length
