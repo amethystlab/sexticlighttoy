@@ -31,6 +31,9 @@ extern uint8_t fiveFoldAxes[NUM_FIVE_FOLD_AXES][2];
 
 
 extern ObjectMode mode;
+extern int32_t previousEncoderValue; 
+extern ObjectMode previousMode;
+
 extern SymmetryType symmetry; 
 extern uint16_t connections[20];
 

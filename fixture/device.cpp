@@ -134,3 +134,64 @@ void reset() {
     clear();
   }
 } // end (Sam 7/8/2020)
+
+
+void getMode(){
+  previousMode = mode;
+  
+  if(switches[0]){
+    mode = Reflectional;
+  } else if(switches[1]){
+    mode = Rotational;
+  } else if(switches[2]){
+    mode = ColorSet;
+  } else {
+    mode = Event;
+  }
+}
+
+void setupPixels(){
+  pixels.begin();
+  pixels.setBrightness(255); // 0 is off.  255 is full.  this is a limit on the brightness for the entire run.
+}
+
+void setupCommunication(){
+  Wire.begin(FIXTURE_ADDRESS);                // join i2c bus with address #4
+  Wire.onReceive(receiveEvent); // register event
+}
+
+void setupSerial(){
+  Serial.println("BEGIN");
+
+  Serial.begin(9600);           // start serial for output
+  Serial.setTimeout(20);
+}
+
+
+void setupTime(){
+  lengthOfShow = 10000;
+  start = millis();
+}
+
+
+
+void deadCodeGraveyard(){
+  //  clear();
+  //  uint8_t arr[5] = {1,2,3,4,5};
+  //  setGroupPresetColor(arr, 5);
+  //  symmetry = FiveFold;
+  //  pixels.show();
+
+    //commented out the three fold because we have the five fold in the set up, hang onto this for mode feature code
+    //  //Three fold rotational symmetry set up
+    //  for (int i = 0; i < 6; i++) {
+    //    setGroupPresetColor(threeFoldGroups[i], 3);
+    //  }
+    //  coneColor(1, 0, 0, 0, 255); //sets the axis for 3-fold to white
+    //  coneColor(18, 0, 0, 0, 255); //sets the axis for 3-fold to white
+
+    //Five fold rotational symmetry set up
+  //  for (int i = 0; i < 4; i++) {
+  //    setGroupPresetColor(fiveFoldGroups[i], 5);
+  //  }
+}

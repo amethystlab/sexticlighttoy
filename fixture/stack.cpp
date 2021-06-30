@@ -152,3 +152,57 @@ bool transitionCone(uint8_t coneNum, bool repeat){
   return true;
 
 }
+
+
+
+
+
+void setupEvents(){
+  for(int i = 0; i < MAX_NUM_EVENTS; i++){
+    event_cone[i] = OPEN_EVENT_CODE;
+  }
+
+  for(int i = 0; i < MAX_CONE_NUM; i++){
+    times[i][1] = NO_EVENT_PLANNED;
+  }
+  
+  //for(int i = 1; i <= MAX_CONE_NUM; i++){
+  //  addEventToStack(i, 0xFF000000, 2500);
+  //  addEventToStack(i, 0xFFFF0000, 7500);
+  //}
+
+
+  //  for(int i = 0; i < MAX_CONE_NUM; i++){
+  //    colors[i][1] = 0xFF00FF00;
+  //    times[i][1] = 5000;
+  //  }
+}
+
+
+void doEventMode(){
+//    for(int i = 0; i < 20; i++){
+//      Serial.print(colors[i][0]); Serial.print(" to "); Serial.print(colors[i][1]);
+//      Serial.print(" from "); Serial.print(times[i][0]); Serial.print(" to "); Serial.println(times[i][1]);
+//    }
+//    delay(500);
+
+//      Serial.print("MILLIS: "); Serial.println(millis());
+
+  eventStackToTransition();
+
+  for(int i = 1; i <= MAX_CONE_NUM; i++){
+    transitionCone(i, true);
+  }
+
+  pixels.show();
+
+}  // event
+
+
+void transitionAllCones(){
+  for(int i = 1; i <= MAX_CONE_NUM; i++){
+    transitionCone(i, false);
+  }
+
+  pixels.show();
+}

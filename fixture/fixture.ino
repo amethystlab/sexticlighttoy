@@ -33,61 +33,11 @@
 
 // called once at the beginning
 void setup() {
-  Serial.println("BEGIN");
-  pixels.begin();
-  pixels.setBrightness(255); // 0 is off.  255 is full.  this is a limit on the brightness for the entire run.
-
-
-  Wire.begin(FIXTURE_ADDRESS);                // join i2c bus with address #4
-  Wire.onReceive(receiveEvent); // register event
-  Serial.begin(9600);           // start serial for output
-  Serial.setTimeout(20);
-
-  for(int i = 0; i < MAX_NUM_EVENTS; i++){
-    event_cone[i] = OPEN_EVENT_CODE;
-  }
-
-  for(int i = 0; i < MAX_CONE_NUM; i++){
-    times[i][1] = NO_EVENT_PLANNED;
-  }
-
-  Serial.println("STEP 1");
-
-//for(int i = 1; i <= MAX_CONE_NUM; i++){
-//  addEventToStack(i, 0xFF000000, 2500);
-//  addEventToStack(i, 0xFFFF0000, 7500);
-//}
-
-
-    Serial.println("STEP 2");
-
-
-//  for(int i = 0; i < MAX_CONE_NUM; i++){
-//    colors[i][1] = 0xFF00FF00;
-//    times[i][1] = 5000;
-//  }
-
-  lengthOfShow = 10000;
-  start = millis();
-
-//  clear();
-//  uint8_t arr[5] = {1,2,3,4,5};
-//  setGroupPresetColor(arr, 5);
-//  symmetry = FiveFold;
-//  pixels.show();
-
-  //commented out the three fold because we have the five fold in the set up, hang onto this for mode feature code
-  //  //Three fold rotational symmetry set up
-  //  for (int i = 0; i < 6; i++) {
-  //    setGroupPresetColor(threeFoldGroups[i], 3);
-  //  }
-  //  coneColor(1, 0, 0, 0, 255); //sets the axis for 3-fold to white
-  //  coneColor(18, 0, 0, 0, 255); //sets the axis for 3-fold to white
-
-  //Five fold rotational symmetry set up
-//  for (int i = 0; i < 4; i++) {
-//    setGroupPresetColor(fiveFoldGroups[i], 5);
-//  }
+  setupSerial();
+  setupPixels();
+  setupCommunication();
+  setupEvents();
+  setupTime();
 
   Serial.println("Finished Setup");
 }
@@ -97,151 +47,28 @@ void setup() {
 
 
 
+
+
+
 // called ad nauseum
-#define TICKS_PER_ROTATION 3
 void loop() {
 
-  static int32_t previousEncoderValue = 0; 
+  getMode();
 
-  static ObjectMode previousMode;
-
-  if(switches[0]){
-    mode = Reflectional;
-  } else if(switches[1]){
-    mode = Rotational;
-  } else if(switches[2]){
-    mode = ColorSet;
-  } else {
-    mode = Event;
-  }
-
-  
   switch(mode){
     case Rotational:
-    
-      if(previousMode != Rotational) {
-        symmetry = TwoFold;
-        Serial.println("Rotational Mode");
-
-        incrementAxis(0);
-        
-        set_cycle_presets();
-        pixels.show();
-        previousMode = Rotational;
-      }
-      
-    
-      if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && button_down)
-      {
-        Serial.println("Rotate Axis");
-        previousEncoderValue = rotary_counter;
-        incrementAxis(1);
-        set_cycle_presets();
-
-        pixels.show();
-      } else if((rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
-#ifdef DEBUG_PRINT
-        Serial.print(rotary_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
-        Serial.println("Rotate Positive");
-#endif
-        previousEncoderValue = rotary_counter;
-        rotate(false);
-        pixels.show();
-      } else if((previousEncoderValue - rotary_counter) > TICKS_PER_ROTATION){
-#ifdef DEBUG_PRINT
-        Serial.print("Rotate Negative "); Serial.print(rotary_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
-#endif
-        previousEncoderValue = rotary_counter;
-        rotate(true);
-        pixels.show();
-      }
-
-      if(buttons[0]){
-        Serial.println("Set twofold");
-        symmetry = TwoFold;
-        incrementAxis(0);
-        set_cycle_presets();
-        pixels.show();
-      } else if(buttons[2]){
-        Serial.println("Set threefold");
-        symmetry = ThreeFold;
-        incrementAxis(0);
-        set_cycle_presets();
-
-        pixels.show();
-      } else if(buttons[1]){
-        Serial.println("Set fivefold");
-        symmetry = FiveFold;
-        incrementAxis(0);
-        set_cycle_presets();
-
-        pixels.show();
-      }
-      
-    break;
+      {doRotationalMode(); break;}
     case Reflectional:
-      symmetry = Reflect;
-    
-      if(previousMode != Reflectional) {
-        Serial.println("Reflectional Mode");
-        incrementAxis(0);
-        set_cycle_presets();
-        pixels.show();
-        previousMode = Reflectional;
-      }
-    
-
-      if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && button_down)
-      {
-        Serial.println("Change reflection axis");
-        previousEncoderValue = rotary_counter;
-        incrementAxis(1);
-        set_cycle_presets();
-
-        pixels.show();
-      } else if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
-        Serial.println("Reflect");
-        previousEncoderValue = rotary_counter;
-        rotate(false);
-        pixels.show();
-      }
-    break;
+      {doReflectionalMode(); break;}
     case ColorSet:
-      if(previousMode != ColorSet) {
-        Serial.println("ColorSet Mode");
-        clear();
-        previousMode = ColorSet;
-      }
-
-    
-      coneSelect();
-      pixels.show();
-    break;
+      {doColorSetMode(); break;}
     case Event:
-//    for(int i = 0; i < 20; i++){
-//      Serial.print(colors[i][0]); Serial.print(" to "); Serial.print(colors[i][1]);
-//      Serial.print(" from "); Serial.print(times[i][0]); Serial.print(" to "); Serial.println(times[i][1]);
-//    }
-//    delay(500);
+      {doEventMode(); break;}
+  } // switch
 
-//      Serial.print("MILLIS: "); Serial.println(millis());
-
-      eventStackToTransition();
-
-      for(int i = 1; i <= MAX_CONE_NUM; i++){
-        transitionCone(i, true);
-      }
-
-      pixels.show();
-    break;
-  }
-
+  
   if(mode != Event){
-    for(int i = 1; i <= MAX_CONE_NUM; i++){
-      transitionCone(i, false);
-    }
-
-    pixels.show();
+    transitionAllCones();
   }
 
 } // ends the loop() function

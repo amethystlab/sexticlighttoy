@@ -13,7 +13,7 @@
 #include "externs.h"
 #include "stack.h"
 #include "color.h"
-
+#include "device.h"
 
 
 //uint8_t threeFoldGroups [6][3] = {{5, 14, 2}, {15, 12, 4}, {6, 13, 3}, {7, 20, 10}, {8, 16, 11}, {17, 19, 9}}; //[6] indicates amount of arrays, [3] arrays in the array
@@ -61,4 +61,8 @@ void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone, bool reverse);
 bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool reverse, uint16_t currentTime, uint16_t leng);
 
 void rotationalThreeFoldSymEncoder();
+
+void doRotationalMode();
+void doReflectionalMode();
+void doColorSetMode();
 #endif // include guard

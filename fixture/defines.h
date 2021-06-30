@@ -64,6 +64,7 @@ typedef enum ObjectMode {
 #define NUM_FIVE_FOLD_AXES 12
 #define NUM_TICKS 3
 
+#define TICKS_PER_ROTATION 3
 
 
 

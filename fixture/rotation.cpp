@@ -896,3 +896,110 @@ void rotationalThreeFoldSymEncoder() {
 //}
 
   
+void doRotationalMode()
+{
+
+  if(previousMode != Rotational) {
+    symmetry = TwoFold;
+    Serial.println("Rotational Mode");
+
+    incrementAxis(0);
+    
+    set_cycle_presets();
+    pixels.show();
+    previousMode = Rotational;
+  }
+  
+
+  if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && button_down)
+  {
+    Serial.println("Rotate Axis");
+    previousEncoderValue = rotary_counter;
+    incrementAxis(1);
+    set_cycle_presets();
+
+    pixels.show();
+  } else if((rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+#ifdef DEBUG_PRINT
+    Serial.print(rotary_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
+    Serial.println("Rotate Positive");
+#endif
+    previousEncoderValue = rotary_counter;
+    rotate(false);
+    pixels.show();
+  } else if((previousEncoderValue - rotary_counter) > TICKS_PER_ROTATION){
+#ifdef DEBUG_PRINT
+    Serial.print("Rotate Negative "); Serial.print(rotary_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
+#endif
+    previousEncoderValue = rotary_counter;
+    rotate(true);
+    pixels.show();
+  }
+
+  if(buttons[0]){
+    Serial.println("Set twofold");
+    symmetry = TwoFold;
+    incrementAxis(0);
+    set_cycle_presets();
+    pixels.show();
+  } else if(buttons[2]){
+    Serial.println("Set threefold");
+    symmetry = ThreeFold;
+    incrementAxis(0);
+    set_cycle_presets();
+
+    pixels.show();
+  } else if(buttons[1]){
+    Serial.println("Set fivefold");
+    symmetry = FiveFold;
+    incrementAxis(0);
+    set_cycle_presets();
+
+    pixels.show();
+  }
+  
+} //  case doRotationalMode
+
+
+
+void doReflectionalMode(){
+    symmetry = Reflect;
+  
+    if(previousMode != Reflectional) {
+      Serial.println("Reflectional Mode");
+      incrementAxis(0);
+      set_cycle_presets();
+      pixels.show();
+      previousMode = Reflectional;
+    }
+  
+
+    if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && button_down)
+    {
+      Serial.println("Change reflection axis");
+      previousEncoderValue = rotary_counter;
+      incrementAxis(1);
+      set_cycle_presets();
+
+      pixels.show();
+    } else if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+      Serial.println("Reflect");
+      previousEncoderValue = rotary_counter;
+      rotate(false);
+      pixels.show();
+    }
+}
+
+
+void doColorSetMode(){
+
+    if(previousMode != ColorSet) {
+      Serial.println("ColorSet Mode");
+      clear();
+      previousMode = ColorSet;
+    }
+
+  
+    coneSelect();
+    pixels.show();
+}

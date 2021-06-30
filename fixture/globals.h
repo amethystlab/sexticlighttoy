@@ -31,6 +31,8 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 ObjectMode mode = Event;
 SymmetryType symmetry = TwoFold; 
 
+int32_t previousEncoderValue = 0; 
+ObjectMode previousMode;
 /*---------------------------------------------------------------------*/
 
 

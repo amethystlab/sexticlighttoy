@@ -21,5 +21,8 @@ void eventStackToTransition();
 float t(uint16_t x, uint16_t x1, uint16_t x2);
 float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2);
 bool transitionCone(uint8_t coneNum, bool repeat);
+void setupEvents();
 
+void doEventMode();
+void transitionAllCones();
 #endif // include guard
