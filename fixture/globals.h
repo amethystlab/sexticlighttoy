@@ -35,6 +35,32 @@ SymmetryType symmetry = TwoFold;
 
 
 // define the connections between cones.
+// Maybe it's one of these?  Cross those fingers!  Explanation below.
+// 
+/*
+ * Each uint16_t stores 3 numbers.
+ * The index represents a specific cone on the barth sextic,
+ * whereas the values stored inside the uint16_t hold the cone numbers
+ * that are connected
+ * 
+ * ________________________________________________________________________________
+ * | First Connected Cone | Second Connected Cone | Third Connected Cone  |        |
+ * |-------------------------------------------------------------------------------|
+ * | 5 Bits               | 5 Bits                | 5 Bits                | 1 Bit  |
+ * |-------------------------------------------------------------------------------|
+ * 
+ * The connections are ordered such that if you were to hold the geometric object
+ * from the cone specified by the index, the ordering of the connections would follow
+ * a circle around the cone, ANTI-clockwise from above, looking from the point of the cone
+ * to the center of the fixture.
+ *
+ * Math question (combinatorics): How many valid numberings are there?
+ * 
+ * TODO: INDICATE ONE OFF INDEXING HANDLED BY GET_CONNECTION FUNCTION
+ *  
+ * This is packed into uint16_ts to save space, as the arduino platform is limited in memory.
+ * 
+ */
 // we're specifying which cones are connected to each other.  order matters.
 // Order *must* be the same for all, as you look down the cones.
 #if FIXTURE==1 

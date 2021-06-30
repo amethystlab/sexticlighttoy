@@ -2,18 +2,18 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-
+//#define DEBUG_PRINT // uncomment to make tons of things print. 
 #define WILLIAM_DEBUG
 #define TEST(actual, expected) Serial.print("expected: "); Serial.print(expected); Serial.print("actual: "); Serial.println(actual)
 
 
 #include <Adafruit_NeoPixel.h> // see https://github.com/adafruit/Adafruit_NeoPixel
 
-#define FIXTURE_ADDRESS 4  // used with i2c
-#define NEOPIXEL_PIN 12 // Depends on which pin you used on your Arduino when wiring..
+#define FIXTURE_ADDRESS 4  // used with i2c.  must be the same as the value in controller.ino.
+#define NEOPIXEL_PIN 12 // The pin you used on your Arduino when wiring the neopixels. 
 
 // MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
-#define MAX_UINT5 31
+#define MAX_UINT5 31 // 2^5-1
 
 #define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
 #define MAKE_CONNECTION(a,b,c) CONNECTION_NUM_SETUP(0, a) | CONNECTION_NUM_SETUP(1, b) | CONNECTION_NUM_SETUP(2, c)
@@ -22,9 +22,9 @@
 
 #define NUM_LED_GROUPS 20 //20 cones total on fixture
 
-#define FIXTURE 1  // select which physical wiring path you implemented.  
-// Maybe it's one of these?  Cross those fingers!  Explanation below.
+#define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
+// a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
 typedef enum SymmetryType {
   TwoFold,
   ThreeFold,
@@ -32,6 +32,7 @@ typedef enum SymmetryType {
   Reflect
 };
 
+// which mode is the light fixture in?  stored in a global.  see globals.h
 typedef enum ObjectMode {
   ColorSet,
   Rotational,
