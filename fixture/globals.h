@@ -92,6 +92,13 @@ uint16_t connections[20] = { // Samantha's.  The second one.  Sadly not identica
 };
 #endif
 
+///////idk
+
+uint8_t srcCone = 1;
+uint8_t nextCone = 8;
+
+
+
 ////////////////rotation
 uint8_t fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = {{1, 5}, {6, 15}, {14, 13}, {12, 11}, {1, 6}, {8, 7}, {15, 16}, {13, 17}, {11, 18}, {9, 19}, {7, 20}, {18, 17}};
 

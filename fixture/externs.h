@@ -20,6 +20,11 @@ extern int32_t rotary_counter; // current "position" of rotary encoder (incremen
 
 
 
+////idk
+
+extern uint8_t srcCone;
+extern uint8_t nextCone;
+
 //////////////rotation
 extern uint8_t fiveFoldAxes[NUM_FIVE_FOLD_AXES][2];
 
