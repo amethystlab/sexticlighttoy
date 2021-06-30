@@ -7,9 +7,9 @@ void diagnostic_check(){
   static int num = 1;
   static bool prevState = false;
 
-  if(switches[0] != prevState){
+  if(is_switch_on(0) != prevState){
     // if the switch is flipped from its previous position
-    prevState = switches[0];
+    prevState = is_switch_on(0);
     clear();
 
     num = (num % MAX_CONE_NUM) + 1;
@@ -50,10 +50,10 @@ void diagnostic_check_threefold(){
   // Store the previous state of the switches
   // as well as the current axis cone
 
-  if(switches[0] != prevState){
+  if(is_switch_on(0) != prevState){
     // if we flip the first switch
     
-    prevState = switches[0];
+    prevState = is_switch_on(0);
     clear();
 
     num = (num % MAX_CONE_NUM) + 1;
@@ -83,7 +83,7 @@ void diagnostic_check_threefold(){
     
   }
 
-  if(switches[1] != prevStateTwo){
+  if(is_switch_on(1) != prevStateTwo){
     // if the second switch changes positions, perform
     // a 3 fold "rotation" of the lights about the axis
     rotate(false);
@@ -104,10 +104,10 @@ void diagnostic_check_pentagons(){
   // Store the previous state of the switches
   // as well as the current axis cone
 
-  if(switches[0] != prevState){
+  if(is_switch_on(0) != prevState){
     // if we flip the first switch
     
-    prevState = switches[0];
+    prevState = is_switch_on(0);
     clear();
 
     num = (num % MAX_CONE_NUM) + 1;
@@ -145,18 +145,18 @@ void diagnostic_check_pentagons(){
     pixels.show(); 
   }
 
-  if(switches[1] != prevStateTwo){
+  if(is_switch_on(1) != prevStateTwo){
     // if the second switch changes positions, perform
     // a 3 fold "rotation" of the lights about the axis
-    prevStateTwo = switches[1];
+    prevStateTwo = is_switch_on(1);
     rotate(false);
     pixels.show();
   }
 
-  if(switches[2] != prevStateThree){
+  if(is_switch_on(2) != prevStateThree){
     // if the second switch changes positions, perform
     // a 3 fold "rotation" of the lights about the axis
-    prevStateThree = switches[2];
+    prevStateThree = is_switch_on(2);
     rotate(true);
     pixels.show();
   }
@@ -175,10 +175,10 @@ void diagnostic_check_twofold(){
   // Store the previous state of the switches
   // as well as the current axis cone
 
-  if(switches[0] != prevState){
+  if(is_switch_on(0) != prevState){
     // if we flip the first switch
     
-    prevState = switches[0];
+    prevState = is_switch_on(0);
     clear();
 
     uint8_t secondCone = -1;
@@ -220,11 +220,11 @@ void diagnostic_check_twofold(){
     pixels.show(); 
   }
 
-  if(switches[1] != prevStateTwo){
+  if(is_switch_on(1) != prevStateTwo){
     // if the second switch changes positions, perform
     // a 3 fold "rotation" of the lights about the axis
 
-    prevStateTwo = switches[1];
+    prevStateTwo = is_switch_on(1);
     
     rotate(false);
     pixels.show();
@@ -244,7 +244,7 @@ void diagnostic_check_find_third(){
   //uint8_t findThird(uint8_t src, uint8_t next, uint8_t dir){
 
 
-  if(switches[0] != prevState){
+  if(is_switch_on(0) != prevState){
     // if we flip the first switch
     clear();
     uint8_t arr[5];
@@ -263,6 +263,11 @@ void diagnostic_check_find_third(){
 
     pixels.show();
 
-    prevState = switches[0];
+    prevState = is_switch_on(0);
   }
+}
+
+
+void doDiagnosticMode(){
+  diagnostic_check();
 }

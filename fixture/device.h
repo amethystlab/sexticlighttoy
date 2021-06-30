@@ -23,4 +23,7 @@ void setupPixels();
 void setupCommunication();
 void setupSerial();
 void setupTime();
+
+bool is_button_pressed(uint8_t num);
+bool is_switch_on(uint8_t num);
 #endif

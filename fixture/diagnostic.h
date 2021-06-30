@@ -10,4 +10,5 @@ void diagnostic_check_pentagons();
 void diagnostic_check_twofold();
 void diagnostic_check_find_third();
 
+void doDiagnosticMode();
 #endif

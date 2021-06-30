@@ -64,6 +64,8 @@ void loop() {
       {doColorSetMode(); break;}
     case Event:
       {doEventMode(); break;}
+    case Diagnostic:
+      {doDiagnosticMode(); break;}
   } // switch
 
   

@@ -21,16 +21,26 @@ void get_encoder()
 
 void get_buttons()
 {
-  for (int ii = 0; ii < 3; ++ii) {
-    buttons[ii] = Wire.read();
+  buttons = 0;
+  for (int ii = 0; ii < NUM_BUTTONS; ++ii) {
+     buttons = buttons | (Wire.read() << ii);
   }
 }
 
 void get_switches()
 {
-  for (int ii = 0; ii < 3; ++ii) {
-    switches[ii] = Wire.read();
+  switches = 0;
+  for (int ii = 0; ii < NUM_SWITCHES; ++ii) {
+     switches = switches | (Wire.read() << ii);
   }
+}
+
+bool is_button_pressed(uint8_t num){
+      return buttons & (1 << num);
+}
+
+bool is_switch_on(uint8_t num){
+    return switches & (1 << num);
 }
 
 void get_pots()
@@ -52,14 +62,14 @@ void print_state()
 
   Serial.print("buttons:  ");
   for (int ii = 0; ii < 3; ++ii) {
-    Serial.print(buttons[ii]);
+    Serial.print(is_button_pressed(ii));
   }
   Serial.println("");
 
 
   Serial.print("switches:  ");
   for (int ii = 0; ii < 3; ++ii) {
-    Serial.print(switches[ii]);
+    Serial.print(is_switch_on(ii));
   }
   Serial.println("");
 
@@ -139,13 +149,13 @@ void reset() {
 void getMode(){
   previousMode = mode;
   
-  if(switches[0]){
+  if(switches==0){
     mode = Reflectional;
-  } else if(switches[1]){
+  } else if(switches==1){
     mode = Rotational;
-  } else if(switches[2]){
+  } else if(switches==2){
     mode = ColorSet;
-  } else {
+  } else if (switches==3){
     mode = Event;
   }
 }

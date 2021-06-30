@@ -12,7 +12,7 @@ extern unsigned long previousMillis, currentMillis;
 
 extern uint16_t pot1, pot2, pot3;
 
-extern bool buttons[3], switches[3];
+extern uint8_t buttons, switches;
 
 extern unsigned long button_down_time; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
 extern bool button_down; // is the button in the encoder being pushed?

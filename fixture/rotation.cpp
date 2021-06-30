@@ -936,19 +936,19 @@ void doRotationalMode()
     pixels.show();
   }
 
-  if(buttons[0]){
+  if(is_button_pressed(0)){
     Serial.println("Set twofold");
     symmetry = TwoFold;
     incrementAxis(0);
     set_cycle_presets();
   }
-  else if(buttons[1]){
+  else if(is_button_pressed(1)){
     Serial.println("Set threefold");
     symmetry = ThreeFold;
     incrementAxis(0);
     set_cycle_presets();
   } 
-  else if(buttons[2]){
+  else if(is_button_pressed(2)){
     Serial.println("Set fivefold");
     symmetry = FiveFold;
     incrementAxis(0);

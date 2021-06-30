@@ -19,7 +19,7 @@ unsigned long previousMillis = 0, currentMillis = 0;
 
 uint16_t pot1, pot2, pot3;
 
-bool buttons[3], switches[3];
+uint8_t buttons, switches; // can take up to 8 of each.  we'll play bit games with them.
 
 unsigned long button_down_time = 0L; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
 bool button_down = 0; // is the button in the encoder being pushed?

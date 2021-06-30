@@ -12,6 +12,9 @@
 #define FIXTURE_ADDRESS 4  // used with i2c.  must be the same as the value in controller.ino.
 #define NEOPIXEL_PIN 12 // The pin you used on your Arduino when wiring the neopixels. 
 
+#define NUM_BUTTONS 3
+#define NUM_SWITCHES 3
+
 // MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
 #define MAX_UINT5 31 // 2^5-1
 
@@ -37,7 +40,8 @@ typedef enum ObjectMode {
   ColorSet,
   Rotational,
   Reflectional,
-  Event
+  Event,
+  Diagnostic
 };
 
 
