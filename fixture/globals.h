@@ -6,15 +6,16 @@
 
 
 
+
 /*
  * Array to store the cyclic groups of rotation and reflection
 */
-uint8_t cycles[20]; // 20, because have 20 cones
+uint8_t cycles[NUM_LED_GROUPS]; 
 
 uint8_t num_per_rotation = 3;  // idk why 3.  is that just initial state?
 
 // some global variables
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(140, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
 
 uint16_t pot1, pot2, pot3;
@@ -95,7 +96,7 @@ uint16_t connections[20] = { // Will's.  The first one silviana made.
 #elif FIXTURE==2 
 uint16_t connections[20] = { // Samantha's.  The second one.  Sadly not identical.
   MAKE_CONNECTION(4,1,13),
-  MAKE_CONNECTION(0,2,11)
+  MAKE_CONNECTION(0,2,11),
   MAKE_CONNECTION(9,1,3),
   MAKE_CONNECTION(7,2,4),
   MAKE_CONNECTION(0,5,3),

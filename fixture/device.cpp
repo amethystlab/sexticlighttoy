@@ -148,16 +148,9 @@ void reset() {
 
 void getMode(){
   previousMode = mode;
-  
-  if(switches==0){
-    mode = Reflectional;
-  } else if(switches==1){
-    mode = Rotational;
-  } else if(switches==2){
-    mode = ColorSet;
-  } else if (switches==3){
-    mode = Event;
-  }
+  Serial.println("mode: ");  Serial.print(mode);  Serial.print(" "); Serial.print(switches,BIN);Serial.print("\n"); 
+  // print_state();
+  mode = switches;  // just interpret the uint8_t as an integer.  the user of the controller gets to use binary!
 }
 
 void setupPixels(){
@@ -171,8 +164,6 @@ void setupCommunication(){
 }
 
 void setupSerial(){
-  Serial.println("BEGIN");
-
   Serial.begin(9600);           // start serial for output
   Serial.setTimeout(20);
 }

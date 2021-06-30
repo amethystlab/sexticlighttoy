@@ -64,8 +64,12 @@ void loop() {
       {doColorSetMode(); break;}
     case Event:
       {doEventMode(); break;}
+    case Pulse:
+      {doPulseMode(); break;}
     case Diagnostic:
       {doDiagnosticMode(); break;}
+    default:
+      break;
   } // switch
 
   

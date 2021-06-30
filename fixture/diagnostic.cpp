@@ -4,38 +4,40 @@
 void diagnostic_check(){
   // Store the current cone we are focusing on, as well as the 
   // previous state of the switch
-  static int num = 1;
-  static bool prevState = false;
-
-  if(is_switch_on(0) != prevState){
-    // if the switch is flipped from its previous position
-    prevState = is_switch_on(0);
-    clear();
-
-    num = (num % MAX_CONE_NUM) + 1;
-    //Iterate to the next cone number
-
-#ifdef DEBUG_PRINT
-    Serial.print("NUM CONE: ");
-    Serial.println(num, DEC);
-#endif
-
-    // Light up the current cone (cone number num) green
-    coneColor(num, 255, 0, 0, 0);
-    for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
-      // Light up the cones connected to the current cone red
-      uint8_t conn = get_connection(num, i);
-#ifdef DEBUG_PRINT
-      Serial.print("CONNECTED CONE: ");
-      Serial.println(conn, DEC);
-#endif
-      coneColor(conn, 0, 255, 0, 0);
-    }
-
-    pixels.show();
-
-    
+  static int num = 0;
+  
+  num = rotary_counter;
+  while (num<0){
+    num+=MAX_CONE_NUM;
   }
+  num = rotary_counter%MAX_CONE_NUM;
+  //Iterate to the next cone number
+
+
+  Serial.print("CURRENT NUM CONE: ");
+  Serial.println(num, DEC);
+  
+  // turn off all cones
+  for (int conenum=0; conenum<MAX_CONE_NUM; ++conenum){
+    coneColor(conenum, 0, 0, 0, 0);
+  }
+  
+  // Light up the current cone (cone number num) green
+  coneColor(num, 255, 0, 0, 0);
+  
+  Serial.print("CONNECTED CONES: ");
+  for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
+    // Light up the cones connected to the current cone red
+    uint8_t conn = get_connection(num, i);
+
+    Serial.println(conn, DEC);
+
+    coneColor(conn, 0, 255, 0, 0);
+  }
+
+  pixels.show();
+  
+  delay(500);
 }
 
 
@@ -191,7 +193,7 @@ void diagnostic_check_twofold(){
     }
     
     while(!found){
-      for(int i = connection_num; i <= MAX_CONNECTION_NUM && !found; i++){
+      for(int i = connection_num; i < MAX_CONNECTION_NUM && !found; i++){
         secondCone = get_connection(cone_num, i);
         if(secondCone > cone_num){
           found = true;
@@ -269,5 +271,6 @@ void diagnostic_check_find_third(){
 
 
 void doDiagnosticMode(){
-  diagnostic_check();
+  Serial.println("doing diagnostic check");
+    diagnostic_check();
 }

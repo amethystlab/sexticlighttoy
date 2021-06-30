@@ -4,11 +4,11 @@
 
 //returns the specific color that is within the cone by looking at one pixel
 uint32_t getConeColor(uint8_t coneNum) {
-  if (coneNum >= 1 && coneNum <= 20) {
-    int pixStart = (coneNum - 1) * 7; //determines which pixel out of 140 to fill, inside coneNum
+  if (coneNum >= 0 && coneNum <= 19) {
+    int pixStart = (coneNum) * 7; //determines which pixel out of 140 to fill, inside coneNum
     return pixels.getPixelColor(pixStart);
   }
-  return 0; //if for some reason the coneNum isn't in the range of 1 to 20 then zero is returned
+  return 0; //if for some reason the coneNum isn't in the range of 0 to 19 then zero is returned
 } //end Sam 7-14-20
 
 
@@ -93,7 +93,7 @@ float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2)
 
 
 bool transitionCone(uint8_t coneNum, bool repeat){
-  uint8_t arrayIndex = coneNum - 1;
+  uint8_t arrayIndex = coneNum;
 
   if(times[arrayIndex][1] == NO_EVENT_PLANNED){
     return false;
@@ -166,7 +166,7 @@ void setupEvents(){
     times[i][1] = NO_EVENT_PLANNED;
   }
   
-  //for(int i = 1; i <= MAX_CONE_NUM; i++){
+  //for(int i = 0; i < MAX_CONE_NUM; i++){
   //  addEventToStack(i, 0xFF000000, 2500);
   //  addEventToStack(i, 0xFFFF0000, 7500);
   //}
@@ -190,7 +190,7 @@ void doEventMode(){
 
   eventStackToTransition();
 
-  for(int i = 1; i <= MAX_CONE_NUM; i++){
+  for(int i = 0; i < MAX_CONE_NUM; i++){
     transitionCone(i, true);
   }
 
@@ -200,7 +200,7 @@ void doEventMode(){
 
 
 void transitionAllCones(){
-  for(int i = 1; i <= MAX_CONE_NUM; i++){
+  for(int i = 0; i < MAX_CONE_NUM; i++){
     transitionCone(i, false);
   }
 

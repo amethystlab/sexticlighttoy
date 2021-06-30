@@ -10,7 +10,7 @@ uint8_t get_connection(uint8_t cone, uint8_t connection_num)
   if(cone < MIN_CONE_NUM || cone > MAX_CONE_NUM) return CONE_DNE;
   if(connection_num > MAX_CONNECTION_NUM) return CONNECTION_DNE;
   
-  return ((connections[cone - 1] >> (5*connection_num)) & MAX_UINT5) + 1;
+  return ((connections[cone] >> (5*connection_num)) & MAX_UINT5);
 }
 
 
@@ -264,7 +264,7 @@ uint8_t findThird(uint8_t src, uint8_t next, uint8_t dir){
   uint8_t third = SRC_NEXT_UNCONNECTED_ERR;
   bool found = false;
 
-  for(int i = 0; i <= MAX_CONNECTION_NUM && !found; i++){
+  for(int i = 0; i < MAX_CONNECTION_NUM && !found; i++){
     uint8_t conn = get_connection(src, i);
 
     //find the "next" cone in the list of connections of the 
@@ -336,7 +336,7 @@ void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir){
 //
 //  // Find the cones connected to the "next" cone
 //  // that are not the source cone
-//  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
 //    uint8_t conn = get_connection(cycles[0], i);
 //    if(conn != src){
 //      potentialConnectionsNext[j++] = conn;
@@ -347,7 +347,7 @@ void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir){
 //  // Find the cones connected to the "third" cone
 //  // that are not the source cone
 //  j = 0;
-//  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
 //    uint8_t conn = get_connection(cycles[2], i);
 //    if(conn != src){
 //      potentialConnectionsThird[j++] = conn;
@@ -390,7 +390,7 @@ void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir){
 // Find the cone that is connected to both coneOne and coneTwo
 uint8_t get_mutual_connection(uint8_t coneOne, uint8_t coneTwo){
   
-  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
     // Iterate throught the connections of coneOne
     uint8_t connOne = get_connection(coneOne, i);
     for(int j = 0; j <= MAX_CONNECTION_NUM; j++){
@@ -409,7 +409,7 @@ uint8_t get_mutual_connection(uint8_t coneOne, uint8_t coneTwo){
 // specifically not returning those stored in specific indices
 // of the cycles array (ie cones that we already know their cycle)
 uint8_t find_connection_excluding_prev_cycles(uint8_t* arr, int cone, uint8_t min_avoid, uint8_t max_avoid){
-    for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+    for(int i = 0; i < MAX_CONNECTION_NUM; i++){
       uint8_t conn = get_connection(cone, i);
 
       // find a connection of the cone in question
@@ -433,7 +433,7 @@ uint8_t find_connection_excluding_prev_cycles(uint8_t* arr, int cone, uint8_t mi
 
 
 uint8_t find_connection_index(uint8_t src, uint8_t conn){
-  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
     if(get_connection(src, i) == conn) return i;
   }
 
@@ -442,7 +442,7 @@ uint8_t find_connection_index(uint8_t src, uint8_t conn){
 
 
 uint8_t find_direction(uint8_t src, uint8_t first, uint8_t second){
-  for(int i = 0; i <= MAX_CONNECTION_NUM; i++){
+  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
     uint8_t conn = get_connection(src, i);
     if(conn == first){
       if(get_connection(src, (i + 1) % (MAX_CONNECTION_NUM + 1)) == second){
@@ -614,7 +614,7 @@ void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
 
     uint8_t connection_num = 255;
     bool found = false;
-    for(int i = 0; i <= MAX_CONNECTION_NUM && !found; i++){
+    for(int i = 0; i < MAX_CONNECTION_NUM && !found; i++){
       if(get_connection(first, i) == second){
         connection_num = i;
         found = true;
@@ -635,7 +635,7 @@ void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
     found = false;
     
     while(!found){
-      for(int i = connection_num; i <= MAX_CONNECTION_NUM && !found; i++){
+      for(int i = connection_num; i < MAX_CONNECTION_NUM && !found; i++){
         second = get_connection(first, i);
         if(second > first){
           found = true;

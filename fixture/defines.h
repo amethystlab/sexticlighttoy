@@ -21,11 +21,12 @@
 #define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
 #define MAKE_CONNECTION(a,b,c) CONNECTION_NUM_SETUP(0, a) | CONNECTION_NUM_SETUP(1, b) | CONNECTION_NUM_SETUP(2, c)
 
-#define MAX_CONNECTION_NUM 2
+#define MAX_CONNECTION_NUM 3
+ 
+#define NUM_LED_GROUPS 20 // 20 cones total on fixture
+#define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
 
-#define NUM_LED_GROUPS 20 //20 cones total on fixture
-
-#define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
+#define FIXTURE 2  // select which physical wiring path you implemented.  see globals.h  
 
 // a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
 typedef enum SymmetryType {
@@ -37,11 +38,12 @@ typedef enum SymmetryType {
 
 // which mode is the light fixture in?  stored in a global.  see globals.h
 typedef enum ObjectMode {
-  ColorSet,
-  Rotational,
-  Reflectional,
-  Event,
-  Diagnostic
+  ColorSet=0,
+  Rotational=1,
+  Reflectional=2,
+  Event=5,
+  Pulse=6,
+  Diagnostic=7
 };
 
 

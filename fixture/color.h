@@ -37,4 +37,7 @@ void allmagenta(unsigned long period);
 void allgreen(unsigned long period);
 void allwhite(unsigned long period);
 void allLEDs(unsigned long period);
+
+
+void doPulseMode();
 #endif // include guard
