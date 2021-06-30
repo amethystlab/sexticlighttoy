@@ -941,23 +941,21 @@ void doRotationalMode()
     symmetry = TwoFold;
     incrementAxis(0);
     set_cycle_presets();
-    pixels.show();
-  } else if(buttons[2]){
+  }
+  else if(buttons[1]){
     Serial.println("Set threefold");
     symmetry = ThreeFold;
     incrementAxis(0);
     set_cycle_presets();
-
-    pixels.show();
-  } else if(buttons[1]){
+  } 
+  else if(buttons[2]){
     Serial.println("Set fivefold");
     symmetry = FiveFold;
     incrementAxis(0);
     set_cycle_presets();
-
-    pixels.show();
   }
   
+  pixels.show();
 } //  case doRotationalMode
 
 
