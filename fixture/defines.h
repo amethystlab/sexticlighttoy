@@ -47,25 +47,25 @@ typedef enum ObjectMode {
 };
 
 
-
-
+typedef uint8_t Cone;
+typedef int8_t Direction;
 
 
 
 /////////////////////rotation
 
-#define THREEFOLD_AXIS_CONE_INDEX 0
 
-#define SRC_NEXT_UNCONNECTED_ERR 255
+
 #define POSITIVE 1
-#define NEGATIVE 0
+#define NEGATIVE -1
 
-#define CONE_DNE 255 // Error code returned by get_connection when provided a nonexistant cone number 
-#define CONNECTION_DNE 254; // Error code returned by get_connection when provided a connection number that is too large
+#define CONE_DNE 211 // Error code returned by get_connection when provided a nonexistant cone number 
+#define CONNECTION_DNE 212 // Error code returned by get_connection when provided a connection number that is too large
+#define SRC_NEXT_UNCONNECTED_ERR 213
 
-#define NO_SUCH_CONE_ERR 250
-#define NO_CONNECTION 243
-#define NO_SUCH_DIRECTION 255
+#define NO_SUCH_CONE_ERR 213
+#define NO_CONNECTION 215
+#define NO_SUCH_DIRECTION 216
 
 #define NUM_FIVE_FOLD_AXES 12
 #define NUM_TICKS 3
@@ -88,7 +88,7 @@ typedef enum ObjectMode {
 
 #define BLACK 0x000000
 
-
+#define sumFromOneToTwenty 210 // used in set_missing_in_cycles
 
 
 

@@ -27,40 +27,41 @@
 
 uint8_t get_connection(uint8_t cone, uint8_t connection_num);
 
+void set_twofold_cycles(Cone cone1, Cone cone2);
 void set_threefold_cycles();
-void set_pentagon_cycles();
-void set_twofold_cycles();
+void set_fivefold_cycles();
 
 void set_reflection_cycles();
 
 
-uint8_t findThird(uint8_t src, uint8_t next, uint8_t dir);
+uint8_t find_next_cone_in_direction(uint8_t src, uint8_t next, Direction dir);
 
-void set_twofold(uint8_t one, uint8_t two);
-void set_threefold(uint8_t src);
-void set_pentagon(uint8_t *arr, uint8_t src, uint8_t next, uint8_t dir);
+void set_threefold(Cone src);
+void set_fivefold(Cone *arr, Cone src, Cone next, Direction dir);
 
 
 uint8_t get_mutual_connection(uint8_t coneOne, uint8_t coneTwo);
 uint8_t find_connection_excluding_prev_cycles(uint8_t* arr, int cone, uint8_t min_avoid, uint8_t max_avoid);
-uint8_t find_connection_index(uint8_t src, uint8_t conn);
-uint8_t find_direction(uint8_t src, uint8_t first, uint8_t second);
-uint8_t *find_middle_two(uint8_t coneOne, uint8_t coneTwo);
+uint8_t find_connection_index(Cone src, Cone conn);
+Direction find_direction(Cone src, Cone first, Cone second);
+Cone *find_middle_two(Cone coneOne, Cone coneTwo);
 void set_cycle_presets();
 void set_missing_in_cycles(uint8_t missingIndex);
-void getNextPair(uint8_t *arr, uint8_t one, uint8_t two);
+void getNextPair(Cone *arr, Cone one, Cone two);
 
 
-void incrementAxis(int8_t dir);
+void incrementAxis(Direction dir);
 void rotate(bool reverse);
 
 
-void ThreeFoldRotateColor(uint8_t cone1, uint8_t cone2, uint8_t cone3);
+void ThreeFoldRotateColor(Cone cone1, Cone cone2, Cone cone3);
 void ThreeFoldSymmetry();
-void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone, bool reverse);
-bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool reverse, uint16_t currentTime, uint16_t leng);
+void nFoldRotateColor(Cone *coneArray, Cone numCone, bool reverse);
+bool nFoldRotateColorTransition(Cone *coneArray, Cone numCone, bool reverse, uint16_t currentTime, uint16_t leng);
 
 void rotationalThreeFoldSymEncoder();
+
+void setSymmetryModeFromButtons();
 
 void doRotationalMode();
 void doReflectionalMode();

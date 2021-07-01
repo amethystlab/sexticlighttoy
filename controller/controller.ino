@@ -54,7 +54,7 @@ volatile bool rotary_change = false; // will turn true if rotary_counter has cha
 // button things
 volatile bool button_pressed = false; // will turn true if the button has been pushed
 volatile bool button_released = false; // will turn true if the button has been released (sets button_down_time)
-volatile bool button_down = false;
+volatile bool is_button_down = false;
 volatile unsigned long int button_down_start, button_down_time;
 volatile unsigned long int button_down_end;
 
@@ -190,7 +190,7 @@ void print_state()
 {
 
   Serial.print("encoder:\t");
-  Serial.print(button_down,DEC); Serial.print("\t");
+  Serial.print(is_button_down,DEC); Serial.print("\t");
   Serial.print(button_down_time,DEC); Serial.print("\t");
   Serial.print(rotary_counter,DEC);
   Serial.println("");
@@ -314,9 +314,9 @@ void WriteSwitches()
 
 void WriteEncoder()
 {
-  Wire.write(button_down);
+  Wire.write(is_button_down);
   
-  if (button_down)
+  if (is_button_down)
   {
     button_down_time = millis()-button_down_start;
     write_int32(button_down_time);
@@ -355,26 +355,26 @@ void buttonIRQ()
 
   uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(ROT_SW));
   
-  if ((trigger == RISING) && (button_down == false))
+  if ((trigger == RISING) && (is_button_down == false))
     // Button was up, but is currently being pressed down
   {
     // Discard button presses too close together (debounce)
     button_down_start = millis();
     if (button_down_start > (button_down_end + BUTTON_DEBOUNCE_MS)) // BUTTON_DEBOUNCE_MS debounce timer
     {
-      button_down = true;
+      is_button_down = true;
       button_pressed = true;
 //      Serial.println("pressed");
     }
   }
-  else if ((trigger == FALLING) && (button_down == true))
+  else if ((trigger == FALLING) && (is_button_down == true))
     // Button was down, but has just been released
   {
     // Discard button releases too close together (debounce)
     button_down_end = millis();
     if (button_down_end > (button_down_start + BUTTON_DEBOUNCE_MS)) // BUTTON_DEBOUNCE_MS debounce timer
     {
-      button_down = false;
+      is_button_down = false;
       button_released = true;
       button_down_time = button_down_end - button_down_start;
 //      Serial.println("released");

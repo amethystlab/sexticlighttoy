@@ -3,7 +3,7 @@
 
 #include "defines.h"
 
-extern uint8_t cycles[20]; // 20, because have 20 cones
+extern Cone cycles[20]; // 20, because have 20 cones
 extern uint8_t num_per_rotation;  // idk why 3.  is that just initial state?
 
 // some global variables
@@ -15,7 +15,7 @@ extern uint16_t pot1, pot2, pot3;
 extern uint8_t buttons, switches;
 
 extern unsigned long button_down_time; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
-extern bool button_down; // is the button in the encoder being pushed?
+extern bool is_button_down; // is the button in the encoder being pushed?
 extern int32_t rotary_counter; // current "position" of rotary encoder (increments clockwise, decrements anticlockwise)
 
 
@@ -26,7 +26,7 @@ extern uint8_t srcCone;
 extern uint8_t nextCone;
 
 //////////////rotation
-extern uint8_t fiveFoldAxes[NUM_FIVE_FOLD_AXES][2];
+extern Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2];
 
 
 

@@ -2,6 +2,7 @@
 
 
 void diagnostic_check(){
+  Serial.println("generic diagnostic_check");
   // Store the current cone we are focusing on, as well as the 
   // previous state of the switch
   static int num = 0;
@@ -42,7 +43,75 @@ void diagnostic_check(){
 
 
 
+
+
+void diagnostic_check_twofold(){
+  Serial.println("twofold diagnostic_check");
+  num_per_rotation = 2;
+  
+  static uint8_t connection_num = 0; // indexes the connected cones to the root
+  
+  static uint8_t root_cone = 0; // the active root of the rotation.
+  static uint8_t second_cone = get_connection(root_cone, connection_num); // the second cone.  the node between them is on the line of symmetry
+  static bool first_pass = true;
+ 
+  if (first_pass){
+    first_pass = false;
+    previousEncoderValue = rotary_counter;
+    
+    clear();
+    set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
+    set_cycle_presets();// color the cones in the cycles appropriately
+    pixels.show(); 
+  }
+  Serial.println(previousEncoderValue);
+  Serial.println(rotary_counter);
+  
+  if (previousEncoderValue!=rotary_counter){
+    previousEncoderValue = rotary_counter;
+    // iterate the axis cone (so the center of rotation
+    // becomes cone two if it was cone one before, etc
+    
+    Serial.println("changing line of symmetry");
+
+    // connection_num++;
+    // if(connection_num >= MAX_CONNECTION_NUM){ // trigger a root increment when the connection_num rolls over
+    //   connection_num = connection_num%MAX_CONNECTION_NUM;
+    //   root_cone = (root_cone+1) % NUM_LED_GROUPS;
+    // }
+    
+    connection_num = rotary_counter%3;
+    root_cone = rotary_counter/20;
+    
+    second_cone = get_connection(root_cone, connection_num);
+    
+    clear();
+    set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
+    set_cycle_presets();// color the cones in the cycles appropriately
+    pixels.show(); 
+  }
+  else{
+    // by default, perform a "rotation" of the lights about the axis
+    Serial.println("performing a rotation");
+    
+    rotate(false);
+    pixels.show();
+  }
+  
+  
+  Serial.print("root cone, second cone, connection_num: "); 
+  Serial.print(root_cone); Serial.print(" "); Serial.print(second_cone); Serial.print(" "); Serial.print(connection_num);  Serial.print("\n");
+
+  delay(500);
+}
+
+
+
+
+
+
 void diagnostic_check_threefold(){
+  Serial.println("threefold diagnostic_check");
   num_per_rotation = 3;
 
   static int num = 1;
@@ -58,7 +127,7 @@ void diagnostic_check_threefold(){
     prevState = is_switch_on(0);
     clear();
 
-    num = (num % MAX_CONE_NUM) + 1;
+    num = (num % NUM_LED_GROUPS) + 1;
     // iterate the axis cone (so the center of rotation
     // becomes cone two if it was cone one before, etc
     
@@ -94,7 +163,12 @@ void diagnostic_check_threefold(){
 
 }
 
-void diagnostic_check_pentagons(){
+
+
+
+
+void diagnostic_check_fivefold(){
+  Serial.println("fivefold diagnostic_check");
   symmetry = FiveFold;
   num_per_rotation = 5;
   
@@ -112,7 +186,7 @@ void diagnostic_check_pentagons(){
     prevState = is_switch_on(0);
     clear();
 
-    num = (num % MAX_CONE_NUM) + 1;
+    num = (num % NUM_LED_GROUPS) + 1;
     // iterate the axis cone (so the center of rotation
     // becomes cone two if it was cone one before, etc
 #ifdef DEBUG_PRINT
@@ -121,10 +195,10 @@ void diagnostic_check_pentagons(){
 #endif
 
     uint8_t next = get_connection(num, 0);
-    set_pentagon(cycles, num, next, POSITIVE);
+    set_fivefold(cycles, num, next, POSITIVE);
     // set the axis pentagon in the cycles array
 
-    set_pentagon_cycles();
+    set_fivefold_cycles();
     // set the appropriate cycles in the cycles array
 #ifdef DEBUG_PRINT
     Serial.print("PENTAGON: ");
@@ -165,74 +239,6 @@ void diagnostic_check_pentagons(){
 
 }
 
-void diagnostic_check_twofold(){
-  num_per_rotation = 2;
-  
-  static uint8_t cone_num = 1;
-  static uint8_t connection_num = 0;
-  
-  static bool prevState = false;
-  static bool prevStateTwo = false;
-
-  // Store the previous state of the switches
-  // as well as the current axis cone
-
-  if(is_switch_on(0) != prevState){
-    // if we flip the first switch
-    
-    prevState = is_switch_on(0);
-    clear();
-
-    uint8_t secondCone = -1;
-    bool found = false;
-
-    connection_num++;
-    if(connection_num > MAX_CONNECTION_NUM){
-      connection_num = 0;
-      cone_num = (cone_num % MAX_CONE_NUM) + 1;
-    }
-    
-    while(!found){
-      for(int i = connection_num; i < MAX_CONNECTION_NUM && !found; i++){
-        secondCone = get_connection(cone_num, i);
-        if(secondCone > cone_num){
-          found = true;
-        }
-      }
-
-      if(!found){
-        cone_num = (cone_num % MAX_CONE_NUM) + 1;
-        connection_num = 0;
-      }
-    }
-
-    // iterate the axis cone (so the center of rotation
-    // becomes cone two if it was cone one before, etc
-
-   
-    set_twofold(cone_num, secondCone);
-    // set the axis in the cycles array
-
-    set_reflection_cycles();
-    // set the appropriate cycles in the cycles array
-    
-    set_cycle_presets();
-    // color the cones in the cycles appropriately
-    
-    pixels.show(); 
-  }
-
-  if(is_switch_on(1) != prevStateTwo){
-    // if the second switch changes positions, perform
-    // a 3 fold "rotation" of the lights about the axis
-
-    prevStateTwo = is_switch_on(1);
-    
-    rotate(false);
-    pixels.show();
-  }
-
-}
 
 void diagnostic_check_find_third(){
   static uint8_t src = 1;
@@ -250,7 +256,7 @@ void diagnostic_check_find_third(){
     // if we flip the first switch
     clear();
     uint8_t arr[5];
-    set_pentagon(arr, 1, 2, POSITIVE);
+    set_fivefold(arr, 1, 2, POSITIVE);
     
     for(int i = 0; i < 5; i++) coneColor(arr[i], 255,255,255,255);
     
@@ -271,6 +277,25 @@ void diagnostic_check_find_third(){
 
 
 void doDiagnosticMode(){
+  
   Serial.println("doing diagnostic check");
-    diagnostic_check();
+
+  // symmetry = Reflect;
+  setSymmetryModeFromButtons();
+  
+  switch (symmetry){
+    case TwoFold:
+      diagnostic_check_twofold();
+      break;
+    case ThreeFold:
+      diagnostic_check_threefold();
+      break;
+    case FiveFold:
+      diagnostic_check_fivefold();
+      break;
+    case Reflect:
+      diagnostic_check();
+      break;
+  }
+    
 }

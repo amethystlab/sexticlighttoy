@@ -14,7 +14,7 @@ void receiveEvent(int howMany)
 }
 void get_encoder()
 {
-  button_down = Wire.read(); //reads signal
+  is_button_down = Wire.read(); //reads signal
   button_down_time = get_int32(); //time the button has been pressed down (starts over when button is released)
   rotary_counter = get_int32(); //amount the dial has been turned
 }
@@ -53,9 +53,9 @@ void get_pots()
 
 void print_state()
 {
-//#ifdef DEBUG_PRINT
+#ifdef DEBUG_PRINT
   Serial.print("encoder:  ");
-  Serial.print(button_down, DEC); Serial.print(" ");
+  Serial.print(is_button_down, DEC); Serial.print(" ");
   Serial.print(button_down_time, DEC); Serial.print(" ");
   Serial.print(rotary_counter, DEC);
   Serial.println("");
@@ -81,7 +81,7 @@ void print_state()
   Serial.println("");
 
   Serial.println("");
-//#endif
+#endif
 }
 // this and the other `get` function (get_int32) could easily be replaced by one template function, and a sizeof call
 uint16_t get_uint16()

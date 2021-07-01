@@ -52,9 +52,9 @@ void setup() {
 
 // called ad nauseum
 void loop() {
-
+  // doPulseMode();
   getMode();
-
+  
   switch(mode){
     case Rotational:
       {doRotationalMode(); break;}
@@ -71,7 +71,7 @@ void loop() {
     default:
       break;
   } // switch
-
+  
   
   if(mode != Event){
     transitionAllCones();
