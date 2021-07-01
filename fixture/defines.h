@@ -100,8 +100,8 @@ typedef enum ObjectMode {
 #define CUBIC_INTERP
 
 #define NO_EVENT_PLANNED 65535
-#define MIN_CONE_NUM 1
-#define MAX_CONE_NUM 20
+#define MIN_CONE_NUM 0
+#define MAX_CONE_NUM 19
 #define MAX_NUM_EVENTS 40
 #define OPEN_EVENT_CODE 0
 

@@ -10,7 +10,7 @@ void diagnostic_check(){
   while (num<0){
     num+=MAX_CONE_NUM;
   }
-  num = rotary_counter%MAX_CONE_NUM;
+  num = rotary_counter%NUM_LED_GROUPS;
   //Iterate to the next cone number
 
 
@@ -18,7 +18,7 @@ void diagnostic_check(){
   Serial.println(num, DEC);
   
   // turn off all cones
-  for (int conenum=0; conenum<MAX_CONE_NUM; ++conenum){
+  for (int conenum=0; conenum<NUM_LED_GROUPS; ++conenum){
     coneColor(conenum, 0, 0, 0, 0);
   }
   
