@@ -67,7 +67,7 @@ ObjectMode previousMode;
 // we're specifying which cones are connected to each other.  order matters.
 // Order *must* be the same for all, as you look down the cones.
 #if FIXTURE==1 
-uint16_t connections[20] = { // Will's.  The first one silviana made.
+uint16_t connections[NUM_LED_GROUPS] = { // Will's.  The first one silviana made.
   MAKE_CONNECTION(4,1,7), // specifying that cone 0 is connected to cones 4, 1, and 7, in that order.  
   MAKE_CONNECTION(9,0,2),
   MAKE_CONNECTION(11,1,3),
@@ -94,7 +94,7 @@ uint16_t connections[20] = { // Will's.  The first one silviana made.
 };
 
 #elif FIXTURE==2 
-uint16_t connections[20] = { // Samantha's.  The second one.  Sadly not identical.
+uint16_t connections[NUM_LED_GROUPS] = { // Samantha's.  The second one.  Sadly not identical.
   MAKE_CONNECTION(4,1,13),
   MAKE_CONNECTION(0,2,11),
   MAKE_CONNECTION(9,1,3),
@@ -140,8 +140,8 @@ uint32_t colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 
 /////////////stack
 
-uint32_t colors[20][2];
-uint16_t times[20][2];
+uint32_t colors[NUM_LED_GROUPS][2];
+uint16_t times[NUM_LED_GROUPS][2];
 
 uint8_t event_cone[MAX_NUM_EVENTS];
 uint32_t event_colors[MAX_NUM_EVENTS];

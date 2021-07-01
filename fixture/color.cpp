@@ -218,5 +218,6 @@ void allLEDs(unsigned long period) {
 } // fun
 
 void doPulseMode(){
-    allLEDs(1000);
+  Serial.println("pulse mode");
+  allLEDs(100);
 }

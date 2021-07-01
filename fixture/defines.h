@@ -26,7 +26,7 @@
 #define NUM_LED_GROUPS 20 // 20 cones total on fixture
 #define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
 
-#define FIXTURE 2  // select which physical wiring path you implemented.  see globals.h  
+#define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
 // a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
 typedef enum SymmetryType {
