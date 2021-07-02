@@ -53,28 +53,29 @@ void setup() {
 // called ad nauseum
 void loop() {
   // doPulseMode();
-  getMode();
-  
-  switch(mode){
-    case Rotational:
-      {doRotationalMode(); break;}
-    case Reflectional:
-      {doReflectionalMode(); break;}
-    case ColorSet:
-      {doColorSetMode(); break;}
-    case Event:
-      {doEventMode(); break;}
-    case Pulse:
-      {doPulseMode(); break;}
-    case Diagnostic:
-      {doDiagnosticMode(); break;}
-    default:
-      break;
-  } // switch
-  
-  
-  if(mode != Event){
-    transitionAllCones();
-  }
+  doDiagnosticMode();
+  // getMode();
+  // 
+  // switch(mode){
+  //   case Rotational:
+  //     {doRotationalMode(); break;}
+  //   case Reflectional:
+  //     {doReflectionalMode(); break;}
+  //   case ColorSet:
+  //     {doColorSetMode(); break;}
+  //   case Event:
+  //     {doEventMode(); break;}
+  //   case Pulse:
+  //     {doPulseMode(); break;}
+  //   case Diagnostic:
+  //     {doDiagnosticMode(); break;}
+  //   default:
+  //     break;
+  // } // switch
+  // 
+  // 
+  // if(mode != Event){
+  //   transitionAllCones();
+  // }
 
 } // ends the loop() function

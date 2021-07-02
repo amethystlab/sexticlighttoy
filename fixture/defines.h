@@ -49,7 +49,7 @@ typedef enum ObjectMode {
 
 typedef uint8_t Cone;
 typedef int8_t Direction;
-
+typedef uint32_t Color;
 
 
 /////////////////////rotation
@@ -88,7 +88,7 @@ typedef int8_t Direction;
 
 #define BLACK 0x000000
 
-#define sumFromOneToTwenty 210 // used in set_missing_in_cycles
+#define sumFromZeroToNineteen 190 // used in set_missing_in_cycles
 
 
 

@@ -135,16 +135,16 @@ uint8_t nextCone = 8;
 
 /////////////color
 //use an array of 5 since at most we are looking at 5-fold rotational symmetry (g,r,b,w,y)
- uint32_t colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
+ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
 
 
 /////////////stack
 
-uint32_t colors[NUM_LED_GROUPS][2];
+Color colors[NUM_LED_GROUPS][2];
 uint16_t times[NUM_LED_GROUPS][2];
 
 uint8_t event_cone[MAX_NUM_EVENTS];
-uint32_t event_colors[MAX_NUM_EVENTS];
+Color event_colors[MAX_NUM_EVENTS];
 uint16_t event_times[MAX_NUM_EVENTS];
 
 unsigned long start;

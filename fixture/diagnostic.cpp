@@ -46,12 +46,13 @@ void diagnostic_check(){
 
 
 void diagnostic_check_twofold(){
+
   Serial.println("twofold diagnostic_check");
   num_per_rotation = 2;
   
-  static uint8_t connection_num = 0; // indexes the connected cones to the root
+  static uint8_t connection_num = rotary_counter%3; // indexes the connected cones to the root
   
-  static uint8_t root_cone = 0; // the active root of the rotation.
+  static uint8_t root_cone = rotary_counter/20; // the active root of the rotation.
   static uint8_t second_cone = get_connection(root_cone, connection_num); // the second cone.  the node between them is on the line of symmetry
   static bool first_pass = true;
  
@@ -59,10 +60,10 @@ void diagnostic_check_twofold(){
     first_pass = false;
     previousEncoderValue = rotary_counter;
     
-    clear();
+    // clear();
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
-    set_cycle_presets();// color the cones in the cycles appropriately
-    pixels.show(); 
+    // set_cycle_presets();// color the cones in the cycles appropriately
+    // pixels.show(); 
   }
   Serial.println(previousEncoderValue);
   Serial.println(rotary_counter);
@@ -85,19 +86,24 @@ void diagnostic_check_twofold(){
     
     second_cone = get_connection(root_cone, connection_num);
     
-    clear();
+    // clear();
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
-    set_cycle_presets();// color the cones in the cycles appropriately
-    pixels.show(); 
-  }
-  else{
-    // by default, perform a "rotation" of the lights about the axis
-    Serial.println("performing a rotation");
     
-    rotate(false);
-    pixels.show();
+    // set_cycle_presets();// color the cones in the cycles appropriately
+    
   }
+  // else{
+  //   // by default, perform a "rotation" of the lights about the axis
+  //   Serial.println("performing a rotation");
+  // 
+  //   rotate(false);
+  //   pixels.show();
+  // }
   
+  
+  set_twofold_colors_from_cycles();
+  pixels.show(); 
+
   
   Serial.print("root cone, second cone, connection_num: "); 
   Serial.print(root_cone); Serial.print(" "); Serial.print(second_cone); Serial.print(" "); Serial.print(connection_num);  Serial.print("\n");
@@ -105,6 +111,26 @@ void diagnostic_check_twofold(){
   delay(500);
 }
 
+
+void set_twofold_colors_from_cycles(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[7] = {2,4,2,4,2,4,2};
+  
+  for (uint8_t j=0; j<cycle_lengths[0]; ++j){
+    uint8_t offset = partial_sum(cycle_lengths,0);
+    Color color = Adafruit_NeoPixel::gamma32(Adafruit_NeoPixel::ColorHSV(0,255,255));
+    coneColor(cycles[offset+j], color);
+  }
+  
+  for (uint8_t i=1; i<7; ++i){
+    for (uint8_t j=0; j<cycle_lengths[i]; ++j){
+      uint8_t offset = partial_sum(cycle_lengths,i);
+      Color color = Adafruit_NeoPixel::gamma32(Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(i+1.0)/7 ),255,127));
+      coneColor(cycles[offset+j], color);
+    }
+  }
+}
 
 
 

@@ -10,5 +10,7 @@ void diagnostic_check_fivefold();
 void diagnostic_check_twofold();
 void diagnostic_check_find_third();
 
+void set_twofold_colors_from_cycles();
+
 void doDiagnosticMode();
 #endif

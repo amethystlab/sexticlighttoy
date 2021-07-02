@@ -162,6 +162,7 @@ void set_twofold_cycles(Cone cone1, Cone cone2){
   fourth_level[c++] = arr[0];
   fourth_level[c++] = arr[1];
   
+  arr = find_middle_two(second_level[2], second_level[3]);
   fourth_level[c++] = arr[0];
   fourth_level[c++] = arr[1];
 
@@ -203,7 +204,11 @@ void set_twofold_cycles(Cone cone1, Cone cone2){
   Serial.print("LEVEL 5: "); Serial.print(fifth_level[0]); Serial.print(" "); Serial.println(fifth_level[1]);
   Serial.print("LEVEL 6: "); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.print(sixth_level[2]); Serial.print(" "); Serial.println(sixth_level[3]);
   Serial.print("LEVEL 7: "); Serial.print(seventh_level[0]); Serial.print(" "); Serial.println(seventh_level[1]);
-  delay(100);
+  
+  Serial.println("cycles:");
+  for (int i=0; i<20; ++i)
+    Serial.println(cycles[i]);
+
   // #endif
 }
 
@@ -586,9 +591,9 @@ void set_cycle_presets(){
 
 
 void set_missing_in_cycles(uint8_t missingIndex){
-  // As we know the cycle array will contain the numbers 1-20
-  // we know the sum of the array will be  1 + 2 + 3 + ... + 20 = 210
-  // and that (Sum of the Array without one of those numbers) = 210 - that number
+  // As we know the cycle array will contain the numbers 0-19
+  // we know the sum of the array will be  0 + 1 + 2 + 3 + ... + 19 = 190
+  // and that (Sum of the Array without one of those numbers) = 190 - that number
   // giving us missing number = 210 - sum of the array without the missing number
   
   uint8_t sum_of_array = 0;
@@ -600,7 +605,7 @@ void set_missing_in_cycles(uint8_t missingIndex){
   }
 
   // once we have found the missing number, set it in the array
-  cycles[missingIndex] = sumFromOneToTwenty - sum_of_array;
+  cycles[missingIndex] = sumFromZeroToNineteen - sum_of_array;
 }
 
 void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
@@ -651,7 +656,7 @@ void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
 }
 
 
-
+// only capable of incrementing positive -- cannot go reverse.
 void incrementAxis(Direction dir){
   static Cone fiveFoldAxis = 0;
   static Cone threeFoldAxis = 1;

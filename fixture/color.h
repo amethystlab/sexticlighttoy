@@ -27,6 +27,8 @@ void restrictAllConeRandom();
 
 void pixelColor(int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);
 void pixToConeColor (int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);
+
+void coneColor (int coneNum, Color color);
 void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w);
 
 void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry);

@@ -40,15 +40,15 @@ extern uint16_t connections[20];
 
 /////////////color
 
-extern uint32_t colorPresets[5]; 
+extern Color colorPresets[5]; 
 
 ////////////////stack
 
-extern uint32_t colors[20][2];
+extern Color colors[20][2];
 extern uint16_t times[20][2];
 
 extern uint8_t event_cone[MAX_NUM_EVENTS];
-extern uint32_t event_colors[MAX_NUM_EVENTS];
+extern Color event_colors[MAX_NUM_EVENTS];
 extern uint16_t event_times[MAX_NUM_EVENTS];
 
 extern unsigned long start;
