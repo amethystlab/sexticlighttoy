@@ -44,10 +44,12 @@ void setupEvents();
 void doEventMode();
 
 
-// 
-bool transitionCone(Cone coneNum, bool repeat);
+// for a specific `cone`,
+// uses `colors` and `times` to figure out what the color should be,
+// then sets the color to that.
+bool transitionCone(Cone cone, bool repeat);
 
-// 
+// loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones();
 
 #endif // include guard

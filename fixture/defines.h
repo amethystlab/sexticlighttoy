@@ -99,9 +99,9 @@ using Time = unsigned long;
 ////////////stack
 
 #define GRADUAL_TRANSITION
-#define CUBIC_INTERP
+#define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
 
-#define NO_EVENT_PLANNED 65535
+#define NO_EVENT_PLANNED 65535 // i think this should be 0 or the max for unsigned long (Time)
 #define MIN_CONE_NUM 0
 #define MAX_CONE_NUM 19
 #define MAX_NUM_EVENTS 40

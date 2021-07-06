@@ -816,7 +816,7 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
   if (numCone > 1) {
 
     for(int i = 0; i < numCone; i++){
-      if(times[coneArray[i] - 1][1] != NO_EVENT_PLANNED){     
+      if(active_times[coneArray[i] - 1][1] != NO_EVENT_PLANNED){     
         return false;
       }
     }
@@ -839,11 +839,11 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
 
         overwrittenColor = getConeColor(coneArray[index]);
 
-        times[coneArray[index]][0] = currentTime;
-        colors[coneArray[index]][0] = getConeColor(coneArray[index]);
+        active_times[coneArray[index]][0] = currentTime;
+        active_colors[coneArray[index]][0] = getConeColor(coneArray[index]);
 
-        times[coneArray[index]][1] = (currentTime + leng) % lengthOfShow;
-        colors[coneArray[index]][1] = color;
+        active_times[coneArray[index]][1] = (currentTime + leng) % lengthOfShow;
+        active_colors[coneArray[index]][1] = color;
         
         //coneColor(coneArray[index], (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF); //moves color cone to cone
 

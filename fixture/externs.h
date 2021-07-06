@@ -44,8 +44,8 @@ extern Color colorPresets[5];
 
 ////////////////stack
 
-extern Color colors[20][2];
-extern Time times[20][2];
+extern Color active_colors[20][2];
+extern Time active_times[20][2];
 
 extern Cone event_cone[MAX_NUM_EVENTS];
 extern Color event_colors[MAX_NUM_EVENTS];
