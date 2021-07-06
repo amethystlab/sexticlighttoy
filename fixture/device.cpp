@@ -53,7 +53,7 @@ void get_pots()
 
 void print_state()
 {
-#ifdef DEBUG_PRINT
+
   Serial.print("encoder:  ");
   Serial.print(is_button_down, DEC); Serial.print(" ");
   Serial.print(button_down_time, DEC); Serial.print(" ");
@@ -81,7 +81,7 @@ void print_state()
   Serial.println("");
 
   Serial.println("");
-#endif
+
 }
 // this and the other `get` function (get_int32) could easily be replaced by one template function, and a sizeof call
 uint16_t get_uint16()

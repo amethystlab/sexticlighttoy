@@ -10,6 +10,7 @@
 #endif
 
 
+#include "utility.h"
 #include "externs.h"
 #include "stack.h"
 #include "color.h"

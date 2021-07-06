@@ -14,7 +14,6 @@
 // along with sexticlighttoy.  If not, see <https://www.gnu.org/licenses/>.
 
 
-
 #include "globals.h"
 #include "device.h"
 #include "stack.h"
@@ -39,6 +38,7 @@ void setup() {
   setupEvents();
   setupTime();
 
+  delay(100);
   Serial.println("Finished Setup");
 }
 
@@ -53,7 +53,9 @@ void setup() {
 // called ad nauseum
 void loop() {
   // doPulseMode();
+  print_state();
   doDiagnosticMode();
+  
   // getMode();
   // 
   // switch(mode){
