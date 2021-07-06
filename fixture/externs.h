@@ -45,13 +45,13 @@ extern Color colorPresets[5];
 ////////////////stack
 
 extern Color colors[20][2];
-extern uint16_t times[20][2];
+extern Time times[20][2];
 
-extern uint8_t event_cone[MAX_NUM_EVENTS];
+extern Cone event_cone[MAX_NUM_EVENTS];
 extern Color event_colors[MAX_NUM_EVENTS];
-extern uint16_t event_times[MAX_NUM_EVENTS];
+extern Time event_times[MAX_NUM_EVENTS];
 
-extern unsigned long start;
-extern uint16_t lengthOfShow;
+extern Time start;
+extern Time lengthOfShow;
 
 #endif

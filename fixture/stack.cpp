@@ -12,7 +12,7 @@ Color getConeColor(Cone coneNum) {
 } 
 
 
-
+// sets first available event to change the cone to color.
 bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
   bool set = false;
   for (int i = 0; i < MAX_NUM_EVENTS && !set; i++){
@@ -33,7 +33,7 @@ bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
 void eventStackToTransition(){
   unsigned long currentTime = (millis() - start) % lengthOfShow;
 
-  for (int cone = 0; cone < MAX_CONE_NUM; cone++){
+  for (int cone = 0; cone < NUM_CONES; cone++){
     if (times[cone][1] == NO_EVENT_PLANNED){
 
       times[cone][0] = currentTime;
@@ -90,67 +90,6 @@ float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
 }
 
 
-bool transitionCone(Cone coneNum, bool repeat){
-
-  if (times[arrayIndex][1] == NO_EVENT_PLANNED){
-    return false;
-  }
-  
-  uint8_t r[2] = {(colors[coneNum][0] >> 8) & 0xFF, (colors[coneNum][1] >> 8) & 0xFF};
-  uint8_t g[2] = {(colors[coneNum][0] >> 16) & 0xFF, (colors[coneNum][1] >> 16) & 0xFF};
-  uint8_t b[2] = {(colors[coneNum][0]) & 0xFF, (colors[coneNum][1]) & 0xFF};
-  uint8_t w[2] = {(colors[coneNum][0] >> 24) & 0xFF, (colors[coneNum][1] >> 24) & 0xFF};
-
-  Time currentTime = (millis() - start) % lengthOfShow;
-
-  Time startTime = times[coneNum][0];
-  Time finalTime = times[coneNum][1];
-  
-  if(times[coneNum][0] > times[coneNum][1] && currentTime > times[coneNum][0]){
-    finalTime += lengthOfShow;
-  } else if(times[coneNum][0] > times[coneNum][1] && currentTime < times[coneNum][0]){
-    finalTime += lengthOfShow;
-    currentTime += lengthOfShow;
-  }
-  
-  if(currentTime >= finalTime) currentTime = finalTime;
-
-#ifdef CUBIC_INTERP
-  uint8_t finalRed = (uint8_t) round(cubicNatural(currentTime, startTime, finalTime, r[0], r[1]));
-  uint8_t finalGreen = (uint8_t) round(cubicNatural(currentTime, startTime, finalTime, g[0], g[1]));
-  uint8_t finalBlue = (uint8_t) round(cubicNatural(currentTime, startTime, finalTime, b[0], b[1]));
-  uint8_t finalWhite = (uint8_t) round(cubicNatural(currentTime, startTime, finalTime, w[0], w[1]));
-  //Serial.print("final red: "); Serial.println(finalRed);
-
-#else
-
-  float mult = ((float)(currentTime - startTime))/((float)(finalTime - startTime));
-
-  uint8_t finalRed = mult * (r[1] - r[0]) + r[0];
-  uint8_t finalGreen = mult * (g[1] - g[0]) + g[0];
-  uint8_t finalBlue = mult * (b[1] - b[0]) + b[0];
-  uint8_t finalWhite = mult * (w[1] - w[0]) + w[0];
-#endif
-
-  coneColor(coneNum, finalGreen, finalRed, finalBlue, finalWhite);
-
-//#ifdef DEBUG_PRINT
-//  Serial.print("Current Time: "); Serial.print(currentTime); Serial.print(" End of Transition: "); Serial.println(finalTime);
-//#endif
-
-  if (currentTime >= finalTime){
-    if (repeat) 
-      addEventToStack(coneNum, colors[coneNum][1], times[coneNum][1]);
-    
-    colors[coneNum][0] = colors[coneNum][1];
-    times[coneNum][0] = times[coneNum][1];
-    times[coneNum][1] = NO_EVENT_PLANNED;
-  }
-
-  return true;
-
-}
-
 
 
 
@@ -197,6 +136,92 @@ void doEventMode(){
 }  // event
 
 
+
+
+
+
+
+
+bool transitionCone(Cone cone, bool repeat){
+
+  if (times[cone][1] == NO_EVENT_PLANNED){
+    return false;
+  }
+  
+  // the starting and ending colors for the event being transitioned
+  IndividualColor r[2] = {(colors[cone][0] >> 8) & 0xFF, (colors[cone][1] >> 8) & 0xFF};
+  IndividualColor g[2] = {(colors[cone][0] >> 16) & 0xFF, (colors[cone][1] >> 16) & 0xFF};
+  IndividualColor b[2] = {(colors[cone][0]) & 0xFF, (colors[cone][1]) & 0xFF};
+  IndividualColor w[2] = {(colors[cone][0] >> 24) & 0xFF, (colors[cone][1] >> 24) & 0xFF};
+
+  // answer these questions:
+  //
+  // why are we subtracting `start`?  
+  // why are we modding by lengthOfShow?
+  // should the call to `millis()` be factored out, so that all cones being transisioned at once 
+  // will use the same time?  otherwise, they use slightly different times...
+  Time current_time = (millis() - start) % lengthOfShow;
+  
+  // unpack from the stored array
+  Time start_time = times[cone][0];
+  Time final_time = times[cone][1];
+  
+  // this block feels weird to me.  why would the times be out of order?  shouldn't they be always increasing?
+  if (times[cone][0] > times[cone][1] && current_time > times[cone][0]){
+    // times are out of order, so roll forward the final time
+    final_time += lengthOfShow;
+  } 
+  else if (times[cone][0] > times[cone][1] && current_time < times[cone][0]){
+    // times are out of order, so roll forward the final time and the current time.
+    final_time += lengthOfShow;
+    current_time += lengthOfShow;
+  }
+  
+  if(current_time >= final_time) current_time = final_time;
+
+#ifdef CUBIC_INTERP
+  IndividualColor final_red = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, r[0], r[1]));
+  IndividualColor final_green = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, g[0], g[1]));
+  IndividualColor final_blue = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, b[0], b[1]));
+  IndividualColor final_white = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, w[0], w[1]));
+  //Serial.print("final red: "); Serial.println(final_red);
+
+#else
+
+  float mult = ((float)(current_time - start_time))/((float)(final_time - start_time));
+
+  IndividualColor final_red = mult * (r[1] - r[0]) + r[0];
+  IndividualColor final_green = mult * (g[1] - g[0]) + g[0];
+  IndividualColor final_blue = mult * (b[1] - b[0]) + b[0];
+  IndividualColor final_white = mult * (w[1] - w[0]) + w[0];
+#endif
+
+  coneColor(cone, final_green, final_red, final_blue, final_white);
+
+//#ifdef DEBUG_PRINT
+//  Serial.print("Current Time: "); Serial.print(current_time); Serial.print(" End of Transition: "); Serial.println(final_time);
+//#endif
+
+  if (current_time >= final_time){
+    if (repeat) 
+      addEventToStack(cone, colors[cone][1], times[cone][1]);
+    
+    // roll over the color and time for the current cone, and indicate next one is open.
+    colors[cone][0] = colors[cone][1];
+    times[cone][0] = times[cone][1];
+    times[cone][1] = NO_EVENT_PLANNED;
+  }
+
+  return true;
+
+}
+
+
+
+
+
+
+// loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones(){
   for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i, false);
@@ -204,3 +229,11 @@ void transitionAllCones(){
 
   pixels.show();
 }
+
+
+
+
+
+
+
+ 

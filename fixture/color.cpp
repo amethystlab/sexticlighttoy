@@ -230,3 +230,125 @@ void doPulseMode(){
   Serial.println("pulse mode");
   allLEDs(100);
 }
+
+
+
+
+
+/////// from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+// David H.'s code for this problem.  
+
+
+// typedef struct {
+//     double r;       // a fraction between 0 and 1
+//     double g;       // a fraction between 0 and 1
+//     double b;       // a fraction between 0 and 1
+// } rgb;
+// 
+
+
+// static hsv   rgb2hsv(rgb in);
+// static rgb   hsv2rgb(hsv in);
+
+HSV rgb2hsv(RGB in)
+{
+    HSV         out;
+    double      min, max, delta;
+
+    min = in.red < in.green ? in.red : in.green;
+    min = min  < in.blue ? min  : in.blue;
+
+    max = in.red > in.green ? in.red : in.green;
+    max = max  > in.blue ? max  : in.blue;
+
+    out.value = max;                                // v
+    delta = max - min;
+    if (delta < 0.00001)
+    {
+        out.saturation = 0;
+        out.hue = 0; // undefined, maybe nan?
+        return out;
+    }
+    if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
+        out.saturation = (delta / max);                  // s
+    } else {
+        // if max is 0, then r = g = b = 0              
+        // s = 0, h is undefined
+        out.saturation = 0.0;
+        out.hue = NAN;                            // its now undefined
+        return out;
+    }
+    if( in.red >= max )                           // > is bogus, just keeps compilor happy
+        out.hue = ( in.green - in.blue ) / delta;        // between yellow & magenta
+    else
+    if( in.green >= max )
+        out.hue = 2.0 + ( in.blue - in.red ) / delta;  // between cyan & yellow
+    else
+        out.hue = 4.0 + ( in.red - in.green ) / delta;  // between magenta & cyan
+
+    out.hue *= 60.0;                              // degrees
+
+    if( out.hue < 0.0 )
+        out.hue += 360.0;
+
+    return out;
+}
+
+
+RGB hsv2rgb(HSV in)
+{
+    double      hh, p, q, t, ff;
+    long        i;
+    RGB         out;
+
+    if(in.saturation <= 0.0) {       // < is bogus, just shuts up warnings
+        out.red = in.value;
+        out.green = in.value;
+        out.blue = in.value;
+        return out;
+    }
+    hh = in.hue;
+    if(hh >= 360.0) hh = 0.0;
+    hh /= 60.0;
+    i = (long)hh;
+    ff = hh - i;
+    p = in.value * (1.0 - in.saturation);
+    q = in.value * (1.0 - (in.saturation * ff));
+    t = in.value * (1.0 - (in.saturation * (1.0 - ff)));
+
+    switch(i) {
+    case 0:
+        out.red = in.value;
+        out.green = t;
+        out.blue = p;
+        break;
+    case 1:
+        out.red = q;
+        out.green = in.value;
+        out.blue = p;
+        break;
+    case 2:
+        out.red = p;
+        out.green = in.value;
+        out.blue = t;
+        break;
+
+    case 3:
+        out.red = p;
+        out.green = q;
+        out.blue = in.value;
+        break;
+    case 4:
+        out.red = t;
+        out.green = p;
+        out.blue = in.value;
+        break;
+    case 5:
+    default:
+        out.red = in.value;
+        out.green = p;
+        out.blue = q;
+        break;
+    }
+    return out;     
+}

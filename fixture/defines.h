@@ -50,7 +50,9 @@ typedef enum ObjectMode {
 using Cone = uint8_t;
 using Direction = int8_t;
 using Color = uint32_t;
-using Time = uint16_t;
+using IndividualColor = uint8_t;
+using Hue = uint16_t;
+using Time = unsigned long;
 
 /////////////////////rotation
 
@@ -103,6 +105,6 @@ using Time = uint16_t;
 #define MIN_CONE_NUM 0
 #define MAX_CONE_NUM 19
 #define MAX_NUM_EVENTS 40
-#define OPEN_EVENT_CODE 0
+#define OPEN_EVENT_CODE 42
 
 #endif

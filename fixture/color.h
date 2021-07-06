@@ -12,10 +12,18 @@
 #include "externs.h"
 
 
+typedef struct {
+    double red;       // a fraction between 0 and 1
+    double green;       // a fraction between 0 and 1
+    double blue;       // a fraction between 0 and 1
+} RGB;
 
 
-
-
+typedef struct {
+    double hue;       // angle in degrees
+    double saturation;       // a fraction between 0 and 1
+    double value;       // a fraction between 0 and 1
+} HSV;
 
 
 void clear();

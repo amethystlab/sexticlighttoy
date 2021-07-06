@@ -146,14 +146,19 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 
 /////////////stack
 
+// the currently active state,
+// between which we are interpolating.
+// the `times` define the start and end time for the current event,
+// and the colors store the before and after color, between which we interpolate.
 Color colors[NUM_LED_GROUPS][2];
 Time times[NUM_LED_GROUPS][2];
 
-Cone event_cone[MAX_NUM_EVENTS];
-Color event_colors[MAX_NUM_EVENTS];
-Time event_times[MAX_NUM_EVENTS];
 
-unsigned long start;
+Cone event_cone[MAX_NUM_EVENTS]; // the cone to set to the corresponding color from `event_colors`
+Color event_colors[MAX_NUM_EVENTS]; // the color to set the corresponding cone to.
+Time event_times[MAX_NUM_EVENTS]; // the time......
+
+Time start;
 Time lengthOfShow;
 
 #endif // include guard
