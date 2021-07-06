@@ -56,7 +56,7 @@ void doEventMode();
 // for a specific `cone`,
 // uses `colors` and `times` to figure out what the color should be,
 // then sets the color to that.
-bool transitionCone(Cone cone);
+bool transitionCone(Cone cone); // requires that the current_time has already been set externally.
 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones();

@@ -130,8 +130,8 @@ Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = UNDEFINED_FIVEFOLD_AXES please define
 
 ///////idk
 
-Cone srcCone = 1;
-Cone nextCone = 8;
+Cone current_cone[3]{0,1,2};
+
 
 
 
@@ -156,6 +156,7 @@ Time active_times[NUM_LED_GROUPS][2];
 Event event_stack[MAX_NUM_EVENTS];
 
 Time start;
+Time g_current_time;
 Time lengthOfShow;
 
 #endif // include guard

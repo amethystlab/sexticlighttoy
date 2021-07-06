@@ -4,7 +4,8 @@
 void diagnostic_check_connected_cones(){
   Serial.println("diagnostic_check showing connected cones");
 
-  static Cone cone = 0;
+  Cone& cone      = current_cone[0];
+  Cone& prev_cone = current_cone[1];
   
   cone = positive_mod(rotary_counter,NUM_CONES);
 
@@ -35,38 +36,41 @@ void diagnostic_check_connected_cones(){
 
 void diagnostic_check_connected_cones_using_events(){
   Serial.println("event-driven diagnostic_check showing connected cones");
-  static Cone cone = 0;
-  static Cone prev_cone = 1;
+  
+  Cone& cone      = current_cone[0];
+  Cone& prev_cone = current_cone[1];
   
   cone = positive_mod(rotary_counter,NUM_CONES);
-
-  // Serial.print("CURRENT NUM CONE: ");
-  // Serial.println(cone, DEC);
+  
+  
+  Serial.print("CURRENT NUM CONE: ");Serial.println(cone, DEC);
   // pixels.clear();
-  uint32_t cone_tracker{0};
-
+  uint32_t cone_tracker;
+  cone_tracker = 0;
+  Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
   if (prev_cone!= cone){
     prev_cone = cone;
     // Light up the current cone (cone number cone) green
     // coneColor(cone, 255, 0, 0, 0);
     addEventToStack(cone, GREEN, 10000);
-    cone_tracker = cone_tracker | (1 << cone);
-    
+    cone_tracker = cone_tracker | (uint32_t(1) << cone);
+    Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
     // Serial.print("CONNECTED CONES: ");
     for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
       // Light up the cones connected to the current cone red
-      uint8_t connected_cone = get_connection(cone, i);
+      Cone connected_cone = get_connection(cone, i);
 
-      // Serial.println(connected_cone, DEC);
+      Serial.println(connected_cone, DEC);
       
       addEventToStack(connected_cone, RED, 10000);
-      cone_tracker = cone_tracker | (1 << connected_cone);
+      cone_tracker = cone_tracker | (uint32_t(1) << connected_cone);
+      Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
       // coneColor(conn, 0, 255, 0, 0);
     }
     
-    Serial.println(cone_tracker, BIN);
+    Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
     for (uint8_t i{0}; i<NUM_CONES; ++i){
-      if (! (cone_tracker & (1 << i)) )
+      if (! (cone_tracker & (uint32_t(1) << i)) )
         addEventToStack(i, BLACK, 10000);
     }
     
@@ -94,10 +98,13 @@ void diagnostic_check_twofold(){
   // Serial.println("twofold diagnostic_check");
   num_per_rotation = 2;
   
-  static uint8_t connection_num = positive_mod(rotary_counter,3); // indexes the connected cones to the root
+  Cone& root_cone = current_cone[0];
+  Cone& second_cone = current_cone[1];
+  uint8_t& connection_num = current_cone[2];
   
-  static Cone root_cone = positive_div(rotary_counter,20); // the active root of the rotation.
-  static Cone second_cone = get_connection(root_cone, connection_num); // the second cone.  the node between them is on the line of symmetry
+  connection_num = positive_mod(rotary_counter,3); // indexes the connected cones to the root
+  root_cone = positive_div(rotary_counter,20); // the active root of the rotation.
+  second_cone = get_connection(root_cone, connection_num); // the second cone.  the node between them is on the line of symmetry
 
 
   
@@ -346,24 +353,30 @@ void diagnostic_check_find_third(){
 
 void doDiagnosticMode(){
   
-  // Serial.println("doing diagnostic check");
+  Serial.println("doing diagnostic check");
 
   // symmetry = Reflect;
   setSymmetryModeFromButtons();
   
   switch (symmetry){
     case TwoFold:
+    // diagnostic_check_connected_cones_using_events();
+    Serial.println('a');
       diagnostic_check_twofold();
       break;
     case ThreeFold:
+    Serial.println('b');
       diagnostic_check_threefold();
       break;
     case FiveFold:
-      diagnostic_check_fivefold();
+    Serial.println('c');
+      diagnostic_check_connected_cones();
+      // diagnostic_check_fivefold();
       break;
     case Reflect:
+    Serial.println('d');
       // diagnostic_check_connected_cones();
-      diagnostic_check_connected_cones_using_events();
+      diagnostic_check_connected_cones();
       break;
   }
     

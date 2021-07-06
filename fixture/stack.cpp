@@ -160,7 +160,6 @@ bool transitionCone(Cone cone){
   // why are we modding by lengthOfShow?
   // should the call to `millis()` be factored out, so that all cones being transisioned at once 
   // will use the same time?  otherwise, they use slightly different times...
-  Time current_time = millis();
 
   // unpack from the stored array
   Time start_time = active_times[cone][0];
@@ -170,9 +169,9 @@ bool transitionCone(Cone cone){
   // the current time is later than the final time of the current event, 
   // so setting the final_time to the current time makes the
   // cone's color get set to the final color for the event.
-  if(current_time < final_time) 
+  if(g_current_time < final_time) 
   {
-    Serial.print("transitioning cone "); Serial.print(cone); Serial.print(" at time "); Serial.println(current_time);
+    Serial.print("transitioning cone "); Serial.print(cone); Serial.print(" at time "); Serial.println(g_current_time);
       
     #ifdef CUBIC_INTERP
     IndividualColor final_red = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, r[0], r[1]));
@@ -183,7 +182,7 @@ bool transitionCone(Cone cone){
 
   #else
     // linear interpolation
-    float mult = ((float)(current_time - start_time))/((float)(final_time - start_time));
+    float mult = ((float)(g_current_time - start_time))/((float)(final_time - start_time));
 
     IndividualColor final_red = mult * (r[1] - r[0]) + r[0];
     IndividualColor final_green = mult * (g[1] - g[0]) + g[0];
@@ -197,7 +196,7 @@ bool transitionCone(Cone cone){
     //#endif
   }
   else {
-    Serial.print("cone "); Serial.print(cone); Serial.print("over time"); Serial.println(current_time);
+    Serial.print("cone "); Serial.print(cone); Serial.print("over time"); Serial.println(g_current_time);
     coneColor(cone, g[1], r[1], b[1], w[1]);
   }
 
@@ -211,6 +210,8 @@ bool transitionCone(Cone cone){
 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones(){
+  
+  g_current_time = millis();
   
   for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i);

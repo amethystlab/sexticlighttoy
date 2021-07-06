@@ -252,8 +252,8 @@ void doPulseMode(){
 // 
 
 
-// static hsv   rgb2hsv(rgb in);
-// static rgb   hsv2rgb(hsv in);
+// hsv   rgb2hsv(rgb in);
+// rgb   hsv2rgb(hsv in);
 
 HSV rgb2hsv(RGB in)
 {
