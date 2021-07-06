@@ -7,14 +7,12 @@
 
 
 
-/*
- * Array to store the cyclic groups of rotation and reflection
-*/
-Cone cycles[NUM_LED_GROUPS]; 
+Cone cycles[NUM_LED_GROUPS]; //< Array to store the cyclic groups of rotation and reflection
 
-uint8_t num_per_rotation = 3;  // idk why 3.  is that just initial state?
 
-// some global variables
+uint8_t num_per_rotation = 3;  // because each cone is connected to 3 other cones
+
+
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
 
@@ -93,6 +91,9 @@ ObjectMode previousMode;
   MAKE_CONNECTION(18,15,6)
 };
 
+// these hardcoded values are incorrect unless Fixture == 1
+Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = {{1, 5}, {6, 15}, {14, 13}, {12, 11}, {1, 6}, {8, 7}, {15, 16}, {13, 17}, {11, 18}, {9, 19}, {7, 20}, {18, 17}};
+
 #elif FIXTURE==2 
  uint16_t connections[NUM_LED_GROUPS] = { // Samantha's.  The second one.  Sadly not identical.
   MAKE_CONNECTION(4,1,13),
@@ -119,23 +120,24 @@ ObjectMode previousMode;
   MAKE_CONNECTION(19,10,17),
   MAKE_CONNECTION(15,12,18)
 };
+
+Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = UNDEFINED_FIVEFOLD_AXES please define them.;
 #endif
 
 ///////idk
 
-uint8_t srcCone = 1;
-uint8_t nextCone = 8;
+Cone srcCone = 1;
+Cone nextCone = 8;
 
 
 
 ////////////////rotation
- Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = {{1, 5}, {6, 15}, {14, 13}, {12, 11}, {1, 6}, {8, 7}, {15, 16}, {13, 17}, {11, 18}, {9, 19}, {7, 20}, {18, 17}};
 
 
 
 /////////////color
 //use an array of 5 since at most we are looking at 5-fold rotational symmetry (g,r,b,w,y)
- Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
+Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
 
 
 /////////////stack

@@ -24,6 +24,7 @@
 #define MAX_CONNECTION_NUM 3
  
 #define NUM_LED_GROUPS 20 // 20 cones total on fixture
+#define NUM_CONES NUM_LED_GROUPS
 #define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
 
 #define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
@@ -50,7 +51,6 @@ typedef enum ObjectMode {
 typedef uint8_t Cone;
 typedef int8_t Direction;
 typedef uint32_t Color;
-
 
 /////////////////////rotation
 

@@ -14,13 +14,13 @@
 #include "color.h"
 
 
-uint32_t getConeColor(uint8_t coneNum);
-bool addEventToStack(uint8_t cone, uint32_t color, uint16_t timeOfEvent);
+Color getConeColor(Cone coneNum);
+bool addEventToStack(Cone cone, Color color, uint16_t timeOfEvent);
 void eventStackToTransition();
 
 float t(uint16_t x, uint16_t x1, uint16_t x2);
 float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2);
-bool transitionCone(uint8_t coneNum, bool repeat);
+bool transitionCone(Cone coneNum, bool repeat);
 void setupEvents();
 
 void doEventMode();

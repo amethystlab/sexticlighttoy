@@ -477,7 +477,7 @@ uint8_t find_connection_index(Cone src, uint8_t conn){
 }
 
 // tells whether going positive or negative, from cone1 -> middle -> cone2
-int8_t find_direction(Cone cone1, Cone middle, Cone cone2){
+Direction find_direction(Cone cone1, Cone middle, Cone cone2){
   for (int i = 0; i < MAX_CONNECTION_NUM; ++i){
     Cone connected_cone = get_connection(middle, i);
     if (connected_cone == cone1){
@@ -701,26 +701,30 @@ void rotate(bool reverse){
   int numPerRotation;
   
   switch(symmetry){
+    
     case TwoFold:
       numPerRotation = 2;
       offset = 0;
       maximum = 20;
       break;
-    case FiveFold:
-      offset = 0;
-      maximum = 20;
-      numPerRotation = 5;
-    break;
+      
     case ThreeFold:
       offset = 1;
       maximum = 20;
       numPerRotation = 3;
-    break;
+      break;
+      
+    case FiveFold:
+      offset = 0;
+      maximum = 20;
+      numPerRotation = 5;
+      break;
+      
     case Reflect:
       offset = 0;
       maximum = 16;
       numPerRotation = 2;
-    break;
+      break;
   }
   
   int index = offset;

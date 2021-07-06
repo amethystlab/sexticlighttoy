@@ -3,9 +3,9 @@
 
 
 //returns the specific color that is within the cone by looking at one pixel
-uint32_t getConeColor(uint8_t coneNum) {
-  if (coneNum >= 0 && coneNum <= 19) {
-    int pixStart = (coneNum) * 7; //determines which pixel out of 140 to fill, inside coneNum
+Color getConeColor(Cone coneNum) {
+  if (coneNum >= 0 && coneNum < NUM_CONES) {
+    uint8_t pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside coneNum
     return pixels.getPixelColor(pixStart);
   }
   return 0; //if for some reason the coneNum isn't in the range of 0 to 19 then zero is returned
@@ -13,7 +13,7 @@ uint32_t getConeColor(uint8_t coneNum) {
 
 
 
-bool addEventToStack(uint8_t cone, uint32_t color, uint16_t timeOfEvent){
+bool addEventToStack(Cone cone, uint32_t color, uint16_t timeOfEvent){
   bool set = false;
   for(int i = 0; i < MAX_NUM_EVENTS && !set; i++){
     if(event_cone[i] == OPEN_EVENT_CODE){
@@ -33,24 +33,24 @@ bool addEventToStack(uint8_t cone, uint32_t color, uint16_t timeOfEvent){
 void eventStackToTransition(){
   unsigned long currentTime = (millis() - start) % lengthOfShow;
 
-  for(int i = 0; i < MAX_CONE_NUM; i++){
-    if(times[i][1] == NO_EVENT_PLANNED){
-      uint8_t coneNum = i + 1;
-      times[i][0] = currentTime;
-      colors[i][0] = getConeColor(i + 1);
-      int32_t proximity = 65535;
+  for (int cone = 0; cone < MAX_CONE_NUM; cone++){
+    if (times[cone][1] == NO_EVENT_PLANNED){
+
+      times[cone][0] = currentTime;
+      colors[cone][0] = getConeColor(cone);
+      int32_t proximity = 65535; // 2^16-2
       uint8_t closestEvent = 255;
 
-      for(int j = 0; j < MAX_NUM_EVENTS; j++){
-        if(event_cone[j] == coneNum){
+      for (int j = 0; j < MAX_NUM_EVENTS; j++){
+        if (event_cone[j] == cone){
 #ifdef DEBUG_PRINT
           Serial.print("Cone Num "); Serial.print(coneNum); Serial.print(" == "); Serial.println(event_cone[j]);
 #endif
           int32_t tempProximity = event_times[j] + ((event_times[j] < currentTime) ? lengthOfShow : 0) - currentTime;
           if(tempProximity < proximity){
             proximity = tempProximity;
-            times[i][1] = event_times[j];
-            colors[i][1] = event_colors[j];
+            times[cone][1] = event_times[j];
+            colors[cone][1] = event_colors[j];
             closestEvent = j;
           }
         }
@@ -58,10 +58,10 @@ void eventStackToTransition(){
 
       if(closestEvent != 255){
 #ifdef DEBUG_PRINT
-        Serial.print("Setting cone "); Serial.print(coneNum); Serial.print(" to "); Serial.print((colors[i][1] >> 16) & 0xFF); Serial.print(", ");
-        Serial.print((colors[i][1] >> 8) & 0xFF); Serial.print(", "); Serial.println((colors[i][1] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[i][1]);
-        Serial.print(" from "); Serial.print((colors[i][0] >> 16) & 0xFF); Serial.print(", ");
-        Serial.print((colors[i][0] >> 8) & 0xFF); Serial.print(", "); Serial.println((colors[i][0] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[i][0]);
+        Serial.print("Setting cone "); Serial.print(coneNum); Serial.print(" to "); Serial.print((colors[cone][1] >> 16) & 0xFF); Serial.print(", ");
+        Serial.print((colors[cone][1] >> 8) & 0xFF); Serial.print(", "); Serial.println((colors[cone][1] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][1]);
+        Serial.print(" from "); Serial.print((colors[cone][0] >> 16) & 0xFF); Serial.print(", ");
+        Serial.print((colors[cone][0] >> 8) & 0xFF); Serial.print(", "); Serial.println((colors[cone][0] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][0]);
 #endif
        
         event_cone[closestEvent] = OPEN_EVENT_CODE;
@@ -92,7 +92,7 @@ float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2)
 }
 
 
-bool transitionCone(uint8_t coneNum, bool repeat){
+bool transitionCone(Cone coneNum, bool repeat){
   uint8_t arrayIndex = coneNum;
 
   if(times[arrayIndex][1] == NO_EVENT_PLANNED){
@@ -190,7 +190,7 @@ void doEventMode(){
 
   eventStackToTransition();
 
-  for(int i = 0; i < MAX_CONE_NUM; i++){
+  for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i, true);
   }
 
@@ -200,7 +200,7 @@ void doEventMode(){
 
 
 void transitionAllCones(){
-  for(int i = 0; i < MAX_CONE_NUM; i++){
+  for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i, false);
   }
 

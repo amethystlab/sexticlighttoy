@@ -36,13 +36,13 @@ void set_fivefold_cycles();
 void set_reflection_cycles();
 
 
-uint8_t find_next_cone_in_direction(uint8_t src, uint8_t next, Direction dir);
+uint8_t find_next_cone_in_direction(Cone src, Cone next, Direction dir);
 
 void set_threefold(Cone src);
 void set_fivefold(Cone *arr, Cone src, Cone next, Direction dir);
 
 
-uint8_t get_mutual_connection(uint8_t coneOne, uint8_t coneTwo);
+uint8_t get_mutual_connection(Cone coneOne, Cone coneTwo);
 uint8_t find_connection_excluding_prev_cycles(uint8_t* arr, int cone, uint8_t min_avoid, uint8_t max_avoid);
 uint8_t find_connection_index(Cone src, Cone conn);
 Direction find_direction(Cone src, Cone first, Cone second);
