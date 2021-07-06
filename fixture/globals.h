@@ -92,6 +92,10 @@ ObjectMode previousMode;
 };
 
 // these hardcoded values are incorrect unless Fixture == 1
+// please write documentation on how these were generated
+// so that if someone makes another one, they can 
+// figure these out, too.
+// does order of the pair matter?
 Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2] = {{1, 5}, {6, 15}, {14, 13}, {12, 11}, {1, 6}, {8, 7}, {15, 16}, {13, 17}, {11, 18}, {9, 19}, {7, 20}, {18, 17}};
 
 #elif FIXTURE==2 
@@ -143,13 +147,13 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 /////////////stack
 
 Color colors[NUM_LED_GROUPS][2];
-uint16_t times[NUM_LED_GROUPS][2];
+Time times[NUM_LED_GROUPS][2];
 
-uint8_t event_cone[MAX_NUM_EVENTS];
+Cone event_cone[MAX_NUM_EVENTS];
 Color event_colors[MAX_NUM_EVENTS];
-uint16_t event_times[MAX_NUM_EVENTS];
+Time event_times[MAX_NUM_EVENTS];
 
 unsigned long start;
-uint16_t lengthOfShow;
+Time lengthOfShow;
 
 #endif // include guard

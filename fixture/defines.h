@@ -47,10 +47,10 @@ typedef enum ObjectMode {
   Diagnostic=7
 };
 
-
-typedef uint8_t Cone;
-typedef int8_t Direction;
-typedef uint32_t Color;
+using Cone = uint8_t;
+using Direction = int8_t;
+using Color = uint32_t;
+using Time = uint16_t;
 
 /////////////////////rotation
 

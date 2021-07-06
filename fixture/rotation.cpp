@@ -809,6 +809,9 @@ void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone, bool reverse) { //num
   }
 } //end 7/18/20
 
+
+
+
 bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool reverse, uint16_t currentTime, uint16_t leng) { //numCone refers to number of cones in the array
   if (numCone > 1) {
 
@@ -836,11 +839,11 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
 
         overwrittenColor = getConeColor(coneArray[index]);
 
-        times[coneArray[index] - 1][0] = currentTime;
-        colors[coneArray[index] - 1][0] = getConeColor(coneArray[index]);
+        times[coneArray[index]][0] = currentTime;
+        colors[coneArray[index]][0] = getConeColor(coneArray[index]);
 
-        times[coneArray[index] - 1][1] = (currentTime + leng) % lengthOfShow;
-        colors[coneArray[index] - 1][1] = color;
+        times[coneArray[index]][1] = (currentTime + leng) % lengthOfShow;
+        colors[coneArray[index]][1] = color;
         
         //coneColor(coneArray[index], (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF); //moves color cone to cone
 
@@ -859,8 +862,12 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
   }
 } 
 
-//Uses the encoder to rotate the three fold symmetry 120 degrees about the axis point
 
+
+
+
+
+//Uses the encoder to rotate the three fold symmetry 120 degrees about the axis point
 void rotationalThreeFoldSymEncoder() {
   static int32_t lastRotation = 0; //the last rotation value of the encoder
   if (rotary_counter - lastRotation > NUM_TICKS) {

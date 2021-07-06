@@ -14,15 +14,40 @@
 #include "color.h"
 
 
+// generates a floating point number between 0 and 1, representing how far between x1 and x2, x is.   
+// the assumption is that $x \in [x1, x2]$
+float t(Time x, Time x1, Time x2);
+
+// gives you a smoothly interpolated value between y1 and y2, given an $x \in [x1, x2]$, using the `t()` function.
+float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2);
+
+
+// gets the color of the pixels in a cone, assuming they're all pixels in the cone are the same color.  
+// this seems like it should be in the color.h/color.cpp files? 
 Color getConeColor(Cone coneNum);
-bool addEventToStack(Cone cone, Color color, uint16_t timeOfEvent);
+
+
+// will make `cone` transition from its previous color to the specified color, taking the specified duration.
+bool addEventToStack(Cone cone, Color color, Time timeOfEvent);
+
+
+// 
 void eventStackToTransition();
 
-float t(uint16_t x, uint16_t x1, uint16_t x2);
-float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2);
-bool transitionCone(Cone coneNum, bool repeat);
+
+
+// called once at the beginning of the program
+// sets all event_cone[] and times[] values to OPEN_EVENT_CODE and NO_EVENT_PLANNED.
 void setupEvents();
 
+// 
 void doEventMode();
+
+
+// 
+bool transitionCone(Cone coneNum, bool repeat);
+
+// 
 void transitionAllCones();
+
 #endif // include guard

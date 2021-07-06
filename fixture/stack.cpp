@@ -8,15 +8,15 @@ Color getConeColor(Cone coneNum) {
     uint8_t pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside coneNum
     return pixels.getPixelColor(pixStart);
   }
-  return 0; //if for some reason the coneNum isn't in the range of 0 to 19 then zero is returned
-} //end Sam 7-14-20
+  return 0; //if for some reason the coneNum isn't in range then zero is returned
+} 
 
 
 
-bool addEventToStack(Cone cone, uint32_t color, uint16_t timeOfEvent){
+bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
   bool set = false;
-  for(int i = 0; i < MAX_NUM_EVENTS && !set; i++){
-    if(event_cone[i] == OPEN_EVENT_CODE){
+  for (int i = 0; i < MAX_NUM_EVENTS && !set; i++){
+    if (event_cone[i] == OPEN_EVENT_CODE){
 #ifdef DEBUG_PRINT
         Serial.println("EVENT ADDED TO STACK!");
 #endif
@@ -75,16 +75,14 @@ void eventStackToTransition(){
 
 
 
-
-
-float t(uint16_t x, uint16_t x1, uint16_t x2){
+float t(Time x, Time x1, Time x2){
   //Serial.print((x - x1)); Serial.print(" / "); Serial.println((x2 - x1));
   //Serial.println((float) (x - x1) / (float) (x2 - x1));
   
   return ((float) (x - x1) / (float) (x2 - x1));
 }
 
-float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2){
+float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
   float tOfX = t(x, x1, x2);
   //Serial.print("y1: "); Serial.print(y1); Serial.print(" y2: "); Serial.println(y2);
   //Serial.print("t(x) = "); Serial.println(tOfX); //Serial.print(", "); Serial.print((1 - tOfX) * y1); Serial.print(", "); Serial.print(tOfX * y2); Serial.print(", "); Serial.println(tOfX * (1 - tOfX) * ((1 - tOfX) * (y1 - y2) + tOfX * (y2 - y1)));
@@ -93,25 +91,24 @@ float cubicNatural(uint16_t x, uint16_t x1, uint16_t x2, uint8_t y1, uint8_t y2)
 
 
 bool transitionCone(Cone coneNum, bool repeat){
-  uint8_t arrayIndex = coneNum;
 
-  if(times[arrayIndex][1] == NO_EVENT_PLANNED){
+  if (times[arrayIndex][1] == NO_EVENT_PLANNED){
     return false;
   }
   
-  uint8_t r[2] = {(colors[arrayIndex][0] >> 8) & 0xFF, (colors[arrayIndex][1] >> 8) & 0xFF};
-  uint8_t g[2] = {(colors[arrayIndex][0] >> 16) & 0xFF, (colors[arrayIndex][1] >> 16) & 0xFF};
-  uint8_t b[2] = {(colors[arrayIndex][0]) & 0xFF, (colors[arrayIndex][1]) & 0xFF};
-  uint8_t w[2] = {(colors[arrayIndex][0] >> 24) & 0xFF, (colors[arrayIndex][1] >> 24) & 0xFF};
+  uint8_t r[2] = {(colors[coneNum][0] >> 8) & 0xFF, (colors[coneNum][1] >> 8) & 0xFF};
+  uint8_t g[2] = {(colors[coneNum][0] >> 16) & 0xFF, (colors[coneNum][1] >> 16) & 0xFF};
+  uint8_t b[2] = {(colors[coneNum][0]) & 0xFF, (colors[coneNum][1]) & 0xFF};
+  uint8_t w[2] = {(colors[coneNum][0] >> 24) & 0xFF, (colors[coneNum][1] >> 24) & 0xFF};
 
-  uint16_t currentTime = (millis() - start) % lengthOfShow;
+  Time currentTime = (millis() - start) % lengthOfShow;
 
-  uint16_t startTime = times[arrayIndex][0];
-  uint16_t finalTime = times[arrayIndex][1];
+  Time startTime = times[coneNum][0];
+  Time finalTime = times[coneNum][1];
   
-  if(times[arrayIndex][0] > times[arrayIndex][1] && currentTime > times[arrayIndex][0]){
+  if(times[coneNum][0] > times[coneNum][1] && currentTime > times[coneNum][0]){
     finalTime += lengthOfShow;
-  } else if(times[arrayIndex][0] > times[arrayIndex][1] && currentTime < times[arrayIndex][0]){
+  } else if(times[coneNum][0] > times[coneNum][1] && currentTime < times[coneNum][0]){
     finalTime += lengthOfShow;
     currentTime += lengthOfShow;
   }
@@ -141,12 +138,13 @@ bool transitionCone(Cone coneNum, bool repeat){
 //  Serial.print("Current Time: "); Serial.print(currentTime); Serial.print(" End of Transition: "); Serial.println(finalTime);
 //#endif
 
-  if(currentTime >= finalTime){
-    if(repeat) addEventToStack(coneNum, colors[arrayIndex][1], times[arrayIndex][1]);
+  if (currentTime >= finalTime){
+    if (repeat) 
+      addEventToStack(coneNum, colors[coneNum][1], times[coneNum][1]);
     
-    colors[arrayIndex][0] = colors[arrayIndex][1];
-    times[arrayIndex][0] = times[arrayIndex][1];
-    times[arrayIndex][1] = NO_EVENT_PLANNED;
+    colors[coneNum][0] = colors[coneNum][1];
+    times[coneNum][0] = times[coneNum][1];
+    times[coneNum][1] = NO_EVENT_PLANNED;
   }
 
   return true;
@@ -156,7 +154,7 @@ bool transitionCone(Cone coneNum, bool repeat){
 
 
 
-
+// called once at the beginning of the program
 void setupEvents(){
   for(int i = 0; i < MAX_NUM_EVENTS; i++){
     event_cone[i] = OPEN_EVENT_CODE;
