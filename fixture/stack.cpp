@@ -3,68 +3,88 @@
 
 
 
+void printStack(){
+  // Serial.println("current event stack:");
+  for (uint8_t i{0}; i<MAX_NUM_EVENTS; ++i){
+    printEvent(event_stack[i]);
+  }
+}
 
+void printEvent(Event e){
+  Serial.print(e.cone); Serial.print(" "); Serial.print(e.color); Serial.print(" "); Serial.println(e.duration);
+}
 
+void printActive(){
+  Serial.println("active state:");
+  for (Cone i{0}; i<NUM_CONES; ++i){
+    Serial.print(active_colors[i][0]);Serial.print(" ");Serial.print(active_times[i][0]); Serial.print(" --> ");
+    Serial.print(active_colors[i][1]);Serial.print(" ");Serial.println(active_times[i][1]);
+  }
+}
+
+void printConeColorsFromMemory(){
+  // Serial.println("cone colors:");
+  for (Cone i{0}; i<NUM_CONES; ++i){
+    Serial.println(getConeColor(i));
+  }
+}
 // sets first available event to change the cone to color.
-bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
-  bool set = false;
-  for (int i = 0; i < MAX_NUM_EVENTS && !set; i++){
+bool addEventToStack(Cone cone, Color color, Time duration){
+  
+  for (int i = 0; i < MAX_NUM_EVENTS; ++i){
     if (event_stack[i].cone == OPEN_EVENT_CODE){
-#ifdef DEBUG_PRINT
-        Serial.println("EVENT ADDED TO STACK!");
-#endif
-      
+ 
       event_stack[i].cone = cone;
       event_stack[i].color = color;
-      event_stack[i].duration = timeOfEvent;
-      set = true;
+      event_stack[i].duration = duration;
+
+      // Serial.print("EVENT ADDED TO STACK at position"); Serial.println(i);
+
+      return true;
     }
   }
-  return set;
+  return false;
 }
 
-void eventStackToTransition(){
-  unsigned long currentTime = (millis() - start) % lengthOfShow;
-
-  for (Cone cone = 0; cone < NUM_CONES; cone++){
-    if (active_times[cone][1] == NO_EVENT_PLANNED){
+void eventStackToActive(){
+  unsigned long current_time = millis();
+  
+  // Serial.print("current time: "); Serial.println(current_time);
+  // printActive();
+  
+  for (Cone cone = 0; cone < NUM_CONES; ++cone){
+    if (current_time > active_times[cone][1]){ // availability of a cone is indicated by the current time being later than the "to" time in the array.
       
-      active_times[cone][0] = currentTime;
-      active_colors[cone][0] = getConeColor(cone);
-      int32_t proximity = 65535; // 2^16-2
-      uint8_t closestEvent = 255; // this magic value should be defined away
 
-      for (int j = 0; j < MAX_NUM_EVENTS; j++){
+      // loop over all events on the stack,
+      // if matches current cone,
+      // make be next active, and remove from stack.
+      for (uint8_t j = 0; j < MAX_NUM_EVENTS; ++j){
         if (event_stack[j].cone == cone){
 #ifdef DEBUG_PRINT
-          Serial.print("Cone Num "); Serial.print(coneNum); Serial.print(" == "); Serial.println(event_cone[j]);
-#endif
-          int32_t tempProximity = event_stack[j].duration + ((event_stack[j].duration < currentTime) ? lengthOfShow : 0) - currentTime;
-          if(tempProximity < proximity){
-            proximity = tempProximity;
-            active_times[cone][1] = event_stack[j].duration;
-            active_colors[cone][1] = event_stack[j].color;
-            closestEvent = j;
-          }
-        }
-      }
+          Serial.print("Cone Num "); Serial.print(cone_num); Serial.print(" == "); Serial.println(event_cone[j]);
+#endif    
+            // set the old active time and color to be the current ones.
+            active_times[cone][0] = current_time;
+            active_colors[cone][0] = getConeColor(cone); // old color is whatever the pixels think it is.
 
-      if(closestEvent != 255){ // this magic value should be defined away
-#ifdef DEBUG_PRINT
-        Serial.print("Setting cone "); Serial.print(coneNum); Serial.print(" to "); Serial.print((active_colors[cone][1] >> 16) & 0xFF); Serial.print(", ");
-        Serial.print((active_colors[cone][1] >> 8) & 0xFF); Serial.print(", "); Serial.println((active_colors[cone][1] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][1]);
-        Serial.print(" from "); Serial.print((colors[cone][0] >> 16) & 0xFF); Serial.print(", ");
-        Serial.print((active_colors[cone][0] >> 8) & 0xFF); Serial.print(", "); Serial.println((active_colors[cone][0] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][0]);
-#endif
-       
-        event_stack[closestEvent].cone = OPEN_EVENT_CODE;
-        // we just put this event on the transition phase
-        // so open it up to be used again
-      }
-      
-    }
-  }  
-}
+            active_times[cone][1]  = current_time + event_stack[j].duration;
+            active_colors[cone][1] = event_stack[j].color;
+            
+            
+            // now, remove that event from the stack
+            // this should probably be a function, especially if it is used elsewhere.
+            for (uint8_t z{j}; z<MAX_NUM_EVENTS-1; ++z){
+              event_stack[z] = event_stack[z+1];
+            }
+            break;
+        }
+      } // for events on stack
+
+    } // if cone has no event planned
+  }  // for each cone 
+  
+} // function
 
 
 
@@ -92,36 +112,22 @@ void setupEvents(){
     event_stack[i] = Event();
   }
 
-  for (Cone i = 0; i < MAX_CONE_NUM; i++){
+  for (Cone i = 0; i < NUM_CONES; i++){
+    active_times[i][0] = NO_EVENT_PLANNED;
     active_times[i][1] = NO_EVENT_PLANNED;
+    
+    active_colors[i][0] = BLACK;
+    active_colors[i][1] = BLACK;
   }
-  
-  //for(int i = 0; i < MAX_CONE_NUM; i++){
-  //  addEventToStack(i, 0xFF000000, 2500);
-  //  addEventToStack(i, 0xFFFF0000, 7500);
-  //}
-
-
-  //  for(int i = 0; i < MAX_CONE_NUM; i++){
-  //    colors[i][1] = 0xFF00FF00;
-  //    times[i][1] = 5000;
-  //  }
 }
 
 
 void doEventMode(){
-//    for(int i = 0; i < 20; i++){
-//      Serial.print(colors[i][0]); Serial.print(" to "); Serial.print(colors[i][1]);
-//      Serial.print(" from "); Serial.print(times[i][0]); Serial.print(" to "); Serial.println(times[i][1]);
-//    }
-//    delay(500);
 
-//      Serial.print("MILLIS: "); Serial.println(millis());
-
-  eventStackToTransition();
+  eventStackToActive();
 
   for(int i = 0; i < NUM_CONES; i++){
-    transitionCone(i, true);
+    transitionCone(i); 
   }
 
   pixels.show();
@@ -135,9 +141,10 @@ void doEventMode(){
 
 
 
-bool transitionCone(Cone cone, bool repeat){
+bool transitionCone(Cone cone){
 
   if (active_times[cone][1] == NO_EVENT_PLANNED){
+    Serial.print("due to NO_EVENT_PLANNED, skipping cone "); Serial.println(cone);
     return false;
   }
   
@@ -153,64 +160,48 @@ bool transitionCone(Cone cone, bool repeat){
   // why are we modding by lengthOfShow?
   // should the call to `millis()` be factored out, so that all cones being transisioned at once 
   // will use the same time?  otherwise, they use slightly different times...
-  Time current_time = (millis() - start) % lengthOfShow;
-  
+  Time current_time = millis();
+
   // unpack from the stored array
   Time start_time = active_times[cone][0];
   Time final_time = active_times[cone][1];
   
-  // this block feels weird to me.  why would the times be out of order?  shouldn't they be always increasing?
-  if (active_times[cone][0] > active_times[cone][1] && current_time > active_times[cone][0]){
-    // times are out of order, so roll forward the final time
-    final_time += lengthOfShow;
-  } 
-  else if (active_times[cone][0] > active_times[cone][1] && current_time < active_times[cone][0]){
-    // times are out of order, so roll forward the final time and the current time.
-    final_time += lengthOfShow;
-    current_time += lengthOfShow;
-  }
   
   // the current time is later than the final time of the current event, 
   // so setting the final_time to the current time makes the
   // cone's color get set to the final color for the event.
-  if(current_time >= final_time) 
-    current_time = final_time;
+  if(current_time < final_time) 
+  {
+    Serial.print("transitioning cone "); Serial.print(cone); Serial.print(" at time "); Serial.println(current_time);
+      
+    #ifdef CUBIC_INTERP
+    IndividualColor final_red = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, r[0], r[1]));
+    IndividualColor final_green = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, g[0], g[1]));
+    IndividualColor final_blue = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, b[0], b[1]));
+    IndividualColor final_white = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, w[0], w[1]));
+    //Serial.print("final red: "); Serial.println(final_red);
 
-#ifdef CUBIC_INTERP
-  IndividualColor final_red = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, r[0], r[1]));
-  IndividualColor final_green = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, g[0], g[1]));
-  IndividualColor final_blue = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, b[0], b[1]));
-  IndividualColor final_white = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, w[0], w[1]));
-  //Serial.print("final red: "); Serial.println(final_red);
+  #else
+    // linear interpolation
+    float mult = ((float)(current_time - start_time))/((float)(final_time - start_time));
 
-#else
+    IndividualColor final_red = mult * (r[1] - r[0]) + r[0];
+    IndividualColor final_green = mult * (g[1] - g[0]) + g[0];
+    IndividualColor final_blue = mult * (b[1] - b[0]) + b[0];
+    IndividualColor final_white = mult * (w[1] - w[0]) + w[0];
+  #endif
 
-  float mult = ((float)(current_time - start_time))/((float)(final_time - start_time));
-
-  IndividualColor final_red = mult * (r[1] - r[0]) + r[0];
-  IndividualColor final_green = mult * (g[1] - g[0]) + g[0];
-  IndividualColor final_blue = mult * (b[1] - b[0]) + b[0];
-  IndividualColor final_white = mult * (w[1] - w[0]) + w[0];
-#endif
-
-  coneColor(cone, final_green, final_red, final_blue, final_white);
-
-//#ifdef DEBUG_PRINT
-//  Serial.print("Current Time: "); Serial.print(current_time); Serial.print(" End of Transition: "); Serial.println(final_time);
-//#endif
-
-  if (current_time >= final_time){
-    if (repeat) 
-      addEventToStack(cone, active_colors[cone][1], active_times[cone][1]);
-    
-    // roll over the color and time for the current cone, and indicate next one is open.
-    active_colors[cone][0] = active_colors[cone][1];
-    active_times[cone][0] = active_times[cone][1];
-    active_times[cone][1] = NO_EVENT_PLANNED;
+    coneColor(cone, final_green, final_red, final_blue, final_white);
+    //#ifdef DEBUG_PRINT
+    //  Serial.print("Current Time: "); Serial.print(current_time); Serial.print(" End of Transition: "); Serial.println(final_time);
+    //#endif
+  }
+  else {
+    Serial.print("cone "); Serial.print(cone); Serial.print("over time"); Serial.println(current_time);
+    coneColor(cone, g[1], r[1], b[1], w[1]);
   }
 
   return true;
-
 }
 
 
@@ -220,8 +211,9 @@ bool transitionCone(Cone cone, bool repeat){
 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones(){
+  
   for(int i = 0; i < NUM_CONES; i++){
-    transitionCone(i, false);
+    transitionCone(i);
   }
 
   pixels.show();

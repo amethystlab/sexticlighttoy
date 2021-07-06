@@ -8,7 +8,7 @@
 uint8_t get_connection(uint8_t cone, uint8_t connection_num)
 {
   // Serial.print("getting connection "); Serial.print(connection_num); Serial.print(" for cone "); Serial.println(cone);
-  if(cone < MIN_CONE_NUM || cone > MAX_CONE_NUM) return CONE_DNE;
+  if(cone >= NUM_CONES) return CONE_DNE;
   if(connection_num > MAX_CONNECTION_NUM) return CONNECTION_DNE;
   
   return ((connections[cone] >> (5*connection_num)) & MAX_UINT5);
@@ -576,7 +576,7 @@ void set_cycle_presets(){
     index += numPerRotation;
   }
 
-  for(int i = index; i < MAX_CONE_NUM; i++){
+  for(int i = index; i < NUM_CONES; i++){
     // set the remaining cones colors to white
     coneColor(cycles[i], 255, 255, 255, 255);
 #ifdef DEBUG_PRINT
@@ -590,15 +590,16 @@ void set_cycle_presets(){
 }
 
 
+
+// As we know the cycle array will contain the numbers 0-19
+// we know the sum of the array will be  0 + 1 + 2 + 3 + ... + 19 = 190
+// and that (Sum of the Array without one of those numbers) = 190 - that number
+// giving us missing number = 190 - sum of the array without the missing number
 void set_missing_in_cycles(uint8_t missingIndex){
-  // As we know the cycle array will contain the numbers 0-19
-  // we know the sum of the array will be  0 + 1 + 2 + 3 + ... + 19 = 190
-  // and that (Sum of the Array without one of those numbers) = 190 - that number
-  // giving us missing number = 210 - sum of the array without the missing number
-  
+
   uint8_t sum_of_array = 0;
   
-  for(int i = 0; i < MAX_CONE_NUM; ++i){
+  for(int i = 0; i < NUM_CONES; ++i){
     if(i != missingIndex){
       sum_of_array += cycles[i];
     }
@@ -607,6 +608,7 @@ void set_missing_in_cycles(uint8_t missingIndex){
   // once we have found the missing number, set it in the array
   cycles[missingIndex] = sumFromZeroToNineteen - sum_of_array;
 }
+
 
 void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
     uint8_t first = one;
@@ -664,6 +666,7 @@ void incrementAxis(Direction dir){
   static Cone reflectionAxis[2] = {1, 2};
 
   switch(symmetry){
+    
     case Reflect:
       if(dir) getNextPair(reflectionAxis, reflectionAxis[0], reflectionAxis[1]);
       cycles[0] = reflectionAxis[0];
@@ -673,6 +676,7 @@ void incrementAxis(Direction dir){
 #endif
       set_reflection_cycles();
       break;
+      
     case TwoFold:
       if(dir) getNextPair(twoFoldAxis, twoFoldAxis[0], twoFoldAxis[1]);
 
@@ -681,13 +685,17 @@ void incrementAxis(Direction dir){
 #endif
       set_twofold_cycles(twoFoldAxis[0],twoFoldAxis[1]);
       break;
+      
     case ThreeFold:
-      if(dir) threeFoldAxis = (threeFoldAxis % NUM_LED_GROUPS) + 1;
+      if (dir) 
+        threeFoldAxis = (threeFoldAxis + 1) % NUM_LED_GROUPS;
       cycles[0] = threeFoldAxis;
       set_threefold_cycles();
       break;
+      
     case FiveFold:
-      if(dir) fiveFoldAxis = (fiveFoldAxis + 1) % NUM_FIVE_FOLD_AXES;
+      if (dir) 
+        fiveFoldAxis = (fiveFoldAxis + 1) % NUM_FIVE_FOLD_AXES;
       set_fivefold(cycles, fiveFoldAxes[fiveFoldAxis][0], fiveFoldAxes[fiveFoldAxis][1], POSITIVE);
       set_fivefold_cycles();
       break;
@@ -731,7 +739,7 @@ void rotate(bool reverse){
   unsigned long currentTime = (millis() - start) % lengthOfShow;
   boolean shouldContinue = true;
 
-  while(index + numPerRotation <= maximum && shouldContinue){
+  while (index + numPerRotation <= maximum && shouldContinue){
     // iterate through the cycles array, rotating each group
 
 #ifndef GRADUAL_TRANSITION
@@ -750,8 +758,8 @@ void rotate(bool reverse){
   
 
 //Takes the color from cone1 and transfers it to cone2, cone2 goes to cone3, cone3 goes to cone1
-void ThreeFoldRotateColor(uint8_t cone1, uint8_t cone2, uint8_t cone3) { //must make sure the cone# is in the correct order
-  if (cone1 >= 1 && cone1 <= 20 && cone2 >= 1 && cone2 <= 20 && cone3 >= 1 && cone3 <= 20) { //makes sure all the inputed cone numbers are 1-20
+void ThreeFoldRotateColor(Cone cone1, Cone cone2, Cone cone3) { //must make sure the cone# is in the correct order
+  if (cone1 >= 0 && cone1 < NUM_CONES && cone2 >= 1 && cone2 <= 20 && cone3 >= 1 && cone3 <= 20) { //makes sure all the inputed cone numbers are 1-20
     uint32_t changeCone1 = getConeColor(cone1);
     uint32_t changeCone2 = getConeColor(cone2);
     coneColor(cone2, (changeCone1 >> 16) & 0xFF, (changeCone1 >> 8) & 0xFF, changeCone1 & 0xFF, (changeCone1 >> 24) & 0xFF); //moves color from cone1 to cone2
@@ -774,24 +782,26 @@ void ThreeFoldSymmetry() {
   pixels.show();
 } //end Sam 7-15-20
 
+
+
 //changes the color of a certain number of cones, one-by-one, this only rotates one "group" at a time
-void nFoldRotateColor(uint8_t *coneArray, uint8_t numCone, bool reverse) { //numCone refers to number of cones in the array
-  if (numCone > 1) {
+void nFoldRotateColor(uint8_t *coneArray, uint8_t num_cones_to_rotate, bool reverse) { //num_cones_to_rotate refers to number of cones in the array
+  if (num_cones_to_rotate > 0) {
     
     uint32_t color = getConeColor(coneArray[0]);
     uint32_t overwrittenColor = getConeColor(coneArray[0]);
 
     uint8_t prevIndex = 0;
 
-    for (int i = 0; i < numCone; i++) {
-      if (coneArray[i] >= MIN_CONE_NUM && coneArray[i] <= MAX_CONE_NUM) { //makes sure all the inputed cone numbers are between 1-20
+    for (int i = 0; i < num_cones_to_rotate; i++) {
+      if (coneArray[i] < NUM_CONES) { //makes sure all the inputed cone numbers are between 0-19
 
         color = overwrittenColor;
         uint8_t index = -1;
         if(!reverse){
-          index = (prevIndex + 1) % numCone;
+          index = (prevIndex + 1) % num_cones_to_rotate;
         } else {
-          index = (prevIndex - 1 + numCone) % numCone;
+          index = (prevIndex - 1 + num_cones_to_rotate) % num_cones_to_rotate;
         }
 
         overwrittenColor = getConeColor(coneArray[index]);
@@ -816,7 +826,7 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
   if (numCone > 1) {
 
     for(int i = 0; i < numCone; i++){
-      if(active_times[coneArray[i] - 1][1] != NO_EVENT_PLANNED){     
+      if(active_times[coneArray[i]][1] != NO_EVENT_PLANNED){     
         return false;
       }
     }
@@ -827,10 +837,10 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
     uint8_t prevIndex = 0;
 
     for (int i = 0; i < numCone; i++) {
-      if (coneArray[i] >= MIN_CONE_NUM && coneArray[i] <= MAX_CONE_NUM) { //makes sure all the inputed cone numbers are between 1-20
+      if (coneArray[i] < NUM_CONES) { //makes sure all the inputed cone numbers are between 0-19
 
         color = overwrittenColor;
-        uint8_t index = -1;
+        uint8_t index;
         if(!reverse){
           index = (prevIndex + 1) % numCone;
         } else {
@@ -959,7 +969,6 @@ void setSymmetryModeFromButtons(){
 
     // Serial.println("Set reflectional");
     symmetry = Reflect;
-    incrementAxis(0);
     set_cycle_presets();
   }
   else if(is_button_pressed(0)){
@@ -967,22 +976,20 @@ void setSymmetryModeFromButtons(){
       // Serial.println("Set twofold");
 
     symmetry = TwoFold;
-    incrementAxis(0);
     set_cycle_presets();
   }
   else if(is_button_pressed(1)){
     // Serial.println("Set threefold");
 
     symmetry = ThreeFold;
-    incrementAxis(0);
     set_cycle_presets();
   } 
   else if(is_button_pressed(2)){
     // Serial.println("Set fivefold");
     symmetry = FiveFold;
-    incrementAxis(0);
     set_cycle_presets();
   }
+  incrementAxis(0);
 }
 
 void doReflectionalMode(){

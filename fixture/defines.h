@@ -101,13 +101,11 @@ using Time = unsigned long;
 
 
 #define GRADUAL_TRANSITION
-#define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
+// #define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
 
-#define NO_EVENT_PLANNED 65535 // i think this should be 0 or the max for unsigned long (Time)
-#define MIN_CONE_NUM 0
-#define MAX_CONE_NUM 19
+#define NO_EVENT_PLANNED 0 // i think this should be 0 or the max for unsigned long (Time)
 #define MAX_NUM_EVENTS 40
-#define OPEN_EVENT_CODE -1
+#define OPEN_EVENT_CODE NUM_CONES+1
 
 
 typedef struct{

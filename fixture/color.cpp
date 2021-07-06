@@ -44,22 +44,21 @@ void restrictAllConeRandom() {
 
 
 //returns the specific color that is within the cone by looking at one pixel
-Color getConeColor(Cone coneNum) {
-  if (coneNum >= 0 && coneNum < NUM_CONES) {
-    uint8_t pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside coneNum
+Color getConeColor(Cone cone_num) {
+  if (cone_num >= 0 && cone_num < NUM_CONES) {
+    uint8_t pixStart = (cone_num) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside cone_num
     return pixels.getPixelColor(pixStart);
   }
-  return 0; //if for some reason the coneNum isn't in range then zero is returned
+  return 0; //if for some reason the cone_num isn't in range then zero is returned
 } 
 
 
 
 //Only sets ONE pixel to a certain color at a time
-void pixelColor(int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixNum = Pixel Number, g = green, r=red, b = blue, w = white
-  if (pixNum >= 0 && pixNum <= 255) { //forces the user to enter a valid pixel number
+void pixelColor(int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r=red, b = blue, w = white
+  if (pix_num >= 0 && pix_num <= 255) { //forces the user to enter a valid pixel number
     Color color = pixels.Color(g, r, b, w); // make a color
-    pixels.setPixelColor(pixNum, color); //set a single pixel color
-    pixels.show(); //update the colors
+    pixels.setPixelColor(pix_num, color); //set a single pixel color
   }
 }   //end (Sam 6/15/2020)
 
@@ -67,34 +66,31 @@ void pixelColor(int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pi
 
 
 // accepts a pixel number, correlates the pixel's number to the cone its in and lights all of the pixels within that cone to the specfied color
-void pixToConeColor (int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixNum = Pixel Number, g = green, r= red, b = blue, w = white
-  if (pixNum >= 0 && pixNum <= 255) { //forces the user to enter a valid pixel number
+void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  if (pix_num >= 0 && pix_num <= 255) { //forces the user to enter a valid pixel number
     Color color = pixels.Color(g, r, b, w); // make a color
-    int pixStart = (pixNum / NUM_PIXELS_PER_GROUP) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
+    int pixStart = (pix_num / NUM_PIXELS_PER_GROUP) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
     pixels.fill(color, pixStart, NUM_PIXELS_PER_GROUP);
-    pixels.show(); //update the colors
   }
 }   
 
 
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
-  // Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.print(g);Serial.print(r);Serial.print(b);Serial.print(w);
-  if (coneNum < NUM_CONES) {
-    Color color = pixels.Color(g, r, b, w); // make a color
-    int pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
-    pixels.fill(color, pixStart, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+void coneColor (Cone cone_num, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.print(g);Serial.print(" ");Serial.print(r);Serial.print(" ");Serial.print(b);Serial.print(" ");Serial.println(w);
+  if (cone_num < NUM_CONES) {
+    Serial.print("starting at pixel" ); Serial.println(cone_num*NUM_PIXELS_PER_GROUP);
+    pixels.fill(pixels.Color(g, r, b, w), cone_num*NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
   }
 }   
 
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (int coneNum, Color color) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
-  // Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.println(color);
-  if (coneNum < NUM_CONES) {
-    int pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
-    pixels.fill(color, pixStart, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+void coneColor (Cone cone_num, Color color) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  // Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.println(color);
+  if (cone_num < NUM_CONES) {
+    pixels.fill(color, (cone_num) * NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
   }
 }   
 

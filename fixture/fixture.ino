@@ -53,7 +53,7 @@ void setup() {
 // called ad nauseum
 void loop() {
   // doPulseMode();
-  print_state();
+  // print_state();
   doDiagnosticMode();
   
   // getMode();
@@ -79,7 +79,7 @@ void loop() {
   // if (ModeUsesEvents(mode)){
   //   transitionAllCones();
   // }
-
+  printConeColorsFromMemory();
 } // ends the loop() function
 
 bool ModeUsesEvents(ObjectMode mode){

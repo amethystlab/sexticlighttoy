@@ -33,13 +33,13 @@ uint8_t restrictRandom8Bit();
 void restrictAllConeRandom();
 
 // gets the color of the pixels in a cone, assuming they're all pixels in the cone are the same color.  
-Color getConeColor(Cone coneNum);
+Color getConeColor(Cone cone_num);
 
-void pixelColor(int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);
-void pixToConeColor (int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);
+void pixelColor(int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w);
+void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w);
 
-void coneColor (int coneNum, Color color);
-void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w);
+void coneColor(Cone cone_num, Color color);
+void coneColor(Cone cone_num, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w);
 
 void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry);
 

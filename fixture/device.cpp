@@ -125,14 +125,14 @@ int32_t get_int32()
 
 //when the rotary encounter is turned (in either direction) a new cone will be selected and the color is controlled by the potentiometers
 void coneSelect(){
-  int coneNum = abs(((rotary_counter / 2) % 20) + 1); //each time the encoder is turned 2 values it switches to a new cone, (clockwise to get larger #cone, counterclockwise to get smaller #cone)
+  int cone_num = abs(((rotary_counter / 2) % 20) + 1); //each time the encoder is turned 2 values it switches to a new cone, (clockwise to get larger #cone, counterclockwise to get smaller #cone)
   uint8_t g = pot2 / 4; //integer division by four to translate range of 0-1023 (potentiometers) to 0-255 (pixel brightness)
   uint8_t r = pot1 / 4;
   uint8_t b = pot3 / 4;
   
-  coneColor(coneNum, g, r, b, 0); //gets the coneNum from the variable above
+  coneColor(cone_num, g, r, b, 0); //gets the cone_num from the variable above
 #ifdef DEBUG_PRINT
-  Serial.println("Setting Cone "); Serial.print(coneNum); Serial.print(" to "); Serial.print(r); Serial.print(" "); Serial.print(g); Serial.print(" "); Serial.println(b);
+  Serial.println("Setting Cone "); Serial.print(cone_num); Serial.print(" to "); Serial.print(r); Serial.print(" "); Serial.print(g); Serial.print(" "); Serial.println(b);
 #endif
 } //end (Sam 7/7/2020)
 
