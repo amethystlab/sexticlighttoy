@@ -32,6 +32,8 @@ void allConeRandom();
 uint8_t restrictRandom8Bit();
 void restrictAllConeRandom();
 
+// gets the color of the pixels in a cone, assuming they're all pixels in the cone are the same color.  
+Color getConeColor(Cone coneNum);
 
 void pixelColor(int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);
 void pixToConeColor (int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w);

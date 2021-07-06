@@ -27,7 +27,7 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 
-ObjectMode mode = Event;
+ObjectMode mode = Diagnostic;
 SymmetryType symmetry = TwoFold; 
 
 int32_t previousEncoderValue = 0; 
@@ -153,10 +153,7 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 Color active_colors[NUM_LED_GROUPS][2];
 Time active_times[NUM_LED_GROUPS][2];
 
-
-Cone event_cone[MAX_NUM_EVENTS]; // the cone to set to the corresponding color from `event_colors`
-Color event_colors[MAX_NUM_EVENTS]; // the color to set the corresponding cone to.
-Time event_times[MAX_NUM_EVENTS]; // the time......
+Event event_stack[MAX_NUM_EVENTS];
 
 Time start;
 Time lengthOfShow;

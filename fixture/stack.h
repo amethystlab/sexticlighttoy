@@ -22,9 +22,7 @@ float t(Time x, Time x1, Time x2);
 float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2);
 
 
-// gets the color of the pixels in a cone, assuming they're all pixels in the cone are the same color.  
-// this seems like it should be in the color.h/color.cpp files? 
-Color getConeColor(Cone coneNum);
+
 
 
 // will make `cone` transition from its previous color to the specified color, taking the specified duration.

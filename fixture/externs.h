@@ -47,11 +47,11 @@ extern Color colorPresets[5];
 extern Color active_colors[20][2];
 extern Time active_times[20][2];
 
-extern Cone event_cone[MAX_NUM_EVENTS];
-extern Color event_colors[MAX_NUM_EVENTS];
-extern Time event_times[MAX_NUM_EVENTS];
+extern Event event_stack[MAX_NUM_EVENTS];
 
 extern Time start;
 extern Time lengthOfShow;
 
+
+extern Color experiment[NUM_LED_GROUPS][MAX_NUM_EVENTS];
 #endif

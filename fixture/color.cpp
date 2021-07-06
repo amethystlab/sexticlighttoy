@@ -43,6 +43,15 @@ void restrictAllConeRandom() {
 
 
 
+//returns the specific color that is within the cone by looking at one pixel
+Color getConeColor(Cone coneNum) {
+  if (coneNum >= 0 && coneNum < NUM_CONES) {
+    uint8_t pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside coneNum
+    return pixels.getPixelColor(pixStart);
+  }
+  return 0; //if for some reason the coneNum isn't in range then zero is returned
+} 
+
 
 
 //Only sets ONE pixel to a certain color at a time
@@ -71,7 +80,7 @@ void pixToConeColor (int pixNum , uint8_t g, uint8_t r, uint8_t b, uint8_t w) { 
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
 void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
-  Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.print(g);Serial.print(r);Serial.print(b);Serial.print(w);
+  // Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.print(g);Serial.print(r);Serial.print(b);Serial.print(w);
   if (coneNum < NUM_CONES) {
     Color color = pixels.Color(g, r, b, w); // make a color
     int pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
@@ -82,7 +91,7 @@ void coneColor (int coneNum, uint8_t g, uint8_t r, uint8_t b, uint8_t w) { // pi
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
 void coneColor (int coneNum, Color color) { // pixnum = Pixel Number, g = green, r= red, b = blue, w = white
-  Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.println(color);
+  // Serial.print("filling cone ");Serial.print(coneNum);Serial.print(" with color ");Serial.println(color);
   if (coneNum < NUM_CONES) {
     int pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
     pixels.fill(color, pixStart, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location

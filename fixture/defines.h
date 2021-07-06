@@ -42,7 +42,7 @@ typedef enum ObjectMode {
   ColorSet=0,
   Rotational=1,
   Reflectional=2,
-  Event=5,
+  EventMode=5,
   Pulse=6,
   Diagnostic=7
 };
@@ -98,6 +98,8 @@ using Time = unsigned long;
 
 ////////////stack
 
+
+
 #define GRADUAL_TRANSITION
 #define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
 
@@ -105,6 +107,13 @@ using Time = unsigned long;
 #define MIN_CONE_NUM 0
 #define MAX_CONE_NUM 19
 #define MAX_NUM_EVENTS 40
-#define OPEN_EVENT_CODE 42
+#define OPEN_EVENT_CODE -1
+
+
+typedef struct{
+  Cone  cone{OPEN_EVENT_CODE};
+  Color color{WHITE};
+  Time  duration{0};
+} Event;
 
 #endif

@@ -7,11 +7,7 @@ void diagnostic_check_connected_cones(){
   // previous state of the switch
   static int num = 0;
   
-  num = rotary_counter;
-  while (num<0){
-    num+=MAX_CONE_NUM;
-  }
-  num = rotary_counter%NUM_LED_GROUPS;
+  num = positive_mod(rotary_counter,NUM_CONES);
   //Iterate to the next cone number
 
 
@@ -19,7 +15,7 @@ void diagnostic_check_connected_cones(){
   Serial.println(num, DEC);
   
   // turn off all cones
-  for (int conenum=0; conenum<NUM_LED_GROUPS; ++conenum){
+  for (int conenum=0; conenum<NUM_CONES; ++conenum){
     coneColor(conenum, 0, 0, 0, 0);
   }
   

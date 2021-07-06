@@ -2,28 +2,21 @@
 #include "stack.h"
 
 
-//returns the specific color that is within the cone by looking at one pixel
-Color getConeColor(Cone coneNum) {
-  if (coneNum >= 0 && coneNum < NUM_CONES) {
-    uint8_t pixStart = (coneNum) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill, inside coneNum
-    return pixels.getPixelColor(pixStart);
-  }
-  return 0; //if for some reason the coneNum isn't in range then zero is returned
-} 
+
 
 
 // sets first available event to change the cone to color.
 bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
   bool set = false;
   for (int i = 0; i < MAX_NUM_EVENTS && !set; i++){
-    if (event_cone[i] == OPEN_EVENT_CODE){
+    if (event_stack[i].cone == OPEN_EVENT_CODE){
 #ifdef DEBUG_PRINT
         Serial.println("EVENT ADDED TO STACK!");
 #endif
       
-      event_cone[i] = cone;
-      event_colors[i] = color;
-      event_times[i] = timeOfEvent;
+      event_stack[i].cone = cone;
+      event_stack[i].color = color;
+      event_stack[i].duration = timeOfEvent;
       set = true;
     }
   }
@@ -33,30 +26,30 @@ bool addEventToStack(Cone cone, Color color, Time timeOfEvent){
 void eventStackToTransition(){
   unsigned long currentTime = (millis() - start) % lengthOfShow;
 
-  for (int cone = 0; cone < NUM_CONES; cone++){
+  for (Cone cone = 0; cone < NUM_CONES; cone++){
     if (active_times[cone][1] == NO_EVENT_PLANNED){
-
+      
       active_times[cone][0] = currentTime;
       active_colors[cone][0] = getConeColor(cone);
       int32_t proximity = 65535; // 2^16-2
-      uint8_t closestEvent = 255;
+      uint8_t closestEvent = 255; // this magic value should be defined away
 
       for (int j = 0; j < MAX_NUM_EVENTS; j++){
-        if (event_cone[j] == cone){
+        if (event_stack[j].cone == cone){
 #ifdef DEBUG_PRINT
           Serial.print("Cone Num "); Serial.print(coneNum); Serial.print(" == "); Serial.println(event_cone[j]);
 #endif
-          int32_t tempProximity = event_times[j] + ((event_times[j] < currentTime) ? lengthOfShow : 0) - currentTime;
+          int32_t tempProximity = event_stack[j].duration + ((event_stack[j].duration < currentTime) ? lengthOfShow : 0) - currentTime;
           if(tempProximity < proximity){
             proximity = tempProximity;
-            active_times[cone][1] = event_times[j];
-            active_colors[cone][1] = event_colors[j];
+            active_times[cone][1] = event_stack[j].duration;
+            active_colors[cone][1] = event_stack[j].color;
             closestEvent = j;
           }
         }
       }
 
-      if(closestEvent != 255){
+      if(closestEvent != 255){ // this magic value should be defined away
 #ifdef DEBUG_PRINT
         Serial.print("Setting cone "); Serial.print(coneNum); Serial.print(" to "); Serial.print((active_colors[cone][1] >> 16) & 0xFF); Serial.print(", ");
         Serial.print((active_colors[cone][1] >> 8) & 0xFF); Serial.print(", "); Serial.println((active_colors[cone][1] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][1]);
@@ -64,7 +57,7 @@ void eventStackToTransition(){
         Serial.print((active_colors[cone][0] >> 8) & 0xFF); Serial.print(", "); Serial.println((active_colors[cone][0] >> 0) & 0xFF); Serial.print(" at time "); Serial.println(times[cone][0]);
 #endif
        
-        event_cone[closestEvent] = OPEN_EVENT_CODE;
+        event_stack[closestEvent].cone = OPEN_EVENT_CODE;
         // we just put this event on the transition phase
         // so open it up to be used again
       }
@@ -95,11 +88,11 @@ float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
 
 // called once at the beginning of the program
 void setupEvents(){
-  for(int i = 0; i < MAX_NUM_EVENTS; i++){
-    event_cone[i] = OPEN_EVENT_CODE;
+  for (uint8_t i = 0; i < MAX_NUM_EVENTS; i++){
+    event_stack[i] = Event();
   }
 
-  for(int i = 0; i < MAX_CONE_NUM; i++){
+  for (Cone i = 0; i < MAX_CONE_NUM; i++){
     active_times[i][1] = NO_EVENT_PLANNED;
   }
   
@@ -149,10 +142,10 @@ bool transitionCone(Cone cone, bool repeat){
   }
   
   // the starting and ending colors for the event being transitioned
-  IndividualColor r[2] = {(active_colors[cone][0] >> 8) & 0xFF, (active_colors[cone][1] >> 8) & 0xFF};
-  IndividualColor g[2] = {(active_colors[cone][0] >> 16) & 0xFF, (active_colors[cone][1] >> 16) & 0xFF};
-  IndividualColor b[2] = {(active_colors[cone][0]) & 0xFF, (active_colors[cone][1]) & 0xFF};
-  IndividualColor w[2] = {(active_colors[cone][0] >> 24) & 0xFF, (active_colors[cone][1] >> 24) & 0xFF};
+  IndividualColor r[2] = {(active_colors[cone][0] >> 8)  & 0xFF,  (active_colors[cone][1] >> 8)  & 0xFF};
+  IndividualColor g[2] = {(active_colors[cone][0] >> 16) & 0xFF,  (active_colors[cone][1] >> 16) & 0xFF};
+  IndividualColor b[2] = {(active_colors[cone][0])       & 0xFF,  (active_colors[cone][1])       & 0xFF};
+  IndividualColor w[2] = {(active_colors[cone][0] >> 24) & 0xFF,  (active_colors[cone][1] >> 24) & 0xFF};
 
   // answer these questions:
   //

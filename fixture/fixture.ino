@@ -38,7 +38,7 @@ void setup() {
   setupEvents();
   setupTime();
 
-  delay(100);
+  delay(100); // waste some time for communication to get synced.
   Serial.println("Finished Setup");
 }
 
@@ -65,7 +65,7 @@ void loop() {
   //     {doReflectionalMode(); break;}
   //   case ColorSet:
   //     {doColorSetMode(); break;}
-  //   case Event:
+  //   case EventMode:
   //     {doEventMode(); break;}
   //   case Pulse:
   //     {doPulseMode(); break;}
@@ -76,8 +76,19 @@ void loop() {
   // } // switch
   // 
   // 
-  // if(mode != Event){
+  // if (ModeUsesEvents(mode)){
   //   transitionAllCones();
   // }
 
 } // ends the loop() function
+
+bool ModeUsesEvents(ObjectMode mode){
+  switch (mode) {
+    case Rotational:
+    case Reflectional:
+    case ColorSet:
+      return true;
+    default:
+      return false;
+  }
+}
