@@ -5,6 +5,8 @@
 #include "rotation.h"
 
 void diagnostic_check();
+
+void diagnostic_check_connected_cones();
 void diagnostic_check_threefold();
 void diagnostic_check_fivefold();
 void diagnostic_check_twofold();

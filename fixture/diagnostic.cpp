@@ -1,41 +1,11 @@
 #include "diagnostic.h"
 
 
+
+
+
 void diagnostic_check_connected_cones(){
   Serial.println(F("diagnostic_check showing connected cones"));
-
-  Cone& cone      = current_cone[0];
-  Cone& prev_cone = current_cone[1];
-  
-  cone = positive_mod(rotary_counter,NUM_CONES);
-
-  // Serial.print("CURRENT NUM CONE: ");
-  // Serial.println(cone, DEC);
-  
-  // turn off all cones
-  for (int i=0; i<NUM_CONES; ++i)
-    coneColor(i, BLACK);
-  
-  
-  // Light up the current cone (cone number cone) green
-  coneColor(cone, GREEN);
-  
-  Serial.print(F("CONNECTED CONES: "));
-  for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
-    // Light up the cones connected to the current cone red
-    uint8_t connected_cone = get_connection(cone, i);
-
-    // Serial.println(connected_cone, DEC);
-    
-    coneColor(connected_cone, RED);
-  }
-  pixels.show();
-}
-
-
-
-void diagnostic_check_connected_cones_using_events(){
-  Serial.println(F("frame-driven diagnostic_check showing connected cones"));
   
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
@@ -61,14 +31,14 @@ void diagnostic_check_connected_cones_using_events(){
     cone_tracker = cone_tracker | (uint32_t(1) << cone); // mark as used in the tracker, using bit ops
 
     // set the cones connected to the current cone red, record that they're used
-    for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
+    for(uint8_t i = 0; i < MAX_CONNECTION_NUM; ++i){
       Cone connected_cone = get_connection(cone, i);
       setNextFrameColor(connected_cone, RED);
       cone_tracker = cone_tracker | (uint32_t(1) << connected_cone); // mark that we used this cone.
     }
     
     // set the rest of the colors to black
-    for (uint8_t i{0}; i<NUM_CONES; ++i){
+    for (Cone i{0}; i<NUM_CONES; ++i){
       if (! (cone_tracker & (uint32_t(1) << i)) )
         setNextFrameColor(i, BLACK);
     }
@@ -359,7 +329,7 @@ void doDiagnosticMode(){
       break;
 
     case Reflect:
-      diagnostic_check_connected_cones_using_events();
+      diagnostic_check_connected_cones();
       break;
   }
     
