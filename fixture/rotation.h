@@ -32,14 +32,14 @@ uint8_t get_connection(uint8_t cone, uint8_t connection_num);
 
 void set_twofold_cycles(Cone cone1, Cone cone2);
 void set_threefold_cycles(Cone root_cone);
-void set_fivefold_cycles();
-
+void set_fivefold_cycles(Cone src, Cone next, Direction dir);
 void set_reflection_cycles();
+
+
 
 
 uint8_t find_next_cone_in_direction(Cone src, Cone next, Direction dir);
 
-void set_fivefold(Cone *arr, Cone src, Cone next, Direction dir);
 
 
 uint8_t get_mutual_connection(Cone coneOne, Cone coneTwo);

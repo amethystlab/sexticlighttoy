@@ -191,7 +191,7 @@ void set_threefold_cycles(Cone root_cone){
   set_missing_in_cycles(19); // why does this need an argument?
 
 
-
+#ifdef DEBUG_PRINT
   Serial.println(F("Threefold cycles:"));
 
   Serial.print(F("LEVEL 1: ")); Serial.println(cycles[0]); 
@@ -202,10 +202,25 @@ void set_threefold_cycles(Cone root_cone){
   Serial.print(F("LEVEL 6: ")); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.println(sixth_level[2]);
   Serial.print(F("LEVEL 7: ")); Serial.print(seventh_level[0]); Serial.print(" "); Serial.print(seventh_level[1]); Serial.print(" "); Serial.println(seventh_level[2]);
   Serial.print(F("LEVEL 8: ")); Serial.println(eighth_level[0]);
-
+#endif
 }
 
-void set_fivefold_cycles(){
+
+
+//      next Cone
+//        /    \
+//source /      \   Cone
+// Cone  \      /   in Negative direction 
+//        \____/
+void set_fivefold_cycles(Cone src, Cone next, Direction dir){
+
+  cycles[0] = src;
+  cycles[1] = next;
+
+  for(int i = 2; i < 5; i++){
+    cycles[i] = find_next_cone_in_direction(cycles[i - 2], cycles[i - 1], dir);
+  }
+
   // This function sets the cycle array for five fold rotations, assuming the seed 
   // pentagon has already been set
   
@@ -229,9 +244,74 @@ void set_fivefold_cycles(){
     // of each cone in the first cycle that isn't in the first cycle
     cycles[15 + i] = find_connection_excluding_prev_cycles(cycles, cycles[10 + i], 5, 9);
   }
+
+  Serial.println(F("Fivefold cycles:"));
+
+  Serial.print(F("\nLEVEL 1: ")); for (uint8_t i{0}; i<5; ++i) {Serial.print(cycles[i]);  Serial.print(" ");}
+  Serial.print(F("\nLEVEL 2: ")); for (uint8_t i{0}; i<5; ++i) {Serial.print(cycles[i+5]);  Serial.print(" ");}
+  Serial.print(F("\nLEVEL 3: ")); for (uint8_t i{0}; i<5; ++i) {Serial.print(cycles[i+10]);  Serial.print(" ");}
+  Serial.print(F("\nLEVEL 4: ")); for (uint8_t i{0}; i<5; ++i) {Serial.print(cycles[i+15]);  Serial.print(" ");}
+  Serial.println("");
+
 }
 
 
+
+
+// TODO: Investigate iterative path rather than
+//       iterating through every single path of length
+//       two from the cone in array location 0
+
+//  uint8_t potentialConnectionsNext[2];
+//  uint8_t potentialConnectionsThird[2];
+//  int j = 0;
+//
+//  // Find the cones connected to the "next" cone
+//  // that are not the source cone
+//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
+//    uint8_t conn = get_connection(cycles[0], i);
+//    if(conn != src){
+//      potentialConnectionsNext[j++] = conn;
+//      if(j > 2) Serial.print("ERROR");
+//    }
+//  }
+//
+//  // Find the cones connected to the "third" cone
+//  // that are not the source cone
+//  j = 0;
+//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
+//    uint8_t conn = get_connection(cycles[2], i);
+//    if(conn != src){
+//      potentialConnectionsThird[j++] = conn;
+//      if(j > 2) Serial.print("ERROR");
+//    }
+//  }
+//
+//  bool done = false;
+//  for(int i = 0; i < 2 && !done; i++){
+//    for(int j = 0; j <= MAX_CONNECTION_NUM && !done; j++){
+//      // iterate over all of the connections of the cones that are
+//      // connected to the "next" cone
+//      uint8_t conn = get_connection(potentialConnectionsNext[i], j);
+//      for(int k = 0; k < 2 && !done; k++){
+//
+//        // For each cone that is connected to a connection of the "next"
+//        // cone, check if it is connected to the "third" cone. If it is,
+//        // then you have found a path of length two from the "next" cone
+//        // to the "third" cone, completing the pentagon
+//        
+//        Serial.print("PAIR: ");
+//        Serial.print(potentialConnectionsNext[i], DEC);
+//        Serial.println(conn, DEC);
+//
+//        if(conn == potentialConnectionsThird[k]){
+//          arr[4] = potentialConnectionsNext[i];
+//          arr[3] = conn;
+//          done = true;
+//        }
+//      }
+//    }
+//  }
 
 
 
@@ -355,85 +435,6 @@ Cone find_next_cone_in_direction(Cone src, Cone next, Direction dir){
 
 
 
-
-// Function to set an array of length five to the five elements of 
-// the pentagon defined by a source cone, a cone connected to that 
-// source cone, and the direction to iterate from there.
-void set_fivefold(Cone *arr, Cone src, Cone next, Direction dir){
-
-  // Set initial three elements of the pentagon by using the set
-  // parameters, and the function used to find the third cone
-  // from the direction
-  arr[0] = next;
-  arr[1] = src;
-  
-  for(int i = 2; i < 5; i++){
-    arr[i] = find_next_cone_in_direction(arr[i - 1], arr[i - 2], POSITIVE);
-  }
-  /*------------------------------------------------------------*/
-  //    Source Cone
-  //      /    \
-  //Next /      \  Third 
-  //Cone \      /  Cone
-  //      \____/
-
-  // TODO: Investigate iterative path rather than
-  //       iterating through every single path of length
-  //       two from the cone in array location 0
-
-//  uint8_t potentialConnectionsNext[2];
-//  uint8_t potentialConnectionsThird[2];
-//  int j = 0;
-//
-//  // Find the cones connected to the "next" cone
-//  // that are not the source cone
-//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
-//    uint8_t conn = get_connection(cycles[0], i);
-//    if(conn != src){
-//      potentialConnectionsNext[j++] = conn;
-//      if(j > 2) Serial.print("ERROR");
-//    }
-//  }
-//
-//  // Find the cones connected to the "third" cone
-//  // that are not the source cone
-//  j = 0;
-//  for(int i = 0; i < MAX_CONNECTION_NUM; i++){
-//    uint8_t conn = get_connection(cycles[2], i);
-//    if(conn != src){
-//      potentialConnectionsThird[j++] = conn;
-//      if(j > 2) Serial.print("ERROR");
-//    }
-//  }
-//
-//  bool done = false;
-//  for(int i = 0; i < 2 && !done; i++){
-//    for(int j = 0; j <= MAX_CONNECTION_NUM && !done; j++){
-//      // iterate over all of the connections of the cones that are
-//      // connected to the "next" cone
-//      uint8_t conn = get_connection(potentialConnectionsNext[i], j);
-//      for(int k = 0; k < 2 && !done; k++){
-//
-//        // For each cone that is connected to a connection of the "next"
-//        // cone, check if it is connected to the "third" cone. If it is,
-//        // then you have found a path of length two from the "next" cone
-//        // to the "third" cone, completing the pentagon
-//        
-//        Serial.print("PAIR: ");
-//        Serial.print(potentialConnectionsNext[i], DEC);
-//        Serial.println(conn, DEC);
-//
-//        if(conn == potentialConnectionsThird[k]){
-//          arr[4] = potentialConnectionsNext[i];
-//          arr[3] = conn;
-//          done = true;
-//        }
-//      }
-//    }
-//  }
-}
-  
-  
   
 
 
@@ -709,8 +710,7 @@ void incrementAxis(Direction dir){
     case FiveFold:
       if (dir) 
         fiveFoldAxis = (fiveFoldAxis + 1) % NUM_FIVE_FOLD_AXES;
-      set_fivefold(cycles, fiveFoldAxes[fiveFoldAxis][0], fiveFoldAxes[fiveFoldAxis][1], POSITIVE);
-      set_fivefold_cycles();
+      set_fivefold_cycles(fiveFoldAxes[fiveFoldAxis][0], fiveFoldAxes[fiveFoldAxis][1], POSITIVE);
       break;
   }
 }

@@ -75,12 +75,6 @@ void diagnostic_check_twofold(){
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
     current_cone[2] = connection_num;
-
-
-    root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
-    connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
-
-    second_cone = get_connection(root_cone, connection_num);
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
     set_twofold_colors_by_level();
@@ -188,75 +182,34 @@ void set_threefold_colors_by_level(){
 
 
 void diagnostic_check_fivefold(){
-  Serial.println(F("fivefold diagnostic_check"));
-  symmetry = FiveFold;
-  num_per_rotation = 5;
+  Serial.println(F("fivefold diagnostic"));
+
+  num_per_rotation = 5; // why is this global thing being set?  isn't it already set because the global mode is set?
+
+
+  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
+  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
+
+
+  // infer the second cone.  the node between them is on the line of symmetry
+  Cone second_cone = get_connection(root_cone, connection_num); 
+
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2])){
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
+
+    current_cone[0] = root_cone;
+    current_cone[1] = second_cone;
+    current_cone[2] = connection_num;
+    
+    set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
+    set_fivefold_colors_by_level();
+  }
+
   
-  static int num = 1;
-  static bool prevState = false;
-  static bool prevStateTwo = false;
-  static bool prevStateThree = false;
-
-  // Store the previous state of the switches
-  // as well as the current axis cone
-
-  if(is_switch_on(0) != prevState){
-    // if we flip the first switch
-    
-    prevState = is_switch_on(0);
-    clear();
-
-    num = (num % NUM_LED_GROUPS) + 1;
-    // iterate the axis cone (so the center of rotation
-    // becomes cone two if it was cone one before, etc
-#ifdef DEBUG_PRINT
-    Serial.print(F("NUM CONE: "));
-    Serial.println(num, DEC);
-#endif
-
-    uint8_t next = get_connection(num, 0);
-    set_fivefold(cycles, num, next, POSITIVE);
-    // set the axis pentagon in the cycles array
-
-    set_fivefold_cycles();
-    // set the appropriate cycles in the cycles array
-#ifdef DEBUG_PRINT
-    Serial.print(F("PENTAGON: "));
-    for(int i = 0; i < 5; i++){
-      Serial.print(cycles[i], DEC);
-      Serial.print(", ");
-    }
-    Serial.println("");
-    Serial.print(F("Cycles: "));
-    for(int i = 0; i < 20; i++){
-      Serial.print(cycles[i], DEC);
-      Serial.print(", ");
-    }
-    Serial.println("");
-#endif
-
-    set_cycle_presets();
-    // color the cones in the cycles appropriately
-    
-    pixels.show(); 
-  }
-
-  if(is_switch_on(1) != prevStateTwo){
-    // if the second switch changes positions, perform
-    // a 3 fold "rotation" of the lights about the axis
-    prevStateTwo = is_switch_on(1);
-    rotate(false);
-    pixels.show();
-  }
-
-  if(is_switch_on(2) != prevStateThree){
-    // if the second switch changes positions, perform
-    // a 3 fold "rotation" of the lights about the axis
-    prevStateThree = is_switch_on(2);
-    rotate(true);
-    pixels.show();
-  }
-
+  transitionAllCones();
 }
 
 
@@ -264,11 +217,11 @@ void diagnostic_check_fivefold(){
 void set_fivefold_colors_by_level(){
   pixels.clear();
   
-  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
+  const uint8_t cycle_lengths[4] = {5,5,5,5};
   
 
   
-  for (uint8_t level=0; level<8; ++level){
+  for (uint8_t level=0; level<4; ++level){
     uint8_t offset = partial_sum(cycle_lengths,level);
     
     for (uint8_t j=0; j<cycle_lengths[level]; ++j){
@@ -282,40 +235,7 @@ void set_fivefold_colors_by_level(){
 
 
 
-void diagnostic_check_find_third(){
-  static uint8_t src = 1;
-  static uint8_t next = 8;
-  
-  static bool prevState = false;
 
-  // Store the previous state of the switches
-  // as well as the current axis cone
-
-  //uint8_t findThird(uint8_t src, uint8_t next, uint8_t dir){
-
-
-  if(is_switch_on(0) != prevState){
-    // if we flip the first switch
-    clear();
-    uint8_t arr[5];
-    set_fivefold(arr, 1, 2, POSITIVE);
-    
-    for(int i = 0; i < 5; i++) coneColor(arr[i], 255,255,255,255);
-    
-//    uint8_t third = findThird(src, next, POSITIVE);
-//    next = src;
-//    src = third;
-//
-//    coneColor(src, 255, 0, 255, 255);
-//    coneColor(next, 0, 255, 255, 255);
-//
-//    Serial.print("src: "); Serial.print(src); Serial.print(" next: "); Serial.println(next);
-
-    pixels.show();
-
-    prevState = is_switch_on(0);
-  }
-}
 
 
 void doDiagnosticMode(){
