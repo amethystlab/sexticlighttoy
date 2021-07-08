@@ -77,18 +77,17 @@ void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, Individ
 
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (Cone cone_num, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  if (cone_num < NUM_CONES) {
-    pixels.fill(pixels.Color(g, r, b, w), cone_num*NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
-  }
+void coneColor(Cone cone, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  coneColor(cone, pixels.Color(g,r,b,w));
 }   
 
 
-//accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (Cone cone_num, Color color) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  // Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.println(color);
-  if (cone_num < NUM_CONES) {
-    pixels.fill(color, (cone_num) * NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+
+void coneColor(Cone cone, Color color) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  // Serial.print("filling cone ");Serial.print(cone);Serial.print(" with color ");Serial.println(color);
+  if (cone < NUM_CONES) {
+    pixels.fill(color, (cone) * NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+    most_recent_colors[cone] = color;
   }
 }   
 

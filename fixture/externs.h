@@ -38,7 +38,7 @@ extern int32_t previousEncoderValue;
 extern ObjectMode previousMode;
 
 extern SymmetryType symmetry; 
-extern uint16_t connections[20];
+extern uint16_t connections[NUM_LED_GROUPS];
 
 
 /////////////color
@@ -47,13 +47,12 @@ extern Color colorPresets[5];
 
 //////////////// frame butter stuff
 
-extern Color frame_colors[2][20];
+extern Color frame_colors[2][NUM_LED_GROUPS];
 extern Time frame_times[2];
 
+extern Color most_recent_colors[NUM_LED_GROUPS];
 
 extern Time g_current_time;
-
-extern Color experiment[NUM_LED_GROUPS][MAX_NUM_EVENTS];
 
 
 #endif

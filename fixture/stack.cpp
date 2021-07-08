@@ -29,7 +29,7 @@ void printConeColorsFromMemory(){
 void setStartConeColorsFromCurrent(){
   Serial.println("setting start colors from current");
   for (Cone i{0}; i<NUM_CONES; ++i){
-    frame_colors[0][i] = getConeColor(i);
+    frame_colors[0][i] = most_recent_colors[i];
   }
 
 }
@@ -59,7 +59,10 @@ void setupFrames(){
   for (Cone i = 0; i < NUM_CONES; ++i){
     frame_colors[0][i] = BLACK;
     frame_colors[1][i] = BLACK;
+    most_recent_colors[i] = BLACK;
   }
+
+
 }
 
 

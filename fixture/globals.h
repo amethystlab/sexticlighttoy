@@ -153,6 +153,7 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 Color frame_colors[2][NUM_LED_GROUPS];
 Time frame_times[2];
 
+Color most_recent_colors[NUM_LED_GROUPS];
 
 Time g_current_time;
 
