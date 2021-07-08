@@ -499,7 +499,6 @@ Direction find_direction(Cone cone1, Cone middle, Cone cone2){
 // TODO: Replace code in set_fivefold with this function, as
 //       they are mostly equivalent
 Cone* find_middle_two(Cone cone1, Cone cone2){
-  
 
   Cone middlecone = get_mutual_connection(cone1, cone2);
   

@@ -5,7 +5,7 @@
 
 void printStack(){
   // Serial.println("current event stack:");
-  for (uint8_t i{0}; i<MAX_NUM_EVENTS; ++i){
+  for (uint8_t i = 0; i<MAX_NUM_EVENTS; ++i){
     printEvent(event_stack[i]);
   }
 }
@@ -16,7 +16,7 @@ void printEvent(Event e){
 
 void printActive(){
   Serial.println("active state:");
-  for (Cone i{0}; i<NUM_CONES; ++i){
+  for (Cone i = 0; i<NUM_CONES; ++i){
     Serial.print(active_colors[i][0]);Serial.print(" ");Serial.print(active_times[i][0]); Serial.print(" --> ");
     Serial.print(active_colors[i][1]);Serial.print(" ");Serial.println(active_times[i][1]);
   }

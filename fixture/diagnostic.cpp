@@ -35,7 +35,7 @@ void diagnostic_check_connected_cones(){
 
 
 void diagnostic_check_connected_cones_using_events(){
-  Serial.println("event-driven diagnostic_check showing connected cones");
+  Serial.println(F("event-driven diagnostic_check showing connected cones"));
   
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
@@ -43,11 +43,11 @@ void diagnostic_check_connected_cones_using_events(){
   cone = positive_mod(rotary_counter,NUM_CONES);
   
   
-  Serial.print("CURRENT NUM CONE: ");Serial.println(cone, DEC);
+  Serial.print(F("CURRENT NUM CONE: "));Serial.println(cone, DEC);
   // pixels.clear();
   uint32_t cone_tracker;
   cone_tracker = 0;
-  Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
+  Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
   if (prev_cone!= cone){
     prev_cone = cone;
     // Light up the current cone (cone number cone) green
@@ -59,9 +59,9 @@ void diagnostic_check_connected_cones_using_events(){
     for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
       // Light up the cones connected to the current cone red
       Cone connected_cone = get_connection(cone, i);
-
+    
       Serial.println(connected_cone, DEC);
-      
+    
       addEventToStack(connected_cone, RED, 10000);
       cone_tracker = cone_tracker | (uint32_t(1) << connected_cone);
       Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
@@ -73,19 +73,18 @@ void diagnostic_check_connected_cones_using_events(){
       if (! (cone_tracker & (uint32_t(1) << i)) )
         addEventToStack(i, BLACK, 10000);
     }
-    
+  
   }
   
-  // printStack();
+  printStack();
   eventStackToActive();
   
-  // printStack();
-  // printActive();
-
+  printStack();
+  printActive();
   transitionAllCones();
   
-  // printStack();
-  // printActive();
+  printStack();
+  printActive();
   
 }
 
@@ -370,7 +369,7 @@ void doDiagnosticMode(){
       break;
     case FiveFold:
     Serial.println('c');
-      diagnostic_check_connected_cones();
+      diagnostic_check_connected_cones_using_events();
       // diagnostic_check_fivefold();
       break;
     case Reflect:
