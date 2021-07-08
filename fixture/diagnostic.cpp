@@ -345,20 +345,21 @@ void doDiagnosticMode(){
   setSymmetryModeFromButtons();
   
   switch (symmetry){
+    
     case TwoFold:
-    // diagnostic_check_connected_cones_using_events();
       diagnostic_check_twofold();
       break;
+
     case ThreeFold:
       diagnostic_check_threefold();
       break;
+
     case FiveFold:
-      diagnostic_check_connected_cones_using_events();
-      // diagnostic_check_fivefold();
+      diagnostic_check_fivefold();
       break;
+
     case Reflect:
-      // diagnostic_check_connected_cones();
-      diagnostic_check_connected_cones();
+      diagnostic_check_connected_cones_using_events();
       break;
   }
     

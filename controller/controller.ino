@@ -182,7 +182,8 @@ void loop()
   
   print_state();
 
-  delay(50);
+  delay(50); // make this longer to make the delay between sends shorter.  
+  // don't want to overwhelm the fixture, though!!!
 }
 
 
