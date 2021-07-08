@@ -100,7 +100,7 @@ void setup()
 
 void setup_generic()
 {
-  Serial.begin(9600);           // start serial for output
+  Serial.begin(115200);           // start serial for output
 }
 
 void setup_devices()
@@ -153,7 +153,7 @@ void setup_encoder()
   setLED(led_color);  // this is the LED in the encoder
 
   
-  Serial.begin(9600); // Use serial for debugging
+  Serial.begin(115200); // Use serial for debugging
   Serial.println("Begin RGB Rotary Encoder Testing");
 
   // We use the standard external interrupt pin for the rotary,
@@ -182,7 +182,8 @@ void loop()
   
   print_state();
 
-  delay(50);
+  delay(50); // make this longer to make the delay between sends shorter.  
+  // don't want to overwhelm the fixture, though!!!
 }
 
 

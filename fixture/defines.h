@@ -17,6 +17,7 @@
 
 // MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
 #define MAX_UINT5 31 // 2^5-1
+#define MAX_POT_VALUE 1023
 
 #define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
 #define MAKE_CONNECTION(a,b,c) CONNECTION_NUM_SETUP(0, a) | CONNECTION_NUM_SETUP(1, b) | CONNECTION_NUM_SETUP(2, c)
@@ -26,6 +27,8 @@
 #define NUM_LED_GROUPS 20 // 20 cones total on fixture
 #define NUM_CONES NUM_LED_GROUPS
 #define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
+
+#define NUM_PIXELS NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP
 
 #define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
@@ -77,18 +80,18 @@ using Time = unsigned long;
 
 
 /////////////color
-// define some hexadecimal colors.  Handy!
-#define WHITE 0xFFFFFF
+// define some colors.  Handy!
+#define WHITE pixels.Color(255,255,255,0)
 
-#define RED 0xFF0000
-#define GREEN 0x00FF00
-#define BLUE 0x0000FF
+#define RED pixels.Color(0,255,0,0)
+#define GREEN pixels.Color(255,0,0,0)
+#define BLUE pixels.Color(0,0,255,0)
 
-#define YELLOW 0xFFFF00
-#define MAGENTA 0xFF00FF
-#define CYAN 0x00FFFF
+#define YELLOW pixels.Color(255,255,0,0)
+#define MAGENTA pixels.Color(0,255,255,0)
+#define CYAN pixels.Color(255,0,255,0)
 
-#define BLACK 0x000000
+#define BLACK pixels.Color(0,0,0,0)
 
 #define sumFromZeroToNineteen 190 // used in set_missing_in_cycles
 
@@ -107,11 +110,5 @@ using Time = unsigned long;
 #define MAX_NUM_EVENTS 22 // makes things not render if 23 or higher.
 #define OPEN_EVENT_CODE (NUM_CONES+1)
 
-
-typedef struct{
-  Cone  cone{OPEN_EVENT_CODE};
-  Color color{WHITE};
-  Time  duration{0};
-} Event;
 
 #endif

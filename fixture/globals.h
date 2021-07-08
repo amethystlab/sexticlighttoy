@@ -13,7 +13,7 @@ Cone cycles[NUM_LED_GROUPS]; //< Array to store the cyclic groups of rotation an
 uint8_t num_per_rotation = 3;  // because each cone is connected to 3 other cones
 
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
 
 uint16_t pot1, pot2, pot3;
@@ -28,7 +28,7 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 ObjectMode mode = Diagnostic;
-SymmetryType symmetry = Reflect; 
+SymmetryType symmetry = FiveFold; 
 
 int32_t previousEncoderValue = 0; 
 ObjectMode previousMode;
@@ -150,14 +150,13 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 // between which we are interpolating.
 // the `active_times` define the start and end time for the current event,
 // and the `active_colors` store the before and after color, between which we interpolate.
-Color active_colors[NUM_LED_GROUPS][2];
-Time active_times[NUM_LED_GROUPS][2];
+Color frame_colors[2][NUM_LED_GROUPS];
+Time frame_times[2];
 
-Event event_stack[MAX_NUM_EVENTS];
+Color most_recent_colors[NUM_LED_GROUPS];
 
-Time start;
 Time g_current_time;
-Time lengthOfShow;
+
 
 
 #endif // include guard

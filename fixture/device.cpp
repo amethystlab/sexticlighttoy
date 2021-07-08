@@ -159,22 +159,25 @@ void setupPixels(){
 }
 
 void setupCommunication(){
-  Wire.begin(FIXTURE_ADDRESS);                // join i2c bus with address #4
+  Wire.begin(FIXTURE_ADDRESS);                // join i2c bus with address
   Wire.onReceive(receiveEvent); // register event
 }
 
 void setupSerial(){
-  Serial.begin(9600);           // start serial for output
+  Serial.begin(115200);           // start serial for output
   Serial.setTimeout(20);
 }
 
 
 void setupTime(){
-  lengthOfShow = 10000;
-  start = millis();
 }
 
 
+
+Time getCurrentTime(){
+  g_current_time = millis();
+  return g_current_time;
+}
 
 void deadCodeGraveyard(){
   //  clear();

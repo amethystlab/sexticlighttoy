@@ -56,7 +56,7 @@ Color getConeColor(Cone cone_num) {
 
 //Only sets ONE pixel to a certain color at a time
 void pixelColor(int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r=red, b = blue, w = white
-  if (pix_num >= 0 && pix_num <= 255) { //forces the user to enter a valid pixel number
+  if (pix_num >= 0 && pix_num < NUM_PIXELS) { //forces the user to enter a valid pixel number
     Color color = pixels.Color(g, r, b, w); // make a color
     pixels.setPixelColor(pix_num, color); //set a single pixel color
   }
@@ -67,7 +67,7 @@ void pixelColor(int pix_num , IndividualColor g, IndividualColor r, IndividualCo
 
 // accepts a pixel number, correlates the pixel's number to the cone its in and lights all of the pixels within that cone to the specfied color
 void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  if (pix_num >= 0 && pix_num <= 255) { //forces the user to enter a valid pixel number
+  if (pix_num >= 0 && pix_num < NUM_PIXELS) { //forces the user to enter a valid pixel number
     Color color = pixels.Color(g, r, b, w); // make a color
     int pixStart = (pix_num / NUM_PIXELS_PER_GROUP) * NUM_PIXELS_PER_GROUP; //determines which pixel out of 140 to fill
     pixels.fill(color, pixStart, NUM_PIXELS_PER_GROUP);
@@ -77,20 +77,17 @@ void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, Individ
 
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (Cone cone_num, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.print(g);Serial.print(" ");Serial.print(r);Serial.print(" ");Serial.print(b);Serial.print(" ");Serial.println(w);
-  if (cone_num < NUM_CONES) {
-    Serial.print("starting at pixel" ); Serial.println(cone_num*NUM_PIXELS_PER_GROUP);
-    pixels.fill(pixels.Color(g, r, b, w), cone_num*NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
-  }
+void coneColor(Cone cone, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  coneColor(cone, pixels.Color(g,r,b,w));
 }   
 
 
-//accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
-void coneColor (Cone cone_num, Color color) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  // Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.println(color);
-  if (cone_num < NUM_CONES) {
-    pixels.fill(color, (cone_num) * NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+
+void coneColor(Cone cone, Color color) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
+  // Serial.print("filling cone ");Serial.print(cone);Serial.print(" with color ");Serial.println(color);
+  if (cone < NUM_CONES) {
+    pixels.fill(color, (cone) * NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
+    most_recent_colors[cone] = color;
   }
 }   
 
@@ -98,7 +95,7 @@ void coneColor (Cone cone_num, Color color) { // pix_num = Pixel Number, g = gre
 //sets the cones of the array to preset colors, works for 2, 3, and 5 fold
 void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry) {
   if (degreeOfSymmetry > 5) {
-    Serial.println("degreeOfSymmetry must be less than or equal to 5 in setGroupPresetColor function.");
+    Serial.println(F("degreeOfSymmetry must be less than or equal to 5 in setGroupPresetColor function."));
   }
   else {
     for (int i = 0; i < degreeOfSymmetry; i++) {

@@ -12,12 +12,22 @@
 
 #include "externs.h"
 #include "color.h"
+#include "device.h"
 
 
+// sets all starting cone colors to be whatever they currently are from the pixels.
+void setStartConeColorsFromCurrent();
 
-void printStack();
-void printEvent(Event e);
-void printActive();
+
+// sets the start time to whatever time is in g_current_time.  
+// you should probably make sure that g_current_time is current first.  
+// i suggest updating that time once per loop?
+void setStartTimeToNow();
+
+
+void printFrames();
+
+
 void printConeColorsFromMemory();
 
 // generates a floating point number between 0 and 1, representing how far between x1 and x2, x is.   
@@ -30,33 +40,20 @@ float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2);
 
 
 
-
-// will make `cone` transition from its previous color to the specified color, taking the specified duration.
-bool addEventToStack(Cone cone, Color color, Time duration);
-
-
-// loops over all cones.
-// if the active_time indicates that NO_EVENT_PLANNED,
-// then the old active time becomes now, and the old active color is the current cone color.
-// 
-// then, loop over all events on the stack, and if one refers to the current cone,
-// 
-void eventStackToActive();
+bool setNextFrameTime(Time duration);
+bool setNextFrameColor(Cone cone, Color color);
 
 
 
 // called once at the beginning of the program
-// sets all event_cone[] and times[] values to OPEN_EVENT_CODE and NO_EVENT_PLANNED.
-void setupEvents();
-
-// 
-void doEventMode();
+// sets all frame_colors[] and frame_times[] values to BLACk and NO_EVENT_PLANNED.
+void setupFrames();
 
 
 // for a specific `cone`,
-// uses `colors` and `times` to figure out what the color should be,
+// uses `frame_colors` and `frame_times` to figure out what the color should be,
 // then sets the color to that.
-bool transitionCone(Cone cone); // requires that the current_time has already been set externally.
+bool transitionCone(Cone cone); // requires that the g_current_time has already been set externally.
 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones();
