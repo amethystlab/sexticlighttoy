@@ -9,7 +9,7 @@ void printFrames(){
   Serial.print(F("time: "));Serial.print(frame_times[0]); Serial.print(F(" --> ")); Serial.println(frame_times[1]);
 
   for (Cone i = 0; i<NUM_CONES; ++i){
-    Serial.print("cone "); Serial.print(i);Serial.print(": "); Serial.print(frame_colors[0][i]);Serial.print(" "); Serial.print(F(" --> ")); Serial.println(frame_colors[1][i]);;
+    Serial.print(F("cone ")); Serial.print(i);Serial.print(F(": ")); Serial.print(frame_colors[0][i]);Serial.print(F(" ")); Serial.print(F(" --> ")); Serial.println(frame_colors[1][i]);;
   }
   Serial.println("");
 }
@@ -27,7 +27,7 @@ void printConeColorsFromMemory(){
 
 
 void setStartConeColorsFromCurrent(){
-  Serial.println("setting start colors from current");
+  Serial.println(F("setting start colors from current"));
   for (Cone i{0}; i<NUM_CONES; ++i){
     frame_colors[0][i] = most_recent_colors[i];
   }
@@ -46,7 +46,7 @@ bool setNextFrameTime(Time duration){
 
 
 bool setNextFrameColor(Cone cone, Color color){
-  Serial.print(F("setting next frame color for cone "));Serial.print(cone);Serial.print(" to ");Serial.println(color);
+  Serial.print(F("setting next frame color for cone "));Serial.print(cone);Serial.print(F(" to "));Serial.println(color);
   frame_colors[1][cone] = color;
 }
 
