@@ -15,6 +15,7 @@ void diagnostic_check_find_third();
 void set_twofold_colors_by_level();
 void set_twofold_colors_by_cycle_position();
 void set_threefold_colors_by_level();
+void set_fivefold_colors_by_level();
 
 void doDiagnosticMode();
 #endif

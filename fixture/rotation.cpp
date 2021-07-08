@@ -354,10 +354,6 @@ Cone find_next_cone_in_direction(Cone src, Cone next, Direction dir){
 
 
 
-void set_threefold(Cone src){
-  // Set the seed for the threefold rotatoin
-  cycles[0] = src;
-}
 
 
 // Function to set an array of length five to the five elements of 

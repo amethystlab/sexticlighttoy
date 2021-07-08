@@ -67,6 +67,10 @@ void diagnostic_check_twofold(){
   Cone second_cone = get_connection(root_cone, connection_num); 
 
   if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2])){
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
 
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
@@ -254,6 +258,28 @@ void diagnostic_check_fivefold(){
   }
 
 }
+
+
+
+void set_fivefold_colors_by_level(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
+  
+
+  
+  for (uint8_t level=0; level<8; ++level){
+    uint8_t offset = partial_sum(cycle_lengths,level);
+    
+    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+      uint8_t value = (level==0 ? 255 : (255/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/8 ),255,value);
+      setNextFrameColor(cycles[offset+j], color);
+    }
+  }
+
+}
+
 
 
 void diagnostic_check_find_third(){

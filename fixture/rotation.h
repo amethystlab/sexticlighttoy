@@ -39,7 +39,6 @@ void set_reflection_cycles();
 
 uint8_t find_next_cone_in_direction(Cone src, Cone next, Direction dir);
 
-void set_threefold(Cone src);
 void set_fivefold(Cone *arr, Cone src, Cone next, Direction dir);
 
 
