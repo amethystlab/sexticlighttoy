@@ -25,12 +25,13 @@
 //{9,7,15,13,11} = r,g,b,w,y
 //{18,17,16,20,19} = r,g,b,w,y
 
-uint8_t partial_sum(uint8_t* data, uint8_t num);
+
+void printCycles();
 
 uint8_t get_connection(uint8_t cone, uint8_t connection_num);
 
 void set_twofold_cycles(Cone cone1, Cone cone2);
-void set_threefold_cycles();
+void set_threefold_cycles(Cone root_cone);
 void set_fivefold_cycles();
 
 void set_reflection_cycles();

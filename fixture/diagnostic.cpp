@@ -59,9 +59,6 @@ void diagnostic_check_twofold(){
   num_per_rotation = 2; // why is this global thing being set?  isn't it already set because the global mode is set?
   
 
-
-
-
   Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
 
@@ -75,11 +72,6 @@ void diagnostic_check_twofold(){
     current_cone[1] = second_cone;
     current_cone[2] = connection_num;
 
-    // Serial.println("changing line of symmetry");
-    // 
-    // Serial.print("encoder, previous encoder: "); Serial.print(rotary_counter);Serial.println(previousEncoderValue);
-    // Serial.print("root cone, second cone: "); Serial.print(root_cone); Serial.println(second_cone);
-    
 
     root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
     connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -87,22 +79,11 @@ void diagnostic_check_twofold(){
     second_cone = get_connection(root_cone, connection_num);
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
+    set_twofold_colors_by_level();
   }
 
-
-  //   // by default, perform a "rotation" of the lights about the axis
-  //   Serial.println("performing a rotation");
-  // 
-  //   rotate(false);
-  //   pixels.show();
   
-  // Serial.print("root cone, second cone, connection_num: "); 
-  // Serial.print(root_cone); Serial.print(" "); Serial.print(second_cone); Serial.print(" "); Serial.print(connection_num);  Serial.print("\n");
-
-  set_twofold_colors_by_level();
-  // set_twofold_colors_by_cycle_position();
-  pixels.show(); 
-  
+  transitionAllCones();
 }
 
 
@@ -119,7 +100,7 @@ void set_twofold_colors_by_level(){
     for (uint8_t j=0; j<cycle_lengths[level]; ++j){
       uint8_t value = (level==0 ? 255 : (255/4));
       Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/7 ),255,value);
-      coneColor(cycles[offset+j], color);
+      setNextFrameColor(cycles[offset+j], color);
     }
     
   }
@@ -150,54 +131,50 @@ void set_twofold_colors_by_cycle_position(){
 
 
 void diagnostic_check_threefold(){
+
   Serial.println(F("threefold diagnostic_check"));
-  num_per_rotation = 3;
 
-  static int num = 1;
-  static bool prevState = false;
-  static bool prevStateTwo = false;
+  num_per_rotation = 3; // why is this global thing being set?  isn't it already set because the global mode is set?
 
-  // Store the previous state of the switches
-  // as well as the current axis cone
 
-  if(is_switch_on(0) != prevState){
-    // if we flip the first switch
+
+  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
+
+  if ( (root_cone != current_cone[0])){
+    current_cone[0] = root_cone;
+
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
     
-    prevState = is_switch_on(0);
-    clear();
-
-    num = (num % NUM_LED_GROUPS) + 1;
-    // iterate the axis cone (so the center of rotation
-    // becomes cone two if it was cone one before, etc
-    
-    set_threefold(num);
-    // set the axis cone in the cycles array
-    set_threefold_cycles();
+    set_threefold_cycles(root_cone);
     // set the appropriate cycles in the cycles array
-
-#ifdef DEBUG_PRINT
-    Serial.print(F("Cycles: "));
-    for(int i = 0; i < 20; i++){
-      Serial.print(cycles[i], DEC);
-      Serial.print(F(", "));
-    }
-    Serial.println("");
-#endif
-
-    set_cycle_presets();
-    // color the cones appropriately
-
-
-    pixels.show();
-
-    
+    set_threefold_colors_by_level();
   }
 
-  if(is_switch_on(1) != prevStateTwo){
-    // if the second switch changes positions, perform
-    // a 3 fold "rotation" of the lights about the axis
-    rotate(false);
-    pixels.show();
+  
+  transitionAllCones();
+}
+
+
+
+
+void set_threefold_colors_by_level(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
+  
+
+  
+  for (uint8_t level=0; level<8; ++level){
+    uint8_t offset = partial_sum(cycle_lengths,level);
+    
+    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+      uint8_t value = (level==0 ? 255 : (255/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/8 ),255,value);
+      setNextFrameColor(cycles[offset+j], color);
+    }
   }
 
 }
