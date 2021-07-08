@@ -51,6 +51,7 @@ typedef enum ObjectMode {
 };
 
 using Cone = uint8_t;
+using Connection = uint8_t; // indexes the connected cones, to a given cone.  
 using Direction = int8_t;
 using Color = uint32_t;
 using IndividualColor = uint8_t;

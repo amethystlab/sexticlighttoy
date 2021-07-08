@@ -54,30 +54,36 @@ void diagnostic_check_connected_cones(){
 
 void diagnostic_check_twofold(){
 
-  // Serial.println("twofold diagnostic_check");
-  num_per_rotation = 2;
+  Serial.println(F("twofold diagnostic_check"));
+
+  num_per_rotation = 2; // why is this global thing being set?  isn't it already set because the global mode is set?
   
-  Cone& root_cone = current_cone[0];
-  Cone& second_cone = current_cone[1];
-  uint8_t& connection_num = current_cone[2];
-  
-  connection_num = positive_mod(rotary_counter,3); // indexes the connected cones to the root
-  root_cone = positive_div(rotary_counter,20); // the active root of the rotation.
-  second_cone = get_connection(root_cone, connection_num); // the second cone.  the node between them is on the line of symmetry
 
 
-  
-  if (previousEncoderValue!=rotary_counter){
-    previousEncoderValue = rotary_counter;
+
+
+  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
+  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
+
+
+  // infer the second cone.  the node between them is on the line of symmetry
+  Cone second_cone = get_connection(root_cone, connection_num); 
+
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2])){
+
+    current_cone[0] = root_cone;
+    current_cone[1] = second_cone;
+    current_cone[2] = connection_num;
 
     // Serial.println("changing line of symmetry");
     // 
     // Serial.print("encoder, previous encoder: "); Serial.print(rotary_counter);Serial.println(previousEncoderValue);
     // Serial.print("root cone, second cone: "); Serial.print(root_cone); Serial.println(second_cone);
     
-    connection_num = positive_mod(rotary_counter,3);
-    root_cone = positive_div(rotary_counter,20);
-    
+
+    root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
+    connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
+
     second_cone = get_connection(root_cone, connection_num);
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
@@ -93,11 +99,10 @@ void diagnostic_check_twofold(){
   // Serial.print("root cone, second cone, connection_num: "); 
   // Serial.print(root_cone); Serial.print(" "); Serial.print(second_cone); Serial.print(" "); Serial.print(connection_num);  Serial.print("\n");
 
-
-  set_twofold_colors_by_cycle_position();
+  set_twofold_colors_by_level();
+  // set_twofold_colors_by_cycle_position();
   pixels.show(); 
   
-  // delay(500);
 }
 
 
