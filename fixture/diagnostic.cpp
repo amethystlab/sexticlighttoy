@@ -182,7 +182,6 @@ void set_threefold_colors_by_level(){
 
 
 void diagnostic_check_fivefold(){
-  Serial.println(F("fivefold diagnostic"));
 
   num_per_rotation = 5; // why is this global thing being set?  isn't it already set because the global mode is set?
 

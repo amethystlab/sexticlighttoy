@@ -105,7 +105,7 @@ using Time = unsigned long;
 
 
 #define GRADUAL_TRANSITION
-// #define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
+#define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
 
 #define NO_EVENT_PLANNED 0 // i think this should be 0 or the max for unsigned long (Time)
 #define MAX_NUM_EVENTS 22 // makes things not render if 23 or higher.

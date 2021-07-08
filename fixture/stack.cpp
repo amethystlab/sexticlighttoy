@@ -125,13 +125,12 @@ bool transitionCone(Cone cone){
   // cone's color get set to the final color for the event.
   if(g_current_time < final_time) 
   {
-    Serial.print(F("transitioning cone ")); Serial.print(cone); Serial.print(F(" at time ")); Serial.println(g_current_time);
       
-    #ifdef CUBIC_INTERP
-    IndividualColor final_red = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, r[0], r[1]));
-    IndividualColor final_green = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, g[0], g[1]));
-    IndividualColor final_blue = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, b[0], b[1]));
-    IndividualColor final_white = (IndividualColor) round(cubicNatural(current_time, start_time, final_time, w[0], w[1]));
+  #ifdef CUBIC_INTERP
+    IndividualColor final_red = (IndividualColor) round(cubicNatural(g_current_time, start_time, final_time, r[0], r[1]));
+    IndividualColor final_green = (IndividualColor) round(cubicNatural(g_current_time, start_time, final_time, g[0], g[1]));
+    IndividualColor final_blue = (IndividualColor) round(cubicNatural(g_current_time, start_time, final_time, b[0], b[1]));
+    IndividualColor final_white = (IndividualColor) round(cubicNatural(g_current_time, start_time, final_time, w[0], w[1]));
     //Serial.print("final red: "); Serial.println(final_red);
 
   #else
