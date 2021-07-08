@@ -45,15 +45,14 @@ extern uint16_t connections[20];
 
 extern Color colorPresets[5]; 
 
-////////////////stack
+//////////////// frame butter stuff
 
-extern Color active_colors[20][2];
-extern Time active_times[20][2];
+extern Color frame_colors[20][2];
+extern Time frame_times[2];
 
-extern Event event_stack[MAX_NUM_EVENTS];
+extern Color* frame_colors_start, frame_colors_end; 
+extern Time* frame_time_start, frame_time_end;
 
-extern Time start;
-extern Time lengthOfShow;
 extern Time g_current_time;
 
 extern Color experiment[NUM_LED_GROUPS][MAX_NUM_EVENTS];

@@ -35,7 +35,7 @@ void setup() {
   setupSerial();
   setupPixels();
   setupCommunication();
-  setupEvents();
+  setupFrames();
   setupTime();
 
   delay(100); // waste some time for communication to get synced.

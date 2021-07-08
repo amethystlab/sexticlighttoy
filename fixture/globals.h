@@ -150,14 +150,14 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 // between which we are interpolating.
 // the `active_times` define the start and end time for the current event,
 // and the `active_colors` store the before and after color, between which we interpolate.
-Color active_colors[NUM_LED_GROUPS][2];
-Time active_times[NUM_LED_GROUPS][2];
+Color frame_colors[NUM_LED_GROUPS][2];
+Time frame_times[2];
 
-Event event_stack[MAX_NUM_EVENTS];
+Color* frame_colors_start, frame_colors_end; 
+Time* frame_time_start, frame_time_end;
 
-Time start;
 Time g_current_time;
-Time lengthOfShow;
+
 
 
 #endif // include guard

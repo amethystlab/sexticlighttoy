@@ -54,7 +54,7 @@ void set_threefold_cycles(){
     fourth_level[i] = arr[1];
     
 #ifdef DEBUG_PRINT
-    Serial.print("array out: ");
+    Serial.print(F("array out: "));
     for(int i = 0; i < 2; i++){
       Serial.print(arr[0], DEC); Serial.print(", "); Serial.println(arr[1], DEC);
     }
@@ -197,15 +197,15 @@ void set_twofold_cycles(Cone cone1, Cone cone2){
   
 
 // #ifdef DEBUG_PRINT
-  Serial.print("LEVEL 1: "); Serial.print(cycles[0]); Serial.print(" "); Serial.println(cycles[1]);
-  Serial.print("LEVEL 2: "); Serial.print(second_level[0]); Serial.print(" "); Serial.print(second_level[1]); Serial.print(" "); Serial.print(second_level[2]); Serial.print(" "); Serial.println(second_level[3]);
-  Serial.print("LEVEL 3: "); Serial.print(third_level[0]); Serial.print(" "); Serial.println(third_level[1]);
-  Serial.print("LEVEL 4: "); Serial.print(fourth_level[0]); Serial.print(" "); Serial.print(fourth_level[1]); Serial.print(" "); Serial.print(fourth_level[2]); Serial.print(" "); Serial.println(fourth_level[3]);
-  Serial.print("LEVEL 5: "); Serial.print(fifth_level[0]); Serial.print(" "); Serial.println(fifth_level[1]);
-  Serial.print("LEVEL 6: "); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.print(sixth_level[2]); Serial.print(" "); Serial.println(sixth_level[3]);
-  Serial.print("LEVEL 7: "); Serial.print(seventh_level[0]); Serial.print(" "); Serial.println(seventh_level[1]);
+  Serial.print(F("LEVEL 1: ")); Serial.print(cycles[0]); Serial.print(" "); Serial.println(cycles[1]);
+  Serial.print(F("LEVEL 2: ")); Serial.print(second_level[0]); Serial.print(" "); Serial.print(second_level[1]); Serial.print(" "); Serial.print(second_level[2]); Serial.print(" "); Serial.println(second_level[3]);
+  Serial.print(F("LEVEL 3: ")); Serial.print(third_level[0]); Serial.print(" "); Serial.println(third_level[1]);
+  Serial.print(F("LEVEL 4: ")); Serial.print(fourth_level[0]); Serial.print(" "); Serial.print(fourth_level[1]); Serial.print(" "); Serial.print(fourth_level[2]); Serial.print(" "); Serial.println(fourth_level[3]);
+  Serial.print(F("LEVEL 5: ")); Serial.print(fifth_level[0]); Serial.print(" "); Serial.println(fifth_level[1]);
+  Serial.print(F("LEVEL 6: ")); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.print(sixth_level[2]); Serial.print(" "); Serial.println(sixth_level[3]);
+  Serial.print(F("LEVEL 7: ")); Serial.print(seventh_level[0]); Serial.print(" "); Serial.println(seventh_level[1]);
   
-  Serial.println("cycles:");
+  Serial.println(F("cycles:"));
   for (int i=0; i<20; ++i)
     Serial.println(cycles[i]);
 
@@ -270,13 +270,13 @@ void set_reflection_cycles(){
   seventh_level[1] = get_mutual_connection(sixth_level[1], sixth_level[2]);
 
 #ifdef DEBUG_PRINT
-  Serial.print("LEVEL 1: "); Serial.print(cycles[0]); Serial.print(" "); Serial.println(cycles[1]);
-  Serial.print("LEVEL 2: "); Serial.print(second_level[0]); Serial.print(" "); Serial.print(second_level[1]); Serial.print(" "); Serial.print(second_level[2]); Serial.print(" "); Serial.println(second_level[3]);
-  Serial.print("LEVEL 3: "); Serial.print(third_level[0]); Serial.print(" "); Serial.println(third_level[1]);
-  Serial.print("LEVEL 4: "); Serial.print(fourth_level[0]); Serial.print(" "); Serial.print(fourth_level[1]); Serial.print(" "); Serial.print(fourth_level[2]); Serial.print(" "); Serial.println(fourth_level[3]);
-  Serial.print("LEVEL 5: "); Serial.print(fifth_level[0]); Serial.print(" "); Serial.println(fifth_level[1]);
-  Serial.print("LEVEL 6: "); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.print(sixth_level[2]); Serial.print(" "); Serial.println(sixth_level[3]);
-  Serial.print("LEVEL 7: "); Serial.print(seventh_level[0]); Serial.print(" "); Serial.println(seventh_level[1]);
+  Serial.print(F("LEVEL 1: ")); Serial.print(cycles[0]); Serial.print(" "); Serial.println(cycles[1]);
+  Serial.print(F("LEVEL 2: ")); Serial.print(second_level[0]); Serial.print(" "); Serial.print(second_level[1]); Serial.print(" "); Serial.print(second_level[2]); Serial.print(" "); Serial.println(second_level[3]);
+  Serial.print(F("LEVEL 3: ")); Serial.print(third_level[0]); Serial.print(" "); Serial.println(third_level[1]);
+  Serial.print(F("LEVEL 4: ")); Serial.print(fourth_level[0]); Serial.print(" "); Serial.print(fourth_level[1]); Serial.print(" "); Serial.print(fourth_level[2]); Serial.print(" "); Serial.println(fourth_level[3]);
+  Serial.print(F("LEVEL 5: ")); Serial.print(fifth_level[0]); Serial.print(" "); Serial.println(fifth_level[1]);
+  Serial.print(F("LEVEL 6: ")); Serial.print(sixth_level[0]); Serial.print(" "); Serial.print(sixth_level[1]); Serial.print(" "); Serial.print(sixth_level[2]); Serial.print(" "); Serial.println(sixth_level[3]);
+  Serial.print(F("LEVEL 7: ")); Serial.print(seventh_level[0]); Serial.print(" "); Serial.println(seventh_level[1]);
 #endif
 
   // cycles[2] = second_level[0];
@@ -555,7 +555,7 @@ void set_cycle_presets(){
   
   int index = offset;
 #ifdef DEBUG_PRINT
-  Serial.print("Setting ");
+  Serial.print(F("Setting "));
 #endif
 
   for(int i = 0; i < offset; i++){
@@ -584,7 +584,7 @@ void set_cycle_presets(){
 #endif
   }
 #ifdef DEBUG_PRINT
-  Serial.println("to white");
+  Serial.println(F("to white"));
 #endif
 }
 
@@ -671,7 +671,7 @@ void incrementAxis(Direction dir){
       cycles[0] = reflectionAxis[0];
       cycles[1] = reflectionAxis[1];
 #ifdef DEBUG_PRINT
-      Serial.print("NEW AXIS: "); Serial.print(reflectionAxis[0]); Serial.print(", "); Serial.println(reflectionAxis[1]);
+      Serial.print(F("NEW AXIS: ")); Serial.print(reflectionAxis[0]); Serial.print(", "); Serial.println(reflectionAxis[1]);
 #endif
       set_reflection_cycles();
       break;
@@ -735,7 +735,7 @@ void rotate(bool reverse){
   }
   
   int index = offset;
-  unsigned long currentTime = (millis() - start) % lengthOfShow;
+  getCurrentTime();
   boolean shouldContinue = true;
 
   while (index + numPerRotation <= maximum && shouldContinue){
@@ -744,7 +744,7 @@ void rotate(bool reverse){
 #ifndef GRADUAL_TRANSITION
     nFoldRotateColor(cycles + index, numPerRotation, reverse);
 #else
-    shouldContinue = nFoldRotateColorTransition(cycles + index, numPerRotation, reverse, currentTime, 1000);
+    shouldContinue = nFoldRotateColorTransition(cycles + index, numPerRotation, reverse, g_current_time, 1000);
 #endif
     index += numPerRotation;
   }
@@ -813,7 +813,7 @@ void nFoldRotateColor(uint8_t *coneArray, uint8_t num_cones_to_rotate, bool reve
   }
   else {
 #ifdef DEBUG_PRINT
-    Serial.println("numCone is not greater than one. Choose new number in nFoldRotateColor.");
+    Serial.println(F("numCone is not greater than one. Choose new number in nFoldRotateColor."));
 #endif
   }
 } //end 7/18/20
@@ -825,7 +825,7 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
   if (numCone > 1) {
 
     for(int i = 0; i < numCone; i++){
-      if(active_times[coneArray[i]][1] != NO_EVENT_PLANNED){     
+      if(frame_times[1] != NO_EVENT_PLANNED){     
         return false;
       }
     }
@@ -848,11 +848,13 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
 
         overwrittenColor = getConeColor(coneArray[index]);
 
-        active_times[coneArray[index]][0] = currentTime;
-        active_colors[coneArray[index]][0] = getConeColor(coneArray[index]);
+        frame_times[0] = g_current_time;
+        
 
-        active_times[coneArray[index]][1] = (currentTime + leng) % lengthOfShow;
-        active_colors[coneArray[index]][1] = color;
+        frame_times[1] = g_current_time + leng;
+
+        frame_colors[coneArray[index]][0] = getConeColor(coneArray[index]);
+        frame_colors[coneArray[index]][1] = color;
         
         //coneColor(coneArray[index], (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF); //moves color cone to cone
 
@@ -866,7 +868,7 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
   }
   else {
 #ifdef DEBUG_PRINT
-    Serial.println("numCone is not greater than one. Choose new number in nFoldRotateColor.");
+    Serial.println(F("numCone is not greater than one. Choose new number in nFoldRotateColor."));
 #endif
   }
 } 
@@ -942,14 +944,14 @@ void doRotationalMode()
   } else if((rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
 #ifdef DEBUG_PRINT
     Serial.print(rotary_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
-    Serial.println("Rotate Positive");
+    Serial.println(F("Rotate Positive"));
 #endif
     previousEncoderValue = rotary_counter;
     rotate(false);
     pixels.show();
   } else if((previousEncoderValue - rotary_counter) > TICKS_PER_ROTATION){
 #ifdef DEBUG_PRINT
-    Serial.print("Rotate Negative "); Serial.print(rotary_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
+    Serial.print(F("Rotate Negative ")); Serial.print(rotary_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
 #endif
     previousEncoderValue = rotary_counter;
     rotate(true);
@@ -995,7 +997,7 @@ void doReflectionalMode(){
     symmetry = Reflect;
   
     if(previousMode != Reflectional) {
-      Serial.println("Reflectional Mode");
+      Serial.println(F("Reflectional Mode"));
       incrementAxis(0);
       set_cycle_presets();
       pixels.show();
@@ -1006,7 +1008,7 @@ void doReflectionalMode(){
     if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_button_down)
     {
       #ifdef DEBUG_PRINT
-      Serial.println("Change reflection axis");
+      Serial.println(F("Change reflection axis"));
       #endif
       previousEncoderValue = rotary_counter;
       incrementAxis(1);
@@ -1015,7 +1017,7 @@ void doReflectionalMode(){
       pixels.show();
     } else if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
       #ifdef DEBUG_PRINT
-      Serial.println("Reflect");
+      Serial.println(F("Reflect"));
       #endif
       previousEncoderValue = rotary_counter;
       rotate(false);
@@ -1027,7 +1029,7 @@ void doReflectionalMode(){
 void doColorSetMode(){
 
     if(previousMode != ColorSet) {
-      Serial.println("ColorSet Mode");
+      Serial.println(F("ColorSet Mode"));
       clear();
       previousMode = ColorSet;
     }

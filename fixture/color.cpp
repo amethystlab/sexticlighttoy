@@ -78,9 +78,9 @@ void pixToConeColor (int pix_num , IndividualColor g, IndividualColor r, Individ
 
 //accepts an integer (representing the number on each cone) and lights up just that cone to the specified color
 void coneColor (Cone cone_num, IndividualColor g, IndividualColor r, IndividualColor b, IndividualColor w) { // pix_num = Pixel Number, g = green, r= red, b = blue, w = white
-  Serial.print("filling cone ");Serial.print(cone_num);Serial.print(" with color ");Serial.print(g);Serial.print(" ");Serial.print(r);Serial.print(" ");Serial.print(b);Serial.print(" ");Serial.println(w);
+  Serial.print(F("filling cone "));Serial.print(cone_num);Serial.print(F(" with color "));Serial.print(g);Serial.print(" ");Serial.print(r);Serial.print(" ");Serial.print(b);Serial.print(" ");Serial.println(w);
   if (cone_num < NUM_CONES) {
-    Serial.print("starting at pixel" ); Serial.println(cone_num*NUM_PIXELS_PER_GROUP);
+    Serial.print(F("starting at pixel") ); Serial.println(cone_num*NUM_PIXELS_PER_GROUP);
     pixels.fill(pixels.Color(g, r, b, w), cone_num*NUM_PIXELS_PER_GROUP, NUM_PIXELS_PER_GROUP); //fills seven pixels with the desired color and specific location
   }
 }   
@@ -98,7 +98,7 @@ void coneColor (Cone cone_num, Color color) { // pix_num = Pixel Number, g = gre
 //sets the cones of the array to preset colors, works for 2, 3, and 5 fold
 void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry) {
   if (degreeOfSymmetry > 5) {
-    Serial.println("degreeOfSymmetry must be less than or equal to 5 in setGroupPresetColor function.");
+    Serial.println(F("degreeOfSymmetry must be less than or equal to 5 in setGroupPresetColor function."));
   }
   else {
     for (int i = 0; i < degreeOfSymmetry; i++) {

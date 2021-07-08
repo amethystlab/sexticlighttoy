@@ -2,7 +2,7 @@
 
 
 void diagnostic_check_connected_cones(){
-  Serial.println("diagnostic_check showing connected cones");
+  Serial.println(F("diagnostic_check showing connected cones"));
 
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
@@ -20,7 +20,7 @@ void diagnostic_check_connected_cones(){
   // Light up the current cone (cone number cone) green
   coneColor(cone, 255, 0, 0, 0);
   
-  Serial.print("CONNECTED CONES: ");
+  Serial.print(F("CONNECTED CONES: "));
   for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
     // Light up the cones connected to the current cone red
     uint8_t connected_cone = get_connection(cone, i);
@@ -35,7 +35,7 @@ void diagnostic_check_connected_cones(){
 
 
 void diagnostic_check_connected_cones_using_events(){
-  Serial.println(F("event-driven diagnostic_check showing connected cones"));
+  Serial.println(F("frame-driven diagnostic_check showing connected cones"));
   
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
@@ -52,9 +52,10 @@ void diagnostic_check_connected_cones_using_events(){
     prev_cone = cone;
     // Light up the current cone (cone number cone) green
     // coneColor(cone, 255, 0, 0, 0);
-    addEventToStack(cone, GREEN, 10000);
+    setNextFrameTime(10000);
+    setNextFrameColor(cone, GREEN);
     cone_tracker = cone_tracker | (uint32_t(1) << cone);
-    Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
+    Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
     // Serial.print("CONNECTED CONES: ");
     for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
       // Light up the cones connected to the current cone red
@@ -62,29 +63,24 @@ void diagnostic_check_connected_cones_using_events(){
     
       Serial.println(connected_cone, DEC);
     
-      addEventToStack(connected_cone, RED, 10000);
+      setNextFrameColor(connected_cone, RED);
       cone_tracker = cone_tracker | (uint32_t(1) << connected_cone);
-      Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
+      Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
       // coneColor(conn, 0, 255, 0, 0);
     }
     
-    Serial.print("cone tracker: ");Serial.println(cone_tracker, BIN);
+    Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
     for (uint8_t i{0}; i<NUM_CONES; ++i){
       if (! (cone_tracker & (uint32_t(1) << i)) )
-        addEventToStack(i, BLACK, 10000);
+        setNextFrameColor(i, BLACK);
     }
   
   }
   
-  printStack();
-  eventStackToActive();
-  
-  printStack();
-  printActive();
+  printFrames();
   transitionAllCones();
   
-  printStack();
-  printActive();
+  printFrames();
   
 }
 
@@ -185,7 +181,7 @@ void set_twofold_colors_by_cycle_position(){
 
 
 void diagnostic_check_threefold(){
-  Serial.println("threefold diagnostic_check");
+  Serial.println(F("threefold diagnostic_check"));
   num_per_rotation = 3;
 
   static int num = 1;
@@ -211,10 +207,10 @@ void diagnostic_check_threefold(){
     // set the appropriate cycles in the cycles array
 
 #ifdef DEBUG_PRINT
-    Serial.print("Cycles: ");
+    Serial.print(F("Cycles: "));
     for(int i = 0; i < 20; i++){
       Serial.print(cycles[i], DEC);
-      Serial.print(", ");
+      Serial.print(F(", "));
     }
     Serial.println("");
 #endif
@@ -242,7 +238,7 @@ void diagnostic_check_threefold(){
 
 
 void diagnostic_check_fivefold(){
-  Serial.println("fivefold diagnostic_check");
+  Serial.println(F("fivefold diagnostic_check"));
   symmetry = FiveFold;
   num_per_rotation = 5;
   
@@ -264,7 +260,7 @@ void diagnostic_check_fivefold(){
     // iterate the axis cone (so the center of rotation
     // becomes cone two if it was cone one before, etc
 #ifdef DEBUG_PRINT
-    Serial.print("NUM CONE: ");
+    Serial.print(F("NUM CONE: "));
     Serial.println(num, DEC);
 #endif
 
@@ -275,13 +271,13 @@ void diagnostic_check_fivefold(){
     set_fivefold_cycles();
     // set the appropriate cycles in the cycles array
 #ifdef DEBUG_PRINT
-    Serial.print("PENTAGON: ");
+    Serial.print(F("PENTAGON: "));
     for(int i = 0; i < 5; i++){
       Serial.print(cycles[i], DEC);
       Serial.print(", ");
     }
     Serial.println("");
-    Serial.print("Cycles: ");
+    Serial.print(F("Cycles: "));
     for(int i = 0; i < 20; i++){
       Serial.print(cycles[i], DEC);
       Serial.print(", ");
@@ -352,7 +348,7 @@ void diagnostic_check_find_third(){
 
 void doDiagnosticMode(){
   
-  Serial.println("doing diagnostic check");
+  Serial.println(F("doing diagnostic check"));
 
   // symmetry = Reflect;
   setSymmetryModeFromButtons();
@@ -360,20 +356,16 @@ void doDiagnosticMode(){
   switch (symmetry){
     case TwoFold:
     // diagnostic_check_connected_cones_using_events();
-    Serial.println('a');
       diagnostic_check_twofold();
       break;
     case ThreeFold:
-    Serial.println('b');
       diagnostic_check_threefold();
       break;
     case FiveFold:
-    Serial.println('c');
       diagnostic_check_connected_cones_using_events();
       // diagnostic_check_fivefold();
       break;
     case Reflect:
-    Serial.println('d');
       // diagnostic_check_connected_cones();
       diagnostic_check_connected_cones();
       break;
