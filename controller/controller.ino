@@ -71,14 +71,14 @@ volatile unsigned char led_color = OFF; //LED color
 
 
 
-uint16_t pot1, pot2, pot3; // the values of the potentiometers, between 0 and 1023.  see https://www.arduino.cc/reference/en/language/functions/analog-io/analogread/
+uint16_t pot0, pot1, pot2; // the values of the potentiometers, between 0 and 1023.  see https://www.arduino.cc/reference/en/language/functions/analog-io/analogread/
 
 uint8_t buttons[3]; // perhaps these should be just one integer, and use bitwise ops.  that would be an optimization.
 uint8_t switches[3]; // perhaps these should be just one integer, and use bitwise ops.  that would be an optimization.
 
-#define POT1_PIN A1
-#define POT2_PIN A2
-#define POT3_PIN A3
+#define pot0_PIN A1
+#define pot1_PIN A2
+#define pot2_PIN A3
 
 #define BUTTON1_PIN    7
 #define BUTTON2_PIN    8
@@ -116,9 +116,9 @@ void setup_devices()
 void setup_potentiometers()
 {
     // Set up the 3 potentiometers as INPUT:
-  pinMode(POT1_PIN, INPUT); 
-  pinMode(POT2_PIN, INPUT); 
-  pinMode(POT3_PIN, INPUT); 
+  pinMode(pot0_PIN, INPUT); 
+  pinMode(pot1_PIN, INPUT); 
+  pinMode(pot2_PIN, INPUT); 
 }
 
 void setup_switches()
@@ -211,9 +211,9 @@ void print_state()
 
 
   Serial.print("potentiometers:\t");
+  Serial.print(pot0);    Serial.print("\t");
   Serial.print(pot1);    Serial.print("\t");
   Serial.print(pot2);    Serial.print("\t");
-  Serial.print(pot3);    Serial.print("\t");
   Serial.println("");
 
   Serial.println("");
@@ -268,17 +268,17 @@ void write_int32(int32_t i)
 
 
 void ReadPots(){
-  pot1 = analogRead(POT1_PIN);
-  pot2 = analogRead(POT2_PIN);
-  pot3 = analogRead(POT3_PIN);
+  pot0 = analogRead(pot0_PIN);
+  pot1 = analogRead(pot1_PIN);
+  pot2 = analogRead(pot2_PIN);
 }
 
 
 void WritePots()
 {
+  write_int16(pot0);
   write_int16(pot1);
   write_int16(pot2);
-  write_int16(pot3);
 }
 
 

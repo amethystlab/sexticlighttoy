@@ -23,7 +23,7 @@ void diagnostic_check_connected_cones(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
 
 
     // set the current cones to green
@@ -59,8 +59,8 @@ void diagnostic_check_twofold(){
   num_per_rotation = 2; // why is this global thing being set?  isn't it already set because the global mode is set?
   
 
-  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
-  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
+  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
+  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
 
 
   // infer the second cone.  the node between them is on the line of symmetry
@@ -70,7 +70,7 @@ void diagnostic_check_twofold(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
 
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
@@ -136,7 +136,7 @@ void diagnostic_check_threefold(){
 
 
 
-  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
+  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
   if ( (root_cone != current_cone[0])){
     current_cone[0] = root_cone;
@@ -144,7 +144,7 @@ void diagnostic_check_threefold(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
     
     set_threefold_cycles(root_cone);
     // set the appropriate cycles in the cycles array
@@ -187,8 +187,8 @@ void diagnostic_check_fivefold(){
   num_per_rotation = 5; // why is this global thing being set?  isn't it already set because the global mode is set?
 
 
-  Cone root_cone = (NUM_CONES-1)*float(pot1)/MAX_POT_VALUE; // the active root of the rotation.
-  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot2)/MAX_POT_VALUE; // indexes the connected cones to the root
+  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
+  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
 
 
   // infer the second cone.  the node between them is on the line of symmetry
@@ -198,7 +198,7 @@ void diagnostic_check_fivefold(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
 
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
