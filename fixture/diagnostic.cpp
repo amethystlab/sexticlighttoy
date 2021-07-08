@@ -53,7 +53,7 @@ void diagnostic_check_connected_cones_using_events(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot3)/1024);
+    setNextFrameTime(10000*float(pot3)/MAX_POT_VALUE);
 
 
     // set the current cones to green
