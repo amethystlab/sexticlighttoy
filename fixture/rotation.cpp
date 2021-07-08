@@ -990,7 +990,7 @@ void setSymmetryModeFromButtons(){
     symmetry = FiveFold;
     set_cycle_presets();
   }
-  incrementAxis(0);
+  // incrementAxis(0);
 }
 
 void doReflectionalMode(){

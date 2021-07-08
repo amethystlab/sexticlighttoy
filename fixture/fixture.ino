@@ -54,6 +54,7 @@ void setup() {
 void loop() {
   // doPulseMode();
   // print_state();
+  
   doDiagnosticMode();
   
   // getMode();

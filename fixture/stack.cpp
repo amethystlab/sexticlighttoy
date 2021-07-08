@@ -6,11 +6,12 @@
 void printFrames(){
   Serial.println(F("frame state:"));
 
-  Serial.print(frame_times[0]); Serial.print(F(" --> ")); Serial.println(frame_times[1]);
+  Serial.print(F("time: "));Serial.print(frame_times[0]); Serial.print(F(" --> ")); Serial.println(frame_times[1]);
 
   for (Cone i = 0; i<NUM_CONES; ++i){
-    Serial.print(frame_colors[i][0]);Serial.print(" "); Serial.print(F(" --> ")); Serial.println(frame_colors[i][1]);;
+    Serial.print("cone "); Serial.print(i);Serial.print(": "); Serial.print(frame_colors[0][i]);Serial.print(" "); Serial.print(F(" --> ")); Serial.println(frame_colors[1][i]);;
   }
+  Serial.println("");
 }
 
 
@@ -25,24 +26,29 @@ void printConeColorsFromMemory(){
 
 
 
+void setStartConeColorsFromCurrent(){
+  Serial.println("setting start colors from current");
+  for (Cone i{0}; i<NUM_CONES; ++i){
+    frame_colors[0][i] = getConeColor(i);
+  }
 
-float t(Time x, Time x1, Time x2){
-  //Serial.print((x - x1)); Serial.print(" / "); Serial.println((x2 - x1));
-  //Serial.println((float) (x - x1) / (float) (x2 - x1));
-  
-  return ((float) (x - x1) / (float) (x2 - x1));
-}
-
-float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
-  float tOfX = t(x, x1, x2);
-  //Serial.print("y1: "); Serial.print(y1); Serial.print(" y2: "); Serial.println(y2);
-  //Serial.print("t(x) = "); Serial.println(tOfX); //Serial.print(", "); Serial.print((1 - tOfX) * y1); Serial.print(", "); Serial.print(tOfX * y2); Serial.print(", "); Serial.println(tOfX * (1 - tOfX) * ((1 - tOfX) * (y1 - y2) + tOfX * (y2 - y1)));
-  return (1 - tOfX) * y1 + tOfX * y2 + tOfX * (1 - tOfX) * ((1 - tOfX) * (y1 - y2) + tOfX * (y2 - y1));
 }
 
 
+void setStartTimeToNow(){
+  frame_times[0] = g_current_time;
+}
 
 
+bool setNextFrameTime(Time duration){
+  frame_times[1] = frame_times[0] + duration;
+}
+
+
+bool setNextFrameColor(Cone cone, Color color){
+  Serial.print(F("setting next frame color for cone "));Serial.print(cone);Serial.print(" to ");Serial.println(color);
+  frame_colors[1][cone] = color;
+}
 
 // called once at the beginning of the program
 void setupFrames(){
@@ -50,24 +56,16 @@ void setupFrames(){
   frame_times[0] = NO_EVENT_PLANNED;
   frame_times[1] = NO_EVENT_PLANNED;
 
-  for (Cone i = 0; i < NUM_CONES; i++){
-    
-    
-    frame_colors[i][0] = BLACK;
-    frame_colors[i][1] = BLACK;
+  for (Cone i = 0; i < NUM_CONES; ++i){
+    frame_colors[0][i] = BLACK;
+    frame_colors[1][i] = BLACK;
   }
 }
 
 
 
-bool setNextFrameTime(Time duration){
-
-}
 
 
-bool setNextFrameColor(Cone cone, Color color){
-
-}
 
 
 
@@ -90,18 +88,33 @@ void renderFrame(){
 
 
 
+
+float t(Time x, Time x1, Time x2){
+  //Serial.print((x - x1)); Serial.print(" / "); Serial.println((x2 - x1));
+  //Serial.println((float) (x - x1) / (float) (x2 - x1));
+  
+  return ((float) (x - x1) / (float) (x2 - x1));
+}
+
+float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
+  float tOfX = t(x, x1, x2);
+  //Serial.print("y1: "); Serial.print(y1); Serial.print(" y2: "); Serial.println(y2);
+  //Serial.print("t(x) = "); Serial.println(tOfX); //Serial.print(", "); Serial.print((1 - tOfX) * y1); Serial.print(", "); Serial.print(tOfX * y2); Serial.print(", "); Serial.println(tOfX * (1 - tOfX) * ((1 - tOfX) * (y1 - y2) + tOfX * (y2 - y1)));
+  return (1 - tOfX) * y1 + tOfX * y2 + tOfX * (1 - tOfX) * ((1 - tOfX) * (y1 - y2) + tOfX * (y2 - y1));
+}
+
+
+
+
+
 bool transitionCone(Cone cone){
 
-  if (frame_times[1] == NO_EVENT_PLANNED){
-    Serial.print(F("due to NO_EVENT_PLANNED, skipping cone ")); Serial.println(cone);
-    return false;
-  }
-  
+
   // the starting and ending colors for the event being transitioned
-  IndividualColor r[2] = {(frame_colors[cone][0] >> 8)  & 0xFF,  (frame_colors[cone][1] >> 8)  & 0xFF};
-  IndividualColor g[2] = {(frame_colors[cone][0] >> 16) & 0xFF,  (frame_colors[cone][1] >> 16) & 0xFF};
-  IndividualColor b[2] = {(frame_colors[cone][0])       & 0xFF,  (frame_colors[cone][1])       & 0xFF};
-  IndividualColor w[2] = {(frame_colors[cone][0] >> 24) & 0xFF,  (frame_colors[cone][1] >> 24) & 0xFF};
+  IndividualColor r[2] = {(frame_colors[0][cone] >> 8)  & 0xFF,  (frame_colors[1][cone] >> 8)  & 0xFF};
+  IndividualColor g[2] = {(frame_colors[0][cone] >> 16) & 0xFF,  (frame_colors[1][cone] >> 16) & 0xFF};
+  IndividualColor b[2] = {(frame_colors[0][cone])       & 0xFF,  (frame_colors[1][cone])       & 0xFF};
+  IndividualColor w[2] = {(frame_colors[0][cone] >> 24) & 0xFF,  (frame_colors[1][cone] >> 24) & 0xFF};
 
   // answer these questions:
   //
@@ -162,6 +175,8 @@ void transitionAllCones(){
   
   getCurrentTime();
   
+  pixels.clear();
+
   for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i);
   }

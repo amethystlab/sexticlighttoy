@@ -28,7 +28,7 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 ObjectMode mode = Diagnostic;
-SymmetryType symmetry = Reflect; 
+SymmetryType symmetry = FiveFold; 
 
 int32_t previousEncoderValue = 0; 
 ObjectMode previousMode;
@@ -150,11 +150,9 @@ Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW};
 // between which we are interpolating.
 // the `active_times` define the start and end time for the current event,
 // and the `active_colors` store the before and after color, between which we interpolate.
-Color frame_colors[NUM_LED_GROUPS][2];
+Color frame_colors[2][NUM_LED_GROUPS];
 Time frame_times[2];
 
-Color* frame_colors_start, frame_colors_end; 
-Time* frame_time_start, frame_time_end;
 
 Time g_current_time;
 

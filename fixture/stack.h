@@ -15,6 +15,15 @@
 #include "device.h"
 
 
+// sets all starting cone colors to be whatever they currently are from the pixels.
+void setStartConeColorsFromCurrent();
+
+
+// sets the start time to whatever time is in g_current_time.  
+// you should probably make sure that g_current_time is current first.  
+// i suggest updating that time once per loop?
+void setStartTimeToNow();
+
 
 void printFrames();
 

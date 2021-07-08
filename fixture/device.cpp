@@ -164,7 +164,7 @@ void setupCommunication(){
 }
 
 void setupSerial(){
-  Serial.begin(9600);           // start serial for output
+  Serial.begin(115200);           // start serial for output
   Serial.setTimeout(20);
 }
 

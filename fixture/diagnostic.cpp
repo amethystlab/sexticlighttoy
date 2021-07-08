@@ -44,44 +44,41 @@ void diagnostic_check_connected_cones_using_events(){
   
   
   Serial.print(F("CURRENT NUM CONE: "));Serial.println(cone, DEC);
-  // pixels.clear();
-  uint32_t cone_tracker;
-  cone_tracker = 0;
-  Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
+
+  uint32_t cone_tracker = (uint32_t(1) << cone);
+
   if (prev_cone!= cone){
     prev_cone = cone;
-    // Light up the current cone (cone number cone) green
-    // coneColor(cone, 255, 0, 0, 0);
+
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
     setNextFrameTime(10000);
+
+
+    // set the current cones to green
     setNextFrameColor(cone, GREEN);
-    cone_tracker = cone_tracker | (uint32_t(1) << cone);
-    Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
-    // Serial.print("CONNECTED CONES: ");
+    cone_tracker = cone_tracker | (uint32_t(1) << cone); // mark as used in the tracker, using bit ops
+
+    // set the cones connected to the current cone red, record that they're used
     for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
-      // Light up the cones connected to the current cone red
       Cone connected_cone = get_connection(cone, i);
-    
-      Serial.println(connected_cone, DEC);
-    
       setNextFrameColor(connected_cone, RED);
-      cone_tracker = cone_tracker | (uint32_t(1) << connected_cone);
-      Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
-      // coneColor(conn, 0, 255, 0, 0);
+      cone_tracker = cone_tracker | (uint32_t(1) << connected_cone); // mark that we used this cone.
     }
     
-    Serial.print(F("cone tracker: "));Serial.println(cone_tracker, BIN);
+    // set the rest of the colors to black
     for (uint8_t i{0}; i<NUM_CONES; ++i){
       if (! (cone_tracker & (uint32_t(1) << i)) )
         setNextFrameColor(i, BLACK);
     }
   
   }
-  
+
   printFrames();
   transitionAllCones();
-  
-  printFrames();
-  
+
+  Serial.println(F("done with diag pass"));
 }
 
 
@@ -242,7 +239,7 @@ void diagnostic_check_fivefold(){
   symmetry = FiveFold;
   num_per_rotation = 5;
   
-    static int num = 1;
+  static int num = 1;
   static bool prevState = false;
   static bool prevStateTwo = false;
   static bool prevStateThree = false;
@@ -347,10 +344,7 @@ void diagnostic_check_find_third(){
 
 
 void doDiagnosticMode(){
-  
-  Serial.println(F("doing diagnostic check"));
 
-  // symmetry = Reflect;
   setSymmetryModeFromButtons();
   
   switch (symmetry){

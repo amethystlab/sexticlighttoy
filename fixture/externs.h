@@ -47,11 +47,9 @@ extern Color colorPresets[5];
 
 //////////////// frame butter stuff
 
-extern Color frame_colors[20][2];
+extern Color frame_colors[2][20];
 extern Time frame_times[2];
 
-extern Color* frame_colors_start, frame_colors_end; 
-extern Time* frame_time_start, frame_time_end;
 
 extern Time g_current_time;
 
