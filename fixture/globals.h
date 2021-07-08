@@ -13,7 +13,7 @@ Cone cycles[NUM_LED_GROUPS]; //< Array to store the cyclic groups of rotation an
 uint8_t num_per_rotation = 3;  // because each cone is connected to 3 other cones
 
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
 
 uint16_t pot1, pot2, pot3;

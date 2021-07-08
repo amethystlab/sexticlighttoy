@@ -39,7 +39,7 @@ void setup() {
   setupTime();
 
   delay(100); // waste some time for communication to get synced.
-  Serial.println("Finished Setup");
+  Serial.println(F("Finished Setup"));
 }
 
 
@@ -54,7 +54,7 @@ void setup() {
 void loop() {
   // doPulseMode();
   // print_state();
-  
+
   doDiagnosticMode();
   
   // getMode();
@@ -80,7 +80,6 @@ void loop() {
   // if (ModeUsesEvents(mode)){
   //   transitionAllCones();
   // }
-  printConeColorsFromMemory();
 } // ends the loop() function
 
 bool ModeUsesEvents(ObjectMode mode){

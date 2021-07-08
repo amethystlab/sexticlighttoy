@@ -72,14 +72,6 @@ void setupFrames(){
 
 
 
-void renderFrame(){
-
-  for(int i = 0; i < NUM_CONES; i++){
-    transitionCone(i); 
-  }
-
-  pixels.show();
-}  // event
 
 
 
@@ -106,7 +98,9 @@ float cubicNatural(Time x, Time x1, Time x2, uint8_t y1, uint8_t y2){
 
 
 
-
+// this function uses a globally-set time.  you must have set this time prior
+// to calling this function
+// or it will not work correctly.
 bool transitionCone(Cone cone){
 
 
@@ -116,12 +110,7 @@ bool transitionCone(Cone cone){
   IndividualColor b[2] = {(frame_colors[0][cone])       & 0xFF,  (frame_colors[1][cone])       & 0xFF};
   IndividualColor w[2] = {(frame_colors[0][cone] >> 24) & 0xFF,  (frame_colors[1][cone] >> 24) & 0xFF};
 
-  // answer these questions:
-  //
-  // why are we subtracting `start`?  
-  // why are we modding by lengthOfShow?
-  // should the call to `millis()` be factored out, so that all cones being transisioned at once 
-  // will use the same time?  otherwise, they use slightly different times...
+
 
   // unpack from the stored array
   Time start_time = frame_times[0];
@@ -153,12 +142,8 @@ bool transitionCone(Cone cone){
   #endif
 
     coneColor(cone, final_green, final_red, final_blue, final_white);
-    //#ifdef DEBUG_PRINT
-    //  Serial.print("Current Time: "); Serial.print(current_time); Serial.print(" End of Transition: "); Serial.println(final_time);
-    //#endif
   }
   else {
-    Serial.print(F("cone ")); Serial.print(cone); Serial.print(F("over time")); Serial.println(g_current_time);
     coneColor(cone, g[1], r[1], b[1], w[1]);
   }
 
@@ -175,7 +160,7 @@ void transitionAllCones(){
   
   getCurrentTime();
   
-  pixels.clear();
+  // pixels.clear();
 
   for(int i = 0; i < NUM_CONES; i++){
     transitionCone(i);

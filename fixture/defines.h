@@ -27,6 +27,8 @@
 #define NUM_CONES NUM_LED_GROUPS
 #define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
 
+#define NUM_PIXELS NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP
+
 #define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
 // a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
@@ -80,8 +82,8 @@ using Time = unsigned long;
 // define some hexadecimal colors.  Handy!
 #define WHITE 0xFFFFFF
 
-#define RED 0xFF0000
-#define GREEN 0x00FF00
+#define RED 0x00FF00
+#define GREEN 0xFF0000
 #define BLUE 0x0000FF
 
 #define YELLOW 0xFFFF00
@@ -107,11 +109,5 @@ using Time = unsigned long;
 #define MAX_NUM_EVENTS 22 // makes things not render if 23 or higher.
 #define OPEN_EVENT_CODE (NUM_CONES+1)
 
-
-typedef struct{
-  Cone  cone{OPEN_EVENT_CODE};
-  Color color{WHITE};
-  Time  duration{0};
-} Event;
 
 #endif

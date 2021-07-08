@@ -18,7 +18,7 @@ void diagnostic_check_connected_cones(){
   
   
   // Light up the current cone (cone number cone) green
-  coneColor(cone, 255, 0, 0, 0);
+  coneColor(cone, GREEN);
   
   Serial.print(F("CONNECTED CONES: "));
   for(int i = 0; i < MAX_CONNECTION_NUM; ++i){
@@ -27,7 +27,7 @@ void diagnostic_check_connected_cones(){
 
     // Serial.println(connected_cone, DEC);
     
-    coneColor(connected_cone, 0, 255, 0, 0);
+    coneColor(connected_cone, RED);
   }
   pixels.show();
 }
@@ -53,7 +53,7 @@ void diagnostic_check_connected_cones_using_events(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000);
+    setNextFrameTime(10000*float(pot3)/1024);
 
 
     // set the current cones to green
@@ -75,10 +75,7 @@ void diagnostic_check_connected_cones_using_events(){
   
   }
 
-  printFrames();
   transitionAllCones();
-
-  Serial.println(F("done with diag pass"));
 }
 
 

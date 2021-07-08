@@ -49,9 +49,6 @@ bool setNextFrameColor(Cone cone, Color color);
 // sets all frame_colors[] and frame_times[] values to BLACk and NO_EVENT_PLANNED.
 void setupFrames();
 
-// 
-void renderFrame();
-
 
 // for a specific `cone`,
 // uses `frame_colors` and `frame_times` to figure out what the color should be,
