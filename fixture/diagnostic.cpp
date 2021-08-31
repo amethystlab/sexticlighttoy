@@ -153,24 +153,7 @@ void diagnostic_check_fivefold(){
 
 
 
-void set_twofold_colors_by_level(){
-  pixels.clear();
-  
-  const uint8_t cycle_lengths[7] = {2,4,2,4,2,4,2};
-  
 
-  
-  for (uint8_t level=0; level<7; ++level){
-    uint8_t offset = partial_sum(cycle_lengths,level);
-    
-    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
-      uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/7 ),255,value);
-      setNextFrameColor(cycles[offset+j], color);
-    }
-    
-  }
-}
 
 
 
@@ -227,24 +210,6 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
 }
 
 
-void set_threefold_colors_by_level(){
-  pixels.clear();
-  
-  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
-  
-
-  
-  for (uint8_t level=0; level<8; ++level){
-    uint8_t offset = partial_sum(cycle_lengths,level);
-    
-    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
-      uint8_t value = (level==0 ? MAX_UINT8 : (MAX_UINT8/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),MAX_UINT8,value);
-      setNextFrameColor(cycles[offset+j], color);
-    }
-  }
-
-}
 
 
 void set_threefold_colors_by_cycle_position(uint16_t color_offset){
@@ -322,26 +287,6 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset){
 
 
 
-void set_fivefold_colors_by_level(){
-  pixels.clear();
-  
-  const uint8_t cycle_lengths[4] = {5,5,5,5};
-  
-
-  
-  for (uint8_t level=0; level<4; ++level){
-    uint8_t offset = partial_sum(cycle_lengths,level);
-    
-    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
-      uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),255,value);
-      setNextFrameColor(cycles[offset+j], color);
-    }
-  }
-
-}
-
-
 void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
   pixels.clear();
   
@@ -357,11 +302,91 @@ void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
                                    b,a+b,2*a+b, 3*a+b, 4*a+b
                                   };
   
-  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
-      uint8_t value = (ii<5 ? 255 : (255/4));
 
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( angles[ii]/(2*pi)*MAX_UINT16 ),255,value);
-      setNextFrameColor(cycles[ii], color);
+  uint16_t hues[NUM_CONES];
+  uint8_t saturations[NUM_CONES]= {
+    0,0,0,0,0,
+    MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,
+    MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,
+    0,0,0,0,0
+  };
+
+  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
+    hues[ii] = positive_mod(angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
+  }
+
+  uint8_t value = MAX_UINT8;
+
+  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
+  
+    Color color = Adafruit_NeoPixel::ColorHSV( hues[ii],saturations[ii],value);
+    setNextFrameColor(cycles[ii], color);
+  }
+
+
+}
+
+
+
+
+
+
+void set_twofold_colors_by_level(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[7] = {2,4,2,4,2,4,2};
+  
+
+  
+  for (uint8_t level=0; level<7; ++level){
+    uint8_t offset = partial_sum(cycle_lengths,level);
+    
+    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+      uint8_t value = (level==0 ? 255 : (255/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/7 ),255,value);
+      setNextFrameColor(cycles[offset+j], color);
+    }
+    
+  }
+}
+
+
+void set_threefold_colors_by_level(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
+  
+
+  
+  for (uint8_t level=0; level<8; ++level){
+    uint8_t offset = partial_sum(cycle_lengths,level);
+    
+    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+      uint8_t value = (level==0 ? MAX_UINT8 : (MAX_UINT8/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),MAX_UINT8,value);
+      setNextFrameColor(cycles[offset+j], color);
+    }
+  }
+
+}
+
+
+
+void set_fivefold_colors_by_level(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[4] = {5,5,5,5};
+  
+
+  
+  for (uint8_t level=0; level<4; ++level){
+    uint8_t offset = partial_sum(cycle_lengths,level);
+    
+    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+      uint8_t value = (level==0 ? 255 : (255/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),255,value);
+      setNextFrameColor(cycles[offset+j], color);
+    }
   }
 
 }
