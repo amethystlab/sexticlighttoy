@@ -261,7 +261,7 @@ void diagnostic_check_fivefold(){
     current_cone[2] = connection_num;
     
     set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
-    set_fivefold_colors_by_level();
+    set_fivefold_colors_by_cycle_position();
   }
 
   
@@ -289,6 +289,30 @@ void set_fivefold_colors_by_level(){
 
 }
 
+
+void set_fivefold_colors_by_cycle_position(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[4] = {5,5,5,5};
+  
+
+  const float a = 1.2566370614359172; // 72 degrees
+  const float b = a/2; // 36 degrees -- the pentagons on the bottom half are rotated to bisect the angle
+
+  const float angles[NUM_CONES] = {0,a,a+a,3*a, 4*a, // these are the same, amazingly enough
+                                   0,a,a+a,3*a, 4*a,
+                                   b,a+b,2*a+b, 3*a+b, 4*a+b,
+                                   b,a+b,2*a+b, 3*a+b, 4*a+b
+                                  };
+  
+  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
+      uint8_t value = (ii<5 ? 255 : (255/4));
+
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( angles[ii]/(2*pi)*65535 ),255,value);
+      setNextFrameColor(cycles[ii], color);
+  }
+
+}
 
 
 
