@@ -56,7 +56,7 @@ void diagnostic_check_twofold(){
 
   Serial.println(F("twofold diagnostic_check"));
   
-  uint16_t color_offset = positive_mod(rotary_counter*3000,65535);
+  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -92,11 +92,11 @@ void diagnostic_check_threefold(){
 
   Serial.println(F("threefold diagnostic_check"));
 
-
+  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
-  if ( (root_cone != current_cone[0]) || previous_symmetry!=symmetry){
+  if ( (root_cone != current_cone[0]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
     current_cone[0] = root_cone;
 
     getCurrentTime();
@@ -106,7 +106,7 @@ void diagnostic_check_threefold(){
     
     set_threefold_cycles(root_cone);
     // set the appropriate cycles in the cycles array
-    set_threefold_colors_by_cycle_position();//level();
+    set_threefold_colors_by_cycle_position(color_offset);//level();
   }
 
   
@@ -121,6 +121,7 @@ void diagnostic_check_fivefold(){
 
   Serial.println(F("fivefold diagnostic_check"));
 
+  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -129,7 +130,7 @@ void diagnostic_check_fivefold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
@@ -140,7 +141,7 @@ void diagnostic_check_fivefold(){
     current_cone[2] = connection_num;
     
     set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
-    set_fivefold_colors_by_cycle_position();
+    set_fivefold_colors_by_cycle_position(color_offset);
   }
 
   
@@ -164,7 +165,7 @@ void set_twofold_colors_by_level(){
     
     for (uint8_t j=0; j<cycle_lengths[level]; ++j){
       uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/7 ),255,value);
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/7 ),255,value);
       setNextFrameColor(cycles[offset+j], color);
     }
     
@@ -196,7 +197,7 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
                             pi,0
                           };
 
-  float distances[NUM_CONES] = {phi-1, phi-1,
+  const float distances[NUM_CONES] = {phi-1, phi-1,
                                 sqrt(2),sqrt(2),sqrt(2),sqrt(2),
                                 phi,phi,
                                 sqrt(3),sqrt(3),sqrt(3),sqrt(3),
@@ -206,20 +207,19 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
                               };
 
   uint16_t hues[NUM_CONES];
-  uint16_t saturations[NUM_CONES];
+  uint8_t saturations[NUM_CONES];
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    hues[ii] = positive_mod(angles[ii]/(2*pi)*65535+color_offset,65535);
+    hues[ii] = positive_mod(angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
   }
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    saturations[ii] = (distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * 255;
+    saturations[ii] = (distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * MAX_UINT8;
   }
 
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    //uint8_t value = (ii<2 ? 255 : (255/4));
-    uint8_t value = 255;
+    uint8_t value = MAX_UINT8;
     Color color = Adafruit_NeoPixel::ColorHSV(hues[ii],saturations[ii], value);
     setNextFrameColor(cycles[ii], color);
 
@@ -238,8 +238,8 @@ void set_threefold_colors_by_level(){
     uint8_t offset = partial_sum(cycle_lengths,level);
     
     for (uint8_t j=0; j<cycle_lengths[level]; ++j){
-      uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/8 ),255,value);
+      uint8_t value = (level==0 ? MAX_UINT8 : (MAX_UINT8/4));
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),MAX_UINT8,value);
       setNextFrameColor(cycles[offset+j], color);
     }
   }
@@ -247,7 +247,7 @@ void set_threefold_colors_by_level(){
 }
 
 
-void set_threefold_colors_by_cycle_position(){
+void set_threefold_colors_by_cycle_position(uint16_t color_offset){
   pixels.clear();
   
   const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
@@ -281,14 +281,39 @@ void set_threefold_colors_by_cycle_position(){
                                    0 // ill-defined angle, so 0
                                  };
 
-  
+  const float distances[NUM_CONES] = {0,
+                                      1.1547005383791311,1.1547005383791311,1.1547005383791311,
+                                      
+                                      1.6329931618555373,1.6329931618555373,1.6329931618555373,
+                                      1.6329931618555373,1.6329931618555373,1.6329931618555373,
+
+                                      1.6329931618555373,1.6329931618555373,1.6329931618555373,
+                                      1.6329931618555373,1.6329931618555373,1.6329931618555373,
+
+                                      1.1547005383791311,1.1547005383791311,1.1547005383791311,
+
+                                      0
+                                    };
+
+  uint16_t hues[NUM_CONES];
+  uint8_t saturations[NUM_CONES];
+
+  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
+    hues[ii] = positive_mod(angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
+  }
+
+  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
+    saturations[ii] = distances[ii]/1.6329931618555373 * MAX_UINT8;
+  }
+
   for (uint8_t ii=0; ii<NUM_CONES; ++ii){
   
-      uint8_t value = (ii==0 ? 255 : (255/4)); // first one should be brighter
-      uint8_t saturation = ( (ii==0 || (ii==(NUM_CONES-1)) ) ? 0 : 255); // first and last ones should be white
+      // uint8_t value = (ii==0 ? MAX_UINT8 : (MAX_UINT8/4)); // first one should be brighter
+    uint8_t value = MAX_UINT8;
+      // uint8_t saturation = ( (ii==0 || (ii==(NUM_CONES-1)) ) ? 0 : MAX_UINT8); // first and last ones should be white
 
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*angles[ii]/(2*pi) ),saturation,value);
-      setNextFrameColor(cycles[ii], color);
+    Color color = Adafruit_NeoPixel::ColorHSV( hues[ii],saturations[ii],value);
+    setNextFrameColor(cycles[ii], color);
   }
 
 }
@@ -309,7 +334,7 @@ void set_fivefold_colors_by_level(){
     
     for (uint8_t j=0; j<cycle_lengths[level]; ++j){
       uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(level+1.0)/8 ),255,value);
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( MAX_UINT16*(level+1.0)/8 ),255,value);
       setNextFrameColor(cycles[offset+j], color);
     }
   }
@@ -317,7 +342,7 @@ void set_fivefold_colors_by_level(){
 }
 
 
-void set_fivefold_colors_by_cycle_position(){
+void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
   pixels.clear();
   
   const uint8_t cycle_lengths[4] = {5,5,5,5};
@@ -335,7 +360,7 @@ void set_fivefold_colors_by_cycle_position(){
   for (uint8_t ii=0; ii<NUM_CONES; ++ii){
       uint8_t value = (ii<5 ? 255 : (255/4));
 
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( angles[ii]/(2*pi)*65535 ),255,value);
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( angles[ii]/(2*pi)*MAX_UINT16 ),255,value);
       setNextFrameColor(cycles[ii], color);
   }
 

@@ -17,6 +17,8 @@
 
 // MACROS TO EASE WITH THE PROCESS OF WRITING THIS OUT AS UINT16_T
 #define MAX_UINT5 31 // 2^5-1
+#define MAX_UINT8 255
+#define MAX_UINT16 65535
 #define MAX_POT_VALUE 1023
 
 #define CONNECTION_NUM_SETUP(num_connection, num_cone) ((num_cone << 5*(num_connection)) & (MAX_UINT5 << 5*(num_connection)))
