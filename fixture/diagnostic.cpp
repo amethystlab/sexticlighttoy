@@ -160,7 +160,7 @@ void diagnostic_check_threefold(){
     
     set_threefold_cycles(root_cone);
     // set the appropriate cycles in the cycles array
-    set_threefold_colors_by_level();
+    set_threefold_colors_by_cycle_position();//level();
   }
 
   
@@ -190,6 +190,51 @@ void set_threefold_colors_by_level(){
 }
 
 
+void set_threefold_colors_by_cycle_position(){
+  pixels.clear();
+  
+  const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
+  
+  float a = 0.6590580358263686; // 37.76 deg, green-yellow
+  float b = 1.435337066566721;  // 82.24 deg, orange probably, to yellow
+  float c = 0.3881395153702137; // 22.24 deg, green, to slightly yellow
+  float d = 1.7062555870230722; // 97.76 deg, reddish
+
+  float e = pi/3;
+
+
+  float s2 = 2*pi/3;
+  float s4 = 4*pi/3;
+  
+  // correct if the root node is 17.
+
+  const float angles[NUM_CONES] = {0, // ill-defined angle, so 0
+
+                                   0, s2, s4,    // easily seen equilateral triangle directly adjacent to root cone
+
+                                   b, b+s2, b+s4,  
+                                   a, a+s2, a+s4,   // two slightly shifted triangles, distance 2 from root cone
+                                   
+                                   
+                                   c+s2, c+s4, c, // analagous structures on bottom side (root is top)
+                                   d,d+s2, d+s4, 
+
+                                   e+s2, e+s4, e, // easily seen equilateral triangle directly adjacent to root cone
+
+                                   0 // ill-defined angle, so 0
+                                 };
+
+  
+  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
+  
+      uint8_t value = (ii==0 ? 255 : (255/4)); // first one should be brighter
+      uint8_t saturation = ( (ii==0 || (ii==(NUM_CONES-1)) ) ? 0 : 255); // first and last ones should be white
+
+      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*angles[ii]/(2*pi) ),saturation,value);
+      setNextFrameColor(cycles[ii], color);
+  }
+
+}
 
 
 
