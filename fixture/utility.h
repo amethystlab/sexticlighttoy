@@ -11,4 +11,6 @@ uint8_t partial_sum(uint8_t* data, uint8_t num);
 unsigned positive_mod( int32_t value, unsigned modulus);
 unsigned positive_div( int32_t value, unsigned denom);
 
+const float pi = acos(-1);
+
 #endif

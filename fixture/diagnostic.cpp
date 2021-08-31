@@ -77,7 +77,7 @@ void diagnostic_check_twofold(){
     current_cone[2] = connection_num;
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
-    set_twofold_colors_by_level();
+    set_twofold_colors_by_cycle_position();//level();
   }
 
   
@@ -112,17 +112,35 @@ void set_twofold_colors_by_cycle_position(){
   const uint8_t cycle_lengths[7] = {2,4,2,4,2,4,2};
   
 
-  
-  for (uint8_t level=0; level<7; ++level){
-    uint8_t offset = partial_sum(cycle_lengths,level);
-    
-    for (uint8_t j=0; j<cycle_lengths[level]; ++j){
-      uint8_t value = (level==0 ? 255 : (255/4));
-      Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(j+1.0)/cycle_lengths[level] ),255,value);
-      coneColor(cycles[offset+j], color);
-    }
-    
+  //                                      maybe have to swap some of these
+  const float angles[20] = {0,pi,   
+                            // 0,      pi/2, pi, 3*pi/2,//3*pi/4, 5*pi/4, 7*pi/4, 1*pi/4,   
+                            3*pi/4 , 5*pi/4      ,  7*pi/4   , pi/4,
+                            pi/2, 3*pi/2,     
+                            -2.7767288254763103+2*pi,2.7767288254763103,0.3648638281134831,-0.3648638281134831+2*pi, // ,   
+                            pi/2, 3*pi/2,
+                            pi/4, 3*pi/4, 5*pi/4, 7*pi/4, 
+                            pi,0
+                          };
+  //                         0   1        2     3       4       5      6      7
+  //                           0                    1                     2                   3
+
+  for (uint8_t ii{0}; ii<20; ++ii){
+    uint8_t value = (ii<2 ? 255 : (255/4));
+    Color color = Adafruit_NeoPixel::ColorHSV(65535*angles[ii]/(2*pi),255, value);
+    setNextFrameColor(cycles[ii], color);
+    // coneColor();
   }
+  // for (uint8_t level=0; level<7; ++level){
+  //   uint8_t offset = partial_sum(cycle_lengths,level);
+    
+  //   for (uint8_t j=0; j<cycle_lengths[level]; ++j){
+  //     uint8_t value = (level==0 ? 255 : (255/4));
+  //     Color color = Adafruit_NeoPixel::ColorHSV(uint16_t( 65535*(j+1.0)/cycle_lengths[level] ),255,value);
+  //     coneColor(cycles[offset+j], color);
+  //   }
+    
+  // }
 }
 
 
