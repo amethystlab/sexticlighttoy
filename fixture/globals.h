@@ -10,8 +10,6 @@
 Cone cycles[NUM_LED_GROUPS]; //< Array to store the cyclic groups of rotation and reflection
 
 
-uint8_t num_per_rotation = 3;  // because each cone is connected to 3 other cones
-
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, NEOPIXEL_PIN,  NEO_RGBW + NEO_KHZ800); // 140, because 20*7 = 140.
 unsigned long previousMillis = 0, currentMillis = 0;
@@ -29,6 +27,7 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 ObjectMode mode = Diagnostic;
 SymmetryType symmetry = FiveFold; 
+SymmetryType previous_symmetry = TwoFold;
 
 int32_t previousEncoderValue = 0; 
 ObjectMode previousMode;

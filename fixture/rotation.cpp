@@ -968,31 +968,27 @@ void doRotationalMode()
 
 void setSymmetryModeFromButtons(){
   
-  if (is_button_pressed(0)&&is_button_pressed(1)){
+  Serial.println(F("getting symm mode from buttons"));
+  previous_symmetry = symmetry; // cache the old one
 
-    // Serial.println("Set reflectional");
+  if (is_button_pressed(0)&&is_button_pressed(1)){
+    Serial.println("Set reflectional");
     symmetry = Reflect;
-    set_cycle_presets();
   }
   else if(is_button_pressed(0)){
-
-      // Serial.println("Set twofold");
-
+      Serial.println("Set twofold");
     symmetry = TwoFold;
-    set_cycle_presets();
   }
   else if(is_button_pressed(1)){
-    // Serial.println("Set threefold");
-
+    Serial.println("Set threefold");
     symmetry = ThreeFold;
-    set_cycle_presets();
   } 
   else if(is_button_pressed(2)){
-    // Serial.println("Set fivefold");
+    Serial.println("Set fivefold");
     symmetry = FiveFold;
-    set_cycle_presets();
+    
   }
-  // incrementAxis(0);
+  // set_cycle_presets();
 }
 
 void doReflectionalMode(){

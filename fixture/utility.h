@@ -12,5 +12,6 @@ unsigned positive_mod( int32_t value, unsigned modulus);
 unsigned positive_div( int32_t value, unsigned denom);
 
 const float pi = acos(-1);
+const float phi = (sqrt(5)+1)/2;
 
 #endif

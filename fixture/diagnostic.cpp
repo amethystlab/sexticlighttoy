@@ -13,11 +13,11 @@ void diagnostic_check_connected_cones(){
   cone = positive_mod(rotary_counter,NUM_CONES);
   
   
-  Serial.print(F("CURRENT NUM CONE: "));Serial.println(cone, DEC);
+  // Serial.print(F("CURRENT NUM CONE: "));Serial.println(cone, DEC);
 
   uint32_t cone_tracker = (uint32_t(1) << cone);
 
-  if (prev_cone!= cone){
+  if (prev_cone!= cone || previous_symmetry!=symmetry){
     prev_cone = cone;
 
     getCurrentTime();
@@ -55,9 +55,8 @@ void diagnostic_check_connected_cones(){
 void diagnostic_check_twofold(){
 
   Serial.println(F("twofold diagnostic_check"));
-
-  num_per_rotation = 2; // why is this global thing being set?  isn't it already set because the global mode is set?
   
+  uint16_t color_offset = positive_mod(rotary_counter*3000,65535);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -66,7 +65,7 @@ void diagnostic_check_twofold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2])){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
@@ -77,12 +76,80 @@ void diagnostic_check_twofold(){
     current_cone[2] = connection_num;
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
-    set_twofold_colors_by_cycle_position();//level();
+    set_twofold_colors_by_cycle_position(color_offset);//level();
   }
 
   
   transitionAllCones();
 }
+
+
+
+
+
+
+void diagnostic_check_threefold(){
+
+  Serial.println(F("threefold diagnostic_check"));
+
+
+
+  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
+
+  if ( (root_cone != current_cone[0]) || previous_symmetry!=symmetry){
+    current_cone[0] = root_cone;
+
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
+    
+    set_threefold_cycles(root_cone);
+    // set the appropriate cycles in the cycles array
+    set_threefold_colors_by_cycle_position();//level();
+  }
+
+  
+  transitionAllCones();
+}
+
+
+
+
+
+void diagnostic_check_fivefold(){
+
+  Serial.println(F("fivefold diagnostic_check"));
+
+
+  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
+  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
+
+
+  // infer the second cone.  the node between them is on the line of symmetry
+  Cone second_cone = get_connection(root_cone, connection_num); 
+
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry){
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
+
+    current_cone[0] = root_cone;
+    current_cone[1] = second_cone;
+    current_cone[2] = connection_num;
+    
+    set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
+    set_fivefold_colors_by_cycle_position();
+  }
+
+  
+  transitionAllCones();
+}
+
+
+
+
 
 
 void set_twofold_colors_by_level(){
@@ -106,7 +173,7 @@ void set_twofold_colors_by_level(){
 
 
 
-void set_twofold_colors_by_cycle_position(){
+void set_twofold_colors_by_cycle_position(uint16_t color_offset){
   pixels.clear();
   
   // const uint8_t cycle_lengths[7] = {2,4,2,4,2,4,2};
@@ -120,7 +187,7 @@ void set_twofold_colors_by_cycle_position(){
   // this array should be computed in memory, instead of every time this
   // function hits.  when you next read this, please 
   // make this modification.  
-  const float angles[NUM_CONES] = {0,pi,   
+  float angles[NUM_CONES] = {0,pi,   
                             3*pi/4 , 5*pi/4      ,  7*pi/4   , pi/4,
                             pi/2, 3*pi/2,     
                             -2.7767288254763103+2*pi,2.7767288254763103,0.3648638281134831,-0.3648638281134831+2*pi, // ,   
@@ -129,45 +196,35 @@ void set_twofold_colors_by_cycle_position(){
                             pi,0
                           };
 
+  float distances[NUM_CONES] = {phi-1, phi-1,
+                                sqrt(2),sqrt(2),sqrt(2),sqrt(2),
+                                phi,phi,
+                                sqrt(3),sqrt(3),sqrt(3),sqrt(3),
+                                phi,phi,
+                                sqrt(2),sqrt(2),sqrt(2),sqrt(2),
+                                phi-1, phi-1
+                              };
+
+  uint16_t hues[NUM_CONES];
+  uint16_t saturations[NUM_CONES];
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    uint8_t value = (ii<2 ? 255 : (255/4));
-    Color color = Adafruit_NeoPixel::ColorHSV(65535*angles[ii]/(2*pi),255, value);
+    hues[ii] = positive_mod(angles[ii]/(2*pi)*65535+color_offset,65535);
+  }
+
+  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
+    saturations[ii] = (distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * 255;
+  }
+
+
+  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
+    //uint8_t value = (ii<2 ? 255 : (255/4));
+    uint8_t value = 255;
+    Color color = Adafruit_NeoPixel::ColorHSV(hues[ii],saturations[ii], value);
     setNextFrameColor(cycles[ii], color);
 
   }
 }
-
-
-
-void diagnostic_check_threefold(){
-
-  Serial.println(F("threefold diagnostic_check"));
-
-  num_per_rotation = 3; // why is this global thing being set?  isn't it already set because the global mode is set?
-
-
-
-  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
-
-  if ( (root_cone != current_cone[0])){
-    current_cone[0] = root_cone;
-
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
-    
-    set_threefold_cycles(root_cone);
-    // set the appropriate cycles in the cycles array
-    set_threefold_colors_by_cycle_position();//level();
-  }
-
-  
-  transitionAllCones();
-}
-
-
 
 
 void set_threefold_colors_by_level(){
@@ -237,36 +294,6 @@ void set_threefold_colors_by_cycle_position(){
 }
 
 
-
-void diagnostic_check_fivefold(){
-
-  num_per_rotation = 5; // why is this global thing being set?  isn't it already set because the global mode is set?
-
-
-  Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
-  Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
-
-
-  // infer the second cone.  the node between them is on the line of symmetry
-  Cone second_cone = get_connection(root_cone, connection_num); 
-
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2])){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
-
-    current_cone[0] = root_cone;
-    current_cone[1] = second_cone;
-    current_cone[2] = connection_num;
-    
-    set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
-    set_fivefold_colors_by_cycle_position();
-  }
-
-  
-  transitionAllCones();
-}
 
 
 
