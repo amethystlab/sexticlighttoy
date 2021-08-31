@@ -55,17 +55,6 @@ void set_twofold_cycles(Cone cone1, Cone cone2){
   second_level[c++] = find_next_cone_in_direction(cycles[1], cycles[0], POSITIVE);
   second_level[c++] = find_next_cone_in_direction(cycles[1], cycles[0], NEGATIVE);
 
-
-  // for (int i = 0; i < MAX_CONNECTION_NUM; ++i){
-  //   if (i!=skip_this_conn)
-  //     second_level[c++] = get_connection(cycles[0], i);
-  // }
-  
-  // skip_this_conn = find_connection_index(cycles[1], cycles[0]);
-  // for (int i = 0; i < MAX_CONNECTION_NUM; ++i){
-  //   if (i!=skip_this_conn)
-  //     second_level[c++] = get_connection(cycles[1], i);
-  // }
   
   
 
@@ -103,33 +92,13 @@ void set_twofold_cycles(Cone cone1, Cone cone2){
   sixth_level[c++] = find_next_cone_in_direction(third_level[1], fifth_level[1], POSITIVE);
   sixth_level[c++] = find_next_cone_in_direction(third_level[1], fifth_level[1], NEGATIVE);
 
-  // skip_this_conn = find_connection_index(fifth_level[0], third_level[0]); // 
-  // for (int i = 0; i < MAX_CONNECTION_NUM; ++i){
-  //   if (i!=skip_this_conn)
-  //     sixth_level[c++] = get_connection(fifth_level[0], i);
-  // }
-  
-  // skip_this_conn = find_connection_index(fifth_level[1], third_level[1]);
-  // for (int i = 0; i < MAX_CONNECTION_NUM; ++i){
-  //   if (i!=skip_this_conn)
-  //     sixth_level[c++] = get_connection(fifth_level[1], i);
-  // }
-  
+
   
   c = 0; // reset the counter
 
   seventh_level[c++] = get_mutual_connection(sixth_level[1],sixth_level[2]);
   seventh_level[c++] = get_mutual_connection(sixth_level[0],sixth_level[3]);
 
-  // for (int i=0; i<2; ++i){
-  //   for (int j=2; j<4; ++j){
-  //     uint8_t common_cone = get_mutual_connection(sixth_level[i], sixth_level[j]);
-  //     if (common_cone!=NO_SUCH_CONE_ERR && common_cone!=fifth_level[0] && common_cone!=fifth_level[1]){
-  //       // Serial.print("found common for level 3: "); Serial.println(common_cone);
-  //       seventh_level[c++] = common_cone;
-  //     }
-  //   } // j
-  // } // i
   
 
 #ifdef DEBUG_PRINT
