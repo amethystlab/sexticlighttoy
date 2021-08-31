@@ -206,7 +206,7 @@ void set_threefold_colors_by_cycle_position(){
   float s2 = 2*pi/3;
   float s4 = 4*pi/3;
   
-  // correct if the root node is 17.
+  // correct if the root node is 17. also appears correct for all roots.
 
   const float angles[NUM_CONES] = {0, // ill-defined angle, so 0
 

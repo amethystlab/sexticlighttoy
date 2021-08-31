@@ -627,7 +627,7 @@ void getNextPair(uint8_t *arr, uint8_t one, uint8_t two){
     }
 
     if(connection_num == 255) {
-      return NO_CONNECTION;
+      return;// NO_CONNECTION; // is an erroneous condition
     }
     
     connection_num++;

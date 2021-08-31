@@ -33,7 +33,7 @@
 #define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
 // a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
-typedef enum SymmetryType {
+ enum SymmetryType {
   TwoFold,
   ThreeFold,
   FiveFold,
@@ -41,7 +41,7 @@ typedef enum SymmetryType {
 };
 
 // which mode is the light fixture in?  stored in a global.  see globals.h
-typedef enum ObjectMode {
+ enum ObjectMode {
   ColorSet=0,
   Rotational=1,
   Reflectional=2,
