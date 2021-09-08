@@ -152,6 +152,52 @@ bool transitionCone(Cone cone){
   return true;
 }
 
+bool transitionConeHSV(Cone cone){
+
+
+
+
+  // the starting and ending colors for the event being transitioned
+  IndividualColor r[2] = {(frame_colors[0][cone] >> 8)  & 0xFF,  (frame_colors[1][cone] >> 8)  & 0xFF};
+  IndividualColor g[2] = {(frame_colors[0][cone] >> 16) & 0xFF,  (frame_colors[1][cone] >> 16) & 0xFF};
+  IndividualColor b[2] = {(frame_colors[0][cone])       & 0xFF,  (frame_colors[1][cone])       & 0xFF};
+  IndividualColor w[2] = {(frame_colors[0][cone] >> 24) & 0xFF,  (frame_colors[1][cone] >> 24) & 0xFF};
+
+
+
+
+
+  // unpack from the stored array
+  Time start_time = frame_times[0];
+  Time final_time = frame_times[1];
+  
+
+    //bail if nothing to do
+  if (g_current_time >= final_time){
+    coneColor(cone, g[1], r[1], b[1], w[1]);
+    return false;
+  }
+
+
+
+  HSV start_hsv, target_hsv, final_hsv; // these are in [0,1] space
+  start_hsv = rgb2hsv(RGB(r[0],g[0],b[0]));
+  target_hsv = rgb2hsv(RGB(r[1],g[1],b[1]));
+
+
+  float mult = ((float)(g_current_time - start_time))/((float)(final_time - start_time));
+
+  final_hsv.hue        = mult*(final_hsv.hue-start_hsv.hue) + start_hsv.hue;
+  final_hsv.saturation = mult*(final_hsv.saturation-start_hsv.saturation) + start_hsv.saturation;
+  final_hsv.value      = mult*(final_hsv.value-start_hsv.value) + start_hsv.value;
+
+  RGB final_rgb = hsv2rgb(final_hsv);
+
+  coneColor(cone,final_rgb.green*MAX_UINT8, final_rgb.red*MAX_UINT8, final_rgb.blue*MAX_UINT8, mult * (w[1] - w[0]) + w[0]);
+
+
+  return true;
+}
 
 
 
@@ -171,6 +217,19 @@ void transitionAllCones(){
   pixels.show();
 }
 
+// loops over all cones in the fixture, and calls `transitionCone` for each.
+void transitionAllConesHSV(){
+  
+  getCurrentTime();
+  
+  // pixels.clear();
+
+  for(int i = 0; i < NUM_CONES; i++){
+    transitionConeHSV(i);
+  }
+
+  pixels.show();
+}
 
 
 

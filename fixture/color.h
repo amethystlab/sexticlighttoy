@@ -12,19 +12,54 @@
 #include "externs.h"
 
 
-typedef struct {
+/////// from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+// David H.'s code for this problem.  
+struct RGB {
     double red;       // a fraction between 0 and 1
     double green;       // a fraction between 0 and 1
     double blue;       // a fraction between 0 and 1
-} RGB;
+
+    RGB(){}
+
+    RGB(uint8_t r,uint8_t g,uint8_t b){
+        red = double(r)/MAX_UINT8;
+        green = double(g)/MAX_UINT8;
+        blue = double(b)/MAX_UINT8;
+    }
 
 
-typedef struct {
+};
+
+/////// from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+// David H.'s code for this problem.  
+struct HSV{
     double hue;       // angle in degrees
     double saturation;       // a fraction between 0 and 1
     double value;       // a fraction between 0 and 1
-} HSV;
 
+    HSV(){}
+
+    HSV(uint16_t h,uint8_t s,uint8_t v){
+        hue = double(h)/MAX_UINT16*360.0;
+        saturation = double(s)/MAX_UINT8;
+        value = double(v)/MAX_UINT8;
+    }
+
+    inline
+    uint16_t HueAsInt() const{return hue/360.*MAX_UINT16;}
+
+    inline 
+    uint8_t SatAsInt() const{return saturation * MAX_UINT8;}
+
+    inline 
+    uint8_t ValAsInt() const{return value * MAX_UINT8;}
+};
+
+
+HSV   rgb2hsv(RGB in);
+RGB   hsv2rgb(HSV in);
+
+void test_hsvrgb();
 
 void clear();
 uint8_t random8BitValue();

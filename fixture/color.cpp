@@ -241,16 +241,7 @@ void doPulseMode(){
 // David H.'s code for this problem.  
 
 
-// typedef struct {
-//     double r;       // a fraction between 0 and 1
-//     double g;       // a fraction between 0 and 1
-//     double b;       // a fraction between 0 and 1
-// } rgb;
-// 
 
-
-// hsv   rgb2hsv(rgb in);
-// rgb   hsv2rgb(hsv in);
 
 HSV rgb2hsv(RGB in)
 {
@@ -353,4 +344,47 @@ RGB hsv2rgb(HSV in)
         break;
     }
     return out;     
+}
+
+
+void test_hsvrgb(){
+
+  Serial.println("doing sanity check on hsv,rgb");
+  uint16_t hue = 65535/2;
+  uint8_t sat = 127;
+  uint8_t val = 138;
+
+  HSV hsv(hue,sat,val);
+
+  if(hsv.HueAsInt()!=hue)
+    Serial.println("check for hue failed");
+  if(hsv.SatAsInt()!=sat)
+    Serial.println("check for sat failed");
+  if(hsv.ValAsInt()!=val)
+    Serial.println("check for val failed");
+
+
+  RGB rgb = hsv2rgb(hsv);
+
+  HSV hsv2 = rgb2hsv(rgb);
+
+  if (hsv2.hue!=hsv.hue)
+    Serial.println("round tripping hue failed");
+  if (hsv2.saturation!=hsv.saturation){
+    Serial.println("round tripping saturation failed");
+    Serial.print(hsv2.saturation); Serial.print(" vs "); Serial.print(hsv.saturation); Serial.print(", diff "); Serial.println(hsv2.saturation - hsv.saturation);
+  }
+  if (hsv2.value!=hsv.value)
+    Serial.println("round tripping value failed");
+
+
+  if(hsv2.HueAsInt()!=hue)
+    Serial.println("check2 for hue failed");
+  if(hsv2.SatAsInt()!=sat)
+    Serial.println("check2 for sat failed");
+  if(hsv2.ValAsInt()!=val)
+    Serial.println("check2 for val failed");
+
+Serial.println("done with sanity check on hsv,rgb");
+
 }

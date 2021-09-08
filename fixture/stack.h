@@ -58,4 +58,6 @@ bool transitionCone(Cone cone); // requires that the g_current_time has already 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones();
 
+void transitionAllConesHSV();
+
 #endif // include guard

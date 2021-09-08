@@ -200,9 +200,9 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
     saturations[ii] = (distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * MAX_UINT8;
   }
 
+  uint8_t value = MAX_UINT8;
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    uint8_t value = MAX_UINT8;
     Color color = Adafruit_NeoPixel::ColorHSV(hues[ii],saturations[ii], value);
     setNextFrameColor(cycles[ii], color);
 
@@ -271,12 +271,9 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset){
     saturations[ii] = distances[ii]/1.6329931618555373 * MAX_UINT8;
   }
 
-  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
-  
-      // uint8_t value = (ii==0 ? MAX_UINT8 : (MAX_UINT8/4)); // first one should be brighter
-    uint8_t value = MAX_UINT8;
-      // uint8_t saturation = ( (ii==0 || (ii==(NUM_CONES-1)) ) ? 0 : MAX_UINT8); // first and last ones should be white
+  uint8_t value = MAX_UINT8;
 
+  for (uint8_t ii=0; ii<NUM_CONES; ++ii){
     Color color = Adafruit_NeoPixel::ColorHSV( hues[ii],saturations[ii],value);
     setNextFrameColor(cycles[ii], color);
   }
@@ -318,7 +315,6 @@ void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
   uint8_t value = MAX_UINT8;
 
   for (uint8_t ii=0; ii<NUM_CONES; ++ii){
-  
     Color color = Adafruit_NeoPixel::ColorHSV( hues[ii],saturations[ii],value);
     setNextFrameColor(cycles[ii], color);
   }
@@ -396,6 +392,7 @@ void set_fivefold_colors_by_level(){
 
 
 void doDiagnosticMode(){
+  // test_hsvrgb();
 
   setSymmetryModeFromButtons();
   
@@ -417,5 +414,6 @@ void doDiagnosticMode(){
       diagnostic_check_connected_cones();
       break;
   }
-    
+  
+  Serial.println("done with diagnostic check function");
 }
