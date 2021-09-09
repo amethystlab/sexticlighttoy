@@ -415,5 +415,4 @@ void doDiagnosticMode(){
       break;
   }
   
-  Serial.println("done with diagnostic check function");
 }
