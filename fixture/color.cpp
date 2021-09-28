@@ -17,7 +17,7 @@ uint8_t random8BitValue() {
 
 
 //assigns a random color to each and every cone
-void allConeRandom() {
+void pulse_ConeRandom() {
   for (int i = 0; i < NUM_CONES; ++i) {
     coneColor(i, random8BitValue(), random8BitValue(), random8BitValue(), random8BitValue() ); //bit not byte
   }
@@ -109,129 +109,9 @@ void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry) {
 
 
 
-// sets all pixes to red
-void allred(unsigned long period) {
-  uint16_t i, j = 0;
 
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
 
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, 0, a, 0, 0); //set a single pixel color
-      }
-      pixels.show(); //update the color
-    } // if
-  } // j
-} // fun
 
-// sets all pixes to 
-void allblue(unsigned long period) {
-  uint16_t i, j = 0;
-
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
-
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, 0, 0, a, 0);
-      }
-      pixels.show();
-    } // if
-  } // j
-} // fun
-
-// sets all pixes to 
-void allmagenta(unsigned long period) {
-  uint16_t i, j = 0;
-
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
-
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, 0, a, a, 0);
-      }
-      pixels.show();
-    } // if
-  } // j
-} // fun
-
-// sets all pixes to 
-void allgreen(unsigned long period) {
-  uint16_t i, j = 0;
-
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
-
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, a, 0, 0, 0);
-      }
-      pixels.show();
-    } // if
-  } // j
-} // fun
-
-// sets all pixes to 
-void allwhite(unsigned long period) {
-  uint16_t i, j = 0;
-
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
-
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, 0, 0, 0, a);
-      }
-      pixels.show();
-    } // if
-  } // j
-} // fun
-
-void allLEDs(unsigned long period) {
-  uint16_t i, j = 0;
-
-  uint16_t num_steps = 256;
-  uint8_t a = 1;
-  while (j < num_steps) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= period) {
-      a = float(++j) / num_steps * 256;
-      previousMillis = currentMillis;
-
-      for (i = 0; i < pixels.numPixels(); i++) {
-        pixels.setPixelColor(i, a, a, a, a);
-      }
-      pixels.show();
-    } // if
-  } // j
-} // fun
-
-void doPulseMode(){
-  Serial.println("pulse mode");
-  allLEDs(100);
-}
 
 
 

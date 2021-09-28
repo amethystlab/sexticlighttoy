@@ -164,7 +164,9 @@ bool transitionConeHSV(Cone cone){
   IndividualColor w[2] = {(frame_colors[0][cone] >> 24) & 0xFF,  (frame_colors[1][cone] >> 24) & 0xFF};
 
 
-
+  Serial.print(F("hsv interpolating between two colors: "));
+  Serial.print(F("start:")); Serial.print(r[0]); Serial.print(" "); Serial.print(g[0]); Serial.print(" ");Serial.print(b[0]); Serial.println(" ");
+  Serial.print(F("final:")); Serial.print(r[1]); Serial.print(" "); Serial.print(g[1]); Serial.print(" ");Serial.print(b[1]); Serial.println(" ");
 
 
   // unpack from the stored array
@@ -175,28 +177,35 @@ bool transitionConeHSV(Cone cone){
     //bail if nothing to do
   if (g_current_time >= final_time){
     coneColor(cone, g[1], r[1], b[1], w[1]);
-    return false;
+    return true;
+  }
+  else{
+    HSV start_hsv, final_hsv, current_hsv; // these are in [0,360]x[0,1]x[0,1] space
+    start_hsv = rgb2hsv(RGB(r[0],g[0],b[0]));
+    final_hsv = rgb2hsv(RGB(r[1],g[1],b[1]));
+
+
+    float mult = ((float)(g_current_time - start_time))/((float)(final_time - start_time));
+
+    current_hsv.hue        = mult*(final_hsv.hue-start_hsv.hue) + start_hsv.hue;
+    current_hsv.saturation = mult*(final_hsv.saturation-start_hsv.saturation) + start_hsv.saturation;
+    current_hsv.value      = mult*(final_hsv.value-start_hsv.value) + start_hsv.value;
+
+    // RGB current_rgb = hsv2rgb(current_hsv);
+
+    // final_rgb.Print();
+
+    coneColor(cone,Adafruit_NeoPixel::ColorHSV(current_hsv.HueAsInt(), current_hsv.SatAsInt(), current_hsv.ValAsInt()));
+
+    // coneColor(cone,current_rgb.GreenAsInt(), current_rgb.RedAsInt(), current_rgb.BlueAsInt(), 0); //mult * (w[1] - w[0]) + w[0]
+
+
+    return true;
   }
 
 
 
-  HSV start_hsv, target_hsv, final_hsv; // these are in [0,1] space
-  start_hsv = rgb2hsv(RGB(r[0],g[0],b[0]));
-  target_hsv = rgb2hsv(RGB(r[1],g[1],b[1]));
 
-
-  float mult = ((float)(g_current_time - start_time))/((float)(final_time - start_time));
-
-  final_hsv.hue        = mult*(final_hsv.hue-start_hsv.hue) + start_hsv.hue;
-  final_hsv.saturation = mult*(final_hsv.saturation-start_hsv.saturation) + start_hsv.saturation;
-  final_hsv.value      = mult*(final_hsv.value-start_hsv.value) + start_hsv.value;
-
-  RGB final_rgb = hsv2rgb(final_hsv);
-
-  coneColor(cone,final_rgb.green*MAX_UINT8, final_rgb.red*MAX_UINT8, final_rgb.blue*MAX_UINT8, mult * (w[1] - w[0]) + w[0]);
-
-
-  return true;
 }
 
 
@@ -206,7 +215,7 @@ bool transitionConeHSV(Cone cone){
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllCones(){
   
-  getCurrentTime();
+  getCurrentTime();  // sets the variable g_current_time -- the g is for global
   
   // pixels.clear();
 
@@ -219,8 +228,8 @@ void transitionAllCones(){
 
 // loops over all cones in the fixture, and calls `transitionCone` for each.
 void transitionAllConesHSV(){
-  
-  getCurrentTime();
+  Serial.println("hsv transioning");
+  getCurrentTime();  // sets the variable g_current_time -- the g is for global
   
   // pixels.clear();
 

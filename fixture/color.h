@@ -27,7 +27,11 @@ struct RGB {
         blue = double(b)/MAX_UINT8;
     }
 
+    inline uint8_t RedAsInt() const{return red*MAX_UINT8;}
+    inline uint8_t BlueAsInt() const{return blue*MAX_UINT8;}
+    inline uint8_t GreenAsInt() const{return green*MAX_UINT8;}
 
+    inline void Print() const{Serial.print(red);Serial.print(" ");Serial.print(green);Serial.print(" ");Serial.println(blue);}
 };
 
 /////// from https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
@@ -78,13 +82,5 @@ void coneColor(Cone cone_num, IndividualColor g, IndividualColor r, IndividualCo
 
 void setGroupPresetColor(uint8_t *coneArray, uint8_t degreeOfSymmetry);
 
-void allred(unsigned long period);
-void allblue(unsigned long period);
-void allmagenta(unsigned long period);
-void allgreen(unsigned long period);
-void allwhite(unsigned long period);
-void allLEDs(unsigned long period);
 
-
-void doPulseMode();
 #endif // include guard

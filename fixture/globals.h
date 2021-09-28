@@ -25,8 +25,8 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 
-ObjectMode mode = Diagnostic;
-SymmetryType symmetry = TwoFold; 
+ObjectMode mode = ManualRotate;
+SymmetryType symmetry = ThreeFold; 
 SymmetryType previous_symmetry = FiveFold;
 
 int32_t previousEncoderValue = 0; 

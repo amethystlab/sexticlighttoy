@@ -148,14 +148,16 @@ void reset() {
 
 void getMode(){
   previousMode = mode;
-  Serial.println("mode: ");  Serial.print(mode);  Serial.print(" "); Serial.print(switches,BIN);Serial.print("\n"); 
+  Serial.println(F("mode: "));  Serial.print(mode);  Serial.print(F(" ")); Serial.print(switches,BIN);Serial.print(F("\n")); 
   // print_state();
   mode = switches;  // just interpret the uint8_t as an integer.  the user of the controller gets to use binary!
 }
 
 void setupPixels(){
   pixels.begin();
+  clear();
   pixels.setBrightness(255); // 0 is off.  255 is full.  this is a limit on the brightness for the entire run.
+
 }
 
 void setupCommunication(){

@@ -18,7 +18,8 @@
 #include "device.h"
 #include "stack.h"
 #include "rotation.h"
-#include "diagnostic.h"
+#include "manual_rotate.h"
+#include "pulse.h"
 
 
 
@@ -55,26 +56,26 @@ void loop() {
   // doPulseMode();
   // print_state();
 
-  doDiagnosticMode();
+  // doDiagnosticMode();
   
-  // getMode();
+  getMode();
   // 
-  // switch(mode){
-  //   case Rotational:
-  //     {doRotationalMode(); break;}
-  //   case Reflectional:
-  //     {doReflectionalMode(); break;}
-  //   case ColorSet:
-  //     {doColorSetMode(); break;}
-  //   case EventMode:
-  //     {doEventMode(); break;}
-  //   case Pulse:
-  //     {doPulseMode(); break;}
-  //   case Diagnostic:
-  //     {doDiagnosticMode(); break;}
-  //   default:
-  //     break;
-  // } // switch
+  switch(mode){
+    // case Rotational:
+    //   {doRotationalMode(); break;}
+    // case Reflectional:
+    //   {doReflectionalMode(); break;}
+    // case ColorSet:
+    //   {doColorSetMode(); break;}
+    // case EventMode:
+    //   {doEventMode(); break;}
+    case Pulse:
+      {doPulseMode(); break;}
+    case ManualRotate:
+      {doManualRotate(); break;}
+    default:
+      break;
+  } // switch
   // 
   // 
   // if (ModeUsesEvents(mode)){

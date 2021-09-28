@@ -49,7 +49,7 @@
   Reflectional=2,
   EventMode=5,
   Pulse=6,
-  Diagnostic=7
+  ManualRotate=7
 };
 
 using Cone = uint8_t;

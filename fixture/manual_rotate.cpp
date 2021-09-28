@@ -1,11 +1,11 @@
-#include "diagnostic.h"
+#include "manual_rotate.h"
 
 
 
 
 
-void diagnostic_check_connected_cones(){
-  Serial.println(F("diagnostic_check showing connected cones"));
+void manual_rotate_connected_cones(){
+  Serial.println(F("manual_rotate showing connected cones"));
   
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
@@ -52,9 +52,9 @@ void diagnostic_check_connected_cones(){
 
 
 
-void diagnostic_check_twofold(){
+void manual_rotate_twofold(){
 
-  Serial.println(F("twofold diagnostic_check"));
+  Serial.println(F("twofold manual_rotate"));
   
   uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
@@ -88,9 +88,9 @@ void diagnostic_check_twofold(){
 
 
 
-void diagnostic_check_threefold(){
+void manual_rotate_threefold(){
 
-  Serial.println(F("threefold diagnostic_check"));
+  Serial.println(F("threefold manual_rotate"));
 
   uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
@@ -117,9 +117,9 @@ void diagnostic_check_threefold(){
 
 
 
-void diagnostic_check_fivefold(){
+void manual_rotate_fivefold(){
 
-  Serial.println(F("fivefold diagnostic_check"));
+  Serial.println(F("fivefold manual_rotate"));
 
   uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
 
@@ -391,7 +391,7 @@ void set_fivefold_colors_by_level(){
 
 
 
-void doDiagnosticMode(){
+void doManualRotate(){
   // test_hsvrgb();
 
   setSymmetryModeFromButtons();
@@ -399,19 +399,19 @@ void doDiagnosticMode(){
   switch (symmetry){
     
     case TwoFold:
-      diagnostic_check_twofold();
+      manual_rotate_twofold();
       break;
 
     case ThreeFold:
-      diagnostic_check_threefold();
+      manual_rotate_threefold();
       break;
 
     case FiveFold:
-      diagnostic_check_fivefold();
+      manual_rotate_fivefold();
       break;
 
     case Reflect:
-      diagnostic_check_connected_cones();
+      manual_rotate_connected_cones();
       break;
   }
   
