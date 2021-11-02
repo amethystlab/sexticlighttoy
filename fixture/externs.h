@@ -31,6 +31,18 @@ extern Cone current_cone[3];
 
 extern Cone fiveFoldAxes[NUM_FIVE_FOLD_AXES][2];
 
+extern float pi;
+extern float phi;
+
+extern float twofold_distances[NUM_CONES];
+extern float twofold_angles[NUM_CONES];
+
+extern float threefold_distances[NUM_CONES];
+extern float threefold_angles[NUM_CONES];
+
+extern float fivefold_distances[NUM_CONES];
+extern float fivefold_angles[NUM_CONES];
+
 
 
 extern ObjectMode mode;

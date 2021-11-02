@@ -1,7 +1,7 @@
 #ifndef MANUAL_ROTATE_H
 #define MANUAL_ROTATE_H
 
-
+#include "externs.h"
 #include "rotation.h"
 
 void manual_rotate_connected_cones();

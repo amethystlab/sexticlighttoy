@@ -25,8 +25,8 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 
-ObjectMode mode = ManualRotate;
-SymmetryType symmetry = ThreeFold; 
+ObjectMode mode = Start;
+SymmetryType symmetry = TwoFold; 
 SymmetryType previous_symmetry = FiveFold;
 
 int32_t previousEncoderValue = 0; 
@@ -136,9 +136,97 @@ Cone current_cone[3]{0,1,2};
 
 ////////////////rotation
 
+float pi = acos(-1);
+float phi = (sqrt(5)+1)/2;
+
+  // these magic constants computed with the help of python.
+  // i wrote a notebook to compute them, based on 
+  // rotating the points on a dodecahedron
+  // and projecting them to the xy plane,
+  // then using atan2, my favorite lil function.
+  // this array should be computed in memory, instead of every time this
+  // function hits.  when you next read this, please 
+  // make this modification.  
+
+float twofold_distances[NUM_CONES] = {phi-1, phi-1,
+                            sqrt(2),sqrt(2),sqrt(2),sqrt(2),
+                            phi,phi,
+                            sqrt(3),sqrt(3),sqrt(3),sqrt(3),
+                            phi,phi,
+                            sqrt(2),sqrt(2),sqrt(2),sqrt(2),
+                            phi-1, phi-1
+                          };
+
+float twofold_angles[NUM_CONES] = {0,pi,   
+                        3*pi/4 , 5*pi/4      ,  7*pi/4   , pi/4,
+                        pi/2, 3*pi/2,     
+                        -2.7767288254763103+2*pi,2.7767288254763103,0.3648638281134831,-0.3648638281134831+2*pi, // ,   
+                        pi/2, 3*pi/2,
+                        pi/4, 3*pi/4, 5*pi/4, 7*pi/4, 
+                        pi,0
+                      };
+
+
+float g_a3 = 0.6590580358263686; // 37.76 deg, green-yellow
+float g_b3 = 1.435337066566721;  // 82.24 deg, orange probably, to yellow
+float g_c3 = 0.3881395153702137; // 22.24 deg, green, to slightly yellow
+float g_d3 = 1.7062555870230722; // 97.76 deg, reddish
+
+float g_e3 = pi/3;
+
+
+float g_s2_3 = 2*pi/3;
+float g_s4_3 = 4*pi/3;
+
+// correct if the root node is 17. also appears correct for all roots.
+
+float threefold_angles[NUM_CONES] = {0, // ill-defined angle, so 0
+
+                               0, g_s2_3, g_s4_3,    // easily seen equilateral triangle directly adjacent to root cone
+
+                               g_b3, g_b3+g_s2_3, g_b3+g_s4_3,  
+                               g_a3, g_a3+g_s2_3, g_a3+g_s4_3,   // two slightly shifted triangles, distance 2 from root cone
+                               
+                               
+                               g_c3+g_s2_3, g_c3+g_s4_3, g_c3, // analagous structures on bottom side (root is top)
+                               g_d3,g_d3+g_s2_3, g_d3+g_s4_3, 
+
+                               g_e3+g_s2_3, g_e3+g_s4_3, g_e3, // easily seen equilateral triangle directly adjacent to root cone
+
+                               0 // ill-defined angle, so 0
+                             };
+
+
+float threefold_distances[NUM_CONES] = {0,
+                                  1.1547005383791311,1.1547005383791311,1.1547005383791311,
+                                  
+                                  1.6329931618555373,1.6329931618555373,1.6329931618555373,
+                                  1.6329931618555373,1.6329931618555373,1.6329931618555373,
+
+                                  1.6329931618555373,1.6329931618555373,1.6329931618555373,
+                                  1.6329931618555373,1.6329931618555373,1.6329931618555373,
+
+                                  1.1547005383791311,1.1547005383791311,1.1547005383791311,
+
+                                  0
+                                };
+
+
+
+
+float g_a5 = 1.2566370614359172; // 72 degrees
+float g_b5 = g_a5/2; // 36 degrees -- the pentagons on the bottom half are rotated to bisect the angle
+
+float fivefold_angles[NUM_CONES] = {0,g_a5,g_a5+g_a5,3*g_a5, 4*g_a5, // these are the same, amazingly enough
+                               0,g_a5,g_a5+g_a5,3*g_a5, 4*g_a5,
+                               g_b5,g_a5+g_b5,2*g_a5+g_b5, 3*g_a5+g_b5, 4*g_a5+g_b5,
+                               g_b5,g_a5+g_b5,2*g_a5+g_b5, 3*g_a5+g_b5, 4*g_a5+g_b5
+                              };
+
 
 
 /////////////color
+
 //use an array of 5 since at most we are looking at 5-fold rotational symmetry (g,r,b,w,y)
 Color colorPresets[5] = {GREEN, RED, BLUE, WHITE, YELLOW}; 
 

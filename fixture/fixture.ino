@@ -18,7 +18,10 @@
 #include "device.h"
 #include "stack.h"
 #include "rotation.h"
+
+// then the files that define the various modes you can use by switching switches
 #include "manual_rotate.h"
+#include "auto_rotate.h"
 #include "pulse.h"
 
 
@@ -56,9 +59,10 @@ void loop() {
   // doPulseMode();
   // print_state();
 
-  // doDiagnosticMode();
+  // doManualRotate();
+ 
   
-  getMode();
+  getModeFromSwitches();
   // 
   switch(mode){
     // case Rotational:
@@ -69,18 +73,22 @@ void loop() {
     //   {doColorSetMode(); break;}
     // case EventMode:
     //   {doEventMode(); break;}
-    case Pulse:
-      {doPulseMode(); break;}
     case ManualRotate:
       {doManualRotate(); break;}
+    case AutoRotate:
+      {doAutoRotate(); break;}
+    case Pulse:
+      {doPulseMode(); break;}
+
     default:
+      // do nothing
       break;
   } // switch
-  // 
-  // 
-  // if (ModeUsesEvents(mode)){
-  //   transitionAllCones();
-  // }
+//   // 
+//   // 
+//   // if (ModeUsesEvents(mode)){
+//   //   transitionAllCones();
+//   // }
 } // ends the loop() function
 
 bool ModeUsesEvents(ObjectMode mode){

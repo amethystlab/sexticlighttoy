@@ -17,7 +17,7 @@ int32_t get_int32();
 void coneSelect();
 void reset();
 
-void getMode();
+void getModeFromSwitches();
 
 void setupPixels();
 void setupCommunication();
