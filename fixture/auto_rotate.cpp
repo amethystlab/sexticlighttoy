@@ -50,7 +50,7 @@ void auto_rotate_twofold(){
 	  getCurrentTime();
 	  setStartTimeToNow();
 	  setStartConeColorsFromCurrent();
-	  setNextFrameTime(20);
+	  setNextFrameTime(0);
 
 	  current_cone[0] = root_cone;
 	  current_cone[1] = second_cone;
@@ -79,7 +79,7 @@ void auto_rotate_threefold(){
 	  getCurrentTime();
 	  setStartTimeToNow();
 	  setStartConeColorsFromCurrent();
-	  setNextFrameTime(20);
+	  setNextFrameTime(0);
 	  
 	  set_threefold_cycles(root_cone);
 	  // set the appropriate cycles in the cycles array
@@ -108,7 +108,7 @@ void auto_rotate_fivefold(){
 	  getCurrentTime();
 	  setStartTimeToNow();
 	  setStartConeColorsFromCurrent();
-	  setNextFrameTime(20);
+	  setNextFrameTime(0);
 
 	  current_cone[0] = root_cone;
 	  current_cone[1] = second_cone;
