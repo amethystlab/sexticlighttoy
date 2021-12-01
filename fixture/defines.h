@@ -2,6 +2,16 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+
+
+//////////// USER-SET
+#define FIXTURE 3  // select which physical wiring path you implemented.  see globals.h  
+////////////////
+
+
+
+
+
 //#define DEBUG_PRINT // uncomment to make tons of things print. 
 #define WILLIAM_DEBUG
 #define TEST(actual, expected) Serial.print("expected: "); Serial.print(expected); Serial.print("actual: "); Serial.println(actual)
@@ -28,11 +38,18 @@
  
 #define NUM_LED_GROUPS 20 // 20 cones total on fixture
 #define NUM_CONES NUM_LED_GROUPS
-#define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the sextic toys
+
+
+
+#if FIXTURE==1 || FIXTURE==2
+  #define NUM_PIXELS_PER_GROUP 7 // I used 7-pixel chips in the first round of larger PLA sextic toys
+#elif FIXTURE==3 
+  #define NUM_PIXELS_PER_GROUP 1 // in the flexible, only one pixel per chip
+#endif
+
 
 #define NUM_PIXELS NUM_LED_GROUPS*NUM_PIXELS_PER_GROUP
 
-#define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 
 // a list of the symmetries of the icosahedron.  stored in a global.  see globals.h
  enum SymmetryType {

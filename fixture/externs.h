@@ -8,7 +8,7 @@ extern uint8_t num_per_rotation;  // idk why 3.  is that just initial state?
 
 // some global variables
 extern Adafruit_NeoPixel pixels; // 140, because 20*7 = 140.
-extern unsigned long previousMillis, currentMillis;
+extern unsigned long g_previous_millis, g_current_millis;
 
 extern uint16_t pot0, pot1, pot2;
 

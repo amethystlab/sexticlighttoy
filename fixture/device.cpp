@@ -150,7 +150,7 @@ void getModeFromSwitches(){
   previousMode = mode;
   mode = switches;  // just interpret the uint8_t as an integer.  the user of the controller gets to use binary!
 
-  Serial.println(F("mode: "));  Serial.print(mode);  Serial.print(F(" ")); Serial.print(switches,BIN);Serial.print(F("\n")); 
+  // Serial.println(F("mode: "));  Serial.print(mode);  Serial.print(F(" ")); Serial.print(switches,BIN);Serial.print(F("\n")); 
 }
 
 void setupPixels(){
