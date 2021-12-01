@@ -17,7 +17,7 @@ void manual_rotate_connected_cones(){
 
   uint32_t cone_tracker = (uint32_t(1) << cone);
 
-  if (prev_cone!= cone || previous_symmetry!=symmetry){
+  if (prev_cone!= cone || g_previous_symmetry!=g_symmetry){
     prev_cone = cone;
 
     getCurrentTime();
@@ -65,7 +65,7 @@ void manual_rotate_twofold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
@@ -96,7 +96,7 @@ void manual_rotate_threefold(){
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
-  if ( (root_cone != current_cone[0]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
     current_cone[0] = root_cone;
 
     getCurrentTime();
@@ -130,7 +130,7 @@ void manual_rotate_fivefold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || previous_symmetry!=symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
@@ -321,7 +321,7 @@ void doManualRotate(){
 
   setSymmetryModeFromButtons();
   
-  switch (symmetry){
+  switch (g_symmetry){
     
     case TwoFold:
       manual_rotate_twofold();

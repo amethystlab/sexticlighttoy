@@ -533,7 +533,7 @@ void set_cycle_presets(){
   int maximum;
   int numPerRotation;
   
-  switch(symmetry){
+  switch(g_symmetry){
     case TwoFold:
       numPerRotation = 2;
       offset = 0;
@@ -668,7 +668,7 @@ void incrementAxis(Direction dir){
   static Cone twoFoldAxis[2] = {1, 2};
   static Cone reflectionAxis[2] = {1, 2};
 
-  switch(symmetry){
+  switch(g_symmetry){
     
     case Reflect:
       if(dir) getNextPair(reflectionAxis, reflectionAxis[0], reflectionAxis[1]);
@@ -709,7 +709,7 @@ void rotate(bool reverse){
   int maximum;
   int numPerRotation;
   
-  switch(symmetry){
+  switch(g_symmetry){
     
     case TwoFold:
       numPerRotation = 2;
@@ -923,7 +923,7 @@ void doRotationalMode()
 {
 
   if(previousMode != Rotational) {
-    symmetry = TwoFold;
+    g_symmetry = TwoFold;
 
     // Serial.println("Rotational Mode");
 
@@ -969,30 +969,30 @@ void doRotationalMode()
 void setSymmetryModeFromButtons(){
   
   Serial.println(F("getting symm mode from buttons"));
-  previous_symmetry = symmetry; // cache the old one
+  g_previous_symmetry = g_symmetry; // cache the old one
 
   if (is_button_pressed(0)&&is_button_pressed(1)){
     Serial.println("Set reflectional");
-    symmetry = Reflect;
+    g_symmetry = Reflect;
   }
   else if(is_button_pressed(0)){
       Serial.println("Set twofold");
-    symmetry = TwoFold;
+    g_symmetry = TwoFold;
   }
   else if(is_button_pressed(1)){
     Serial.println("Set threefold");
-    symmetry = ThreeFold;
+    g_symmetry = ThreeFold;
   } 
   else if(is_button_pressed(2)){
     Serial.println("Set fivefold");
-    symmetry = FiveFold;
+    g_symmetry = FiveFold;
     
   }
   // set_cycle_presets();
 }
 
 void doReflectionalMode(){
-    symmetry = Reflect;
+    g_symmetry = Reflect;
   
     if(previousMode != Reflectional) {
       Serial.println(F("Reflectional Mode"));

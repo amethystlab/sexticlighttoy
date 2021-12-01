@@ -49,8 +49,8 @@ extern ObjectMode mode;
 extern int32_t previousEncoderValue; 
 extern ObjectMode previousMode;
 
-extern SymmetryType symmetry; 
-extern SymmetryType previous_symmetry; 
+extern SymmetryType g_symmetry; 
+extern SymmetryType g_previous_symmetry; 
 extern uint16_t connections[NUM_LED_GROUPS];
 
 
