@@ -7,6 +7,9 @@ void pulse_pot_color(Time time_per_step) {
   float scale = 1;
   while (j <= num_steps) {
 
+    if (is_button_down) // the encoder button
+      return;
+
     g_current_millis = millis();
     if (g_current_millis - g_previous_millis >= time_per_step) {
       scale = float(j++) / num_steps;
@@ -21,6 +24,9 @@ void pulse_pot_color(Time time_per_step) {
 
   j = 0;
   while (j < num_steps) {
+
+    if (is_button_down) // the encoder button
+      return;
 
     g_current_millis = millis();
     if (g_current_millis - g_previous_millis >= time_per_step) {
