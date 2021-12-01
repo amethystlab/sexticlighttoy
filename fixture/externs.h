@@ -45,7 +45,7 @@ extern float fivefold_angles[NUM_CONES];
 
 
 
-extern ObjectMode mode;
+extern ObjectMode g_mode;
 extern int32_t previousEncoderValue; 
 extern ObjectMode previousMode;
 

@@ -25,12 +25,14 @@ int32_t rotary_counter = 0; // current "position" of rotary encoder (increments 
 
 
 
-ObjectMode mode = Start;
+ObjectMode g_mode = Start;
+ObjectMode previousMode;
+
 SymmetryType g_symmetry = TwoFold; 
 SymmetryType g_previous_symmetry = FiveFold;
 
 int32_t previousEncoderValue = 0; 
-ObjectMode previousMode;
+
 /*---------------------------------------------------------------------*/
 
 

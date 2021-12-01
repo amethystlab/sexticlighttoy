@@ -64,7 +64,7 @@ void loop() {
   
   getModeFromSwitches();
   // 
-  switch(mode){
+  switch(g_mode){
     // case Rotational:
     //   {doRotationalMode(); break;}
     // case Reflectional:
