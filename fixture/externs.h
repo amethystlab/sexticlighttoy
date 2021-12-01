@@ -15,8 +15,8 @@ extern uint16_t pot0, pot1, pot2;
 extern uint8_t buttons, switches;
 
 extern unsigned long button_down_time; // [ms] the time the encoder button has been pushed so far.  is 0 if the button's not being pressed
-extern bool is_button_down; // is the button in the encoder being pushed?
-extern int32_t rotary_counter; // current "position" of rotary encoder (increments clockwise, decrements anticlockwise)
+extern bool is_encoder_button_down; // is the button in the encoder being pushed?
+extern int32_t encoder_counter; // current "position" of rotary encoder (increments clockwise, decrements anticlockwise)
 extern int32_t prev_rotary_counter;
 
 

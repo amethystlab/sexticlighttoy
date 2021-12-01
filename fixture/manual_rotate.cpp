@@ -10,7 +10,7 @@ void manual_rotate_connected_cones(){
   Cone& cone      = current_cone[0];
   Cone& prev_cone = current_cone[1];
   
-  cone = positive_mod(rotary_counter,NUM_CONES);
+  cone = positive_mod(encoder_counter,NUM_CONES);
   
   
   // Serial.print(F("CURRENT NUM CONE: "));Serial.println(cone, DEC);
@@ -56,7 +56,7 @@ void manual_rotate_twofold(){
 
   Serial.println(F("twofold manual_rotate"));
   
-  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
+  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -65,7 +65,7 @@ void manual_rotate_twofold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
@@ -92,11 +92,11 @@ void manual_rotate_threefold(){
 
   Serial.println(F("threefold manual_rotate"));
 
-  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
+  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
-  if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
     current_cone[0] = root_cone;
 
     getCurrentTime();
@@ -121,7 +121,7 @@ void manual_rotate_fivefold(){
 
   Serial.println(F("fivefold manual_rotate"));
 
-  uint16_t color_offset = positive_mod(rotary_counter*1000,MAX_UINT16);
+  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
@@ -130,7 +130,7 @@ void manual_rotate_fivefold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();

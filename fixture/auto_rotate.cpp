@@ -46,7 +46,7 @@ void auto_rotate_twofold(){
 	// infer the second cone.  the node between them is on the line of symmetry
 	Cone second_cone = get_connection(root_cone, connection_num); 
 
-	if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+	if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
 	  getCurrentTime();
 	  setStartTimeToNow();
 	  setStartConeColorsFromCurrent();
@@ -73,7 +73,7 @@ void auto_rotate_threefold(){
 
 	Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
-	if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+	if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
 	  current_cone[0] = root_cone;
 
 	  getCurrentTime();
@@ -104,7 +104,7 @@ void auto_rotate_fivefold(){
 	// infer the second cone.  the node between them is on the line of symmetry
 	Cone second_cone = get_connection(root_cone, connection_num); 
 
-	if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=rotary_counter){
+	if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
 	  getCurrentTime();
 	  setStartTimeToNow();
 	  setStartConeColorsFromCurrent();

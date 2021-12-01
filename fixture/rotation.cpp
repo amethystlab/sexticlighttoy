@@ -883,14 +883,14 @@ bool nFoldRotateColorTransition(uint8_t *coneArray, uint8_t numCone, bool revers
 //Uses the encoder to rotate the three fold symmetry 120 degrees about the axis point
 void rotationalThreeFoldSymEncoder() {
   static int32_t lastRotation = 0; //the last rotation value of the encoder
-  if (rotary_counter - lastRotation > NUM_TICKS) {
+  if (encoder_counter - lastRotation > NUM_TICKS) {
     ThreeFoldSymmetry();
-    lastRotation = rotary_counter;
+    lastRotation = encoder_counter;
   }
-  else if (lastRotation - rotary_counter > NUM_TICKS) { //moved more than 3 in the opposite direction
+  else if (lastRotation - encoder_counter > NUM_TICKS) { //moved more than 3 in the opposite direction
     ThreeFoldSymmetry();
     ThreeFoldSymmetry();
-    lastRotation = rotary_counter;
+    lastRotation = encoder_counter;
   } //if rotary encoder is turned any amount between 5 and -5 nothing will happen
 }
 
@@ -904,16 +904,16 @@ void rotationalThreeFoldSymEncoder() {
 //this is 100% a guess. Trying to get the rotational encoder to rotate both colockwise and counterclockwise around the pentagons (5fold)
 //void rotationalFiveFoldSymEncoder() {
 //  static int32_t lastRotation = 0; //the last rotation value of the encoder
-//  if (rotary_counter - lastRotation > NUM_TICKS) { //NUM_TICKS defined above
+//  if (encoder_counter - lastRotation > NUM_TICKS) { //NUM_TICKS defined above
 //    fiveFoldSymmetry(false);
-//    lastRotation = rotary_counter;
+//    lastRotation = encoder_counter;
 //  }
-//  else if (lastRotation - rotary_counter > NUM_TICKS) { //moved more than 3 in the opposite direction
+//  else if (lastRotation - encoder_counter > NUM_TICKS) { //moved more than 3 in the opposite direction
 //    fiveFoldSymmetry(false); //need 4 to get to the left (rotate the the same direction just ending on a different cone technically
 //    fiveFoldSymmetry(false);
 //    fiveFoldSymmetry(false);
 //    fiveFoldSymmetry(false);
-//    lastRotation = rotary_counter;
+//    lastRotation = encoder_counter;
 //  } //if rotary encoder is turned any amount between 5 and -5 nothing will happen
 //  pixels.show();
 //}
@@ -935,27 +935,27 @@ void doRotationalMode()
   }
   
 
-  if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_button_down)
+  if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_encoder_button_down)
   {
     // Serial.println("Rotate Axis");
-    previousEncoderValue = rotary_counter;
+    previousEncoderValue = encoder_counter;
     incrementAxis(1);
     set_cycle_presets();
 
     pixels.show();
-  } else if((rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+  } else if((encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
 #ifdef DEBUG_PRINT
-    Serial.print(rotary_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
+    Serial.print(encoder_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
     Serial.println(F("Rotate Positive"));
 #endif
-    previousEncoderValue = rotary_counter;
+    previousEncoderValue = encoder_counter;
     rotate(false);
     pixels.show();
-  } else if((previousEncoderValue - rotary_counter) > TICKS_PER_ROTATION){
+  } else if((previousEncoderValue - encoder_counter) > TICKS_PER_ROTATION){
 #ifdef DEBUG_PRINT
-    Serial.print(F("Rotate Negative ")); Serial.print(rotary_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
+    Serial.print(F("Rotate Negative ")); Serial.print(encoder_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
 #endif
-    previousEncoderValue = rotary_counter;
+    previousEncoderValue = encoder_counter;
     rotate(true);
     pixels.show();
   }
@@ -1003,21 +1003,21 @@ void doReflectionalMode(){
     }
   
 
-    if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_button_down)
+    if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_encoder_button_down)
     {
       #ifdef DEBUG_PRINT
       Serial.println(F("Change reflection axis"));
       #endif
-      previousEncoderValue = rotary_counter;
+      previousEncoderValue = encoder_counter;
       incrementAxis(1);
       set_cycle_presets();
 
       pixels.show();
-    } else if(abs(rotary_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+    } else if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
       #ifdef DEBUG_PRINT
       Serial.println(F("Reflect"));
       #endif
-      previousEncoderValue = rotary_counter;
+      previousEncoderValue = encoder_counter;
       rotate(false);
       pixels.show();
     }
