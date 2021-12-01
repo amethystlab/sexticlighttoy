@@ -46,8 +46,10 @@ extern float fivefold_angles[NUM_CONES];
 
 
 extern ObjectMode g_mode;
-extern int32_t previousEncoderValue; 
+extern int32_t previous_encoder_value; 
 extern ObjectMode previousMode;
+
+extern uint16_t g_auto_color_rotation;
 
 extern SymmetryType g_symmetry; 
 extern SymmetryType g_previous_symmetry; 

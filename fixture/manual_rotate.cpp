@@ -23,7 +23,7 @@ void manual_rotate_connected_cones(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
+    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
 
 
     // set the current cones to green
@@ -65,17 +65,25 @@ void manual_rotate_twofold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
+  bool need_compute_cycles = (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry;
+  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
 
+  previous_encoder_value = encoder_counter;
+
+  if (need_compute_cycles){
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
     current_cone[2] = connection_num;
     
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
+  }
+
+  if (need_compute_colors){
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(500* (float(pot2)/MAX_POT_VALUE));
+
     set_twofold_colors_by_cycle_position(color_offset);//level();
   }
 
@@ -96,20 +104,26 @@ void manual_rotate_threefold(){
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
-  if ( (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
-    current_cone[0] = root_cone;
+  bool need_compute_cycles = (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry;
+  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
 
+  previous_encoder_value = encoder_counter;
+
+  if (need_compute_cycles){
+    current_cone[0] = root_cone;
+    set_threefold_cycles(root_cone);
+  }
+
+  if (need_compute_colors){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
-    
-    set_threefold_cycles(root_cone);
+    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
+
     // set the appropriate cycles in the cycles array
     set_threefold_colors_by_cycle_position(color_offset);//level();
   }
 
-  
   transitionAllCones();
 }
 
@@ -130,21 +144,26 @@ void manual_rotate_fivefold(){
   // infer the second cone.  the node between them is on the line of symmetry
   Cone second_cone = get_connection(root_cone, connection_num); 
 
-  if ( (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry || previousEncoderValue!=encoder_counter){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(10000*float(pot2)/MAX_POT_VALUE);
+  bool need_compute_cycles = (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry;
+  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
+  previous_encoder_value = encoder_counter;
 
+  if (need_compute_cycles){
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
     current_cone[2] = connection_num;
-    
     set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
+  }
+
+  if (need_compute_colors){
+    getCurrentTime();
+    setStartTimeToNow();
+    setStartConeColorsFromCurrent();
+    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
+    
     set_fivefold_colors_by_cycle_position(color_offset);
   }
 
-  
   transitionAllCones();
 }
 

@@ -22,12 +22,14 @@ Time button_down_time = 0L; // [ms] the time the encoder button has been pushed 
 bool is_encoder_button_down = 0; // is the button in the encoder being pushed?
 
 int32_t encoder_counter = 0; // current "position" of rotary encoder (increments clockwise, decrements anticlockwise)
-int32_t previousEncoderValue = 0; 
+int32_t previous_encoder_value = 0; 
 
 
 
 ObjectMode g_mode = Start;
 ObjectMode previousMode;
+
+uint16_t g_auto_color_rotation = 0;
 
 SymmetryType g_symmetry = TwoFold; 
 SymmetryType g_previous_symmetry = FiveFold;

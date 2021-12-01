@@ -935,27 +935,27 @@ void doRotationalMode()
   }
   
 
-  if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_encoder_button_down)
+  if(abs(encoder_counter - previous_encoder_value) > TICKS_PER_ROTATION && is_encoder_button_down)
   {
     // Serial.println("Rotate Axis");
-    previousEncoderValue = encoder_counter;
+    previous_encoder_value = encoder_counter;
     incrementAxis(1);
     set_cycle_presets();
 
     pixels.show();
-  } else if((encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+  } else if((encoder_counter - previous_encoder_value) > TICKS_PER_ROTATION) {
 #ifdef DEBUG_PRINT
-    Serial.print(encoder_counter - previousEncoderValue); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
+    Serial.print(encoder_counter - previous_encoder_value); Serial.print(" > "); Serial.println(TICKS_PER_ROTATION);
     Serial.println(F("Rotate Positive"));
 #endif
-    previousEncoderValue = encoder_counter;
+    previous_encoder_value = encoder_counter;
     rotate(false);
     pixels.show();
-  } else if((previousEncoderValue - encoder_counter) > TICKS_PER_ROTATION){
+  } else if((previous_encoder_value - encoder_counter) > TICKS_PER_ROTATION){
 #ifdef DEBUG_PRINT
-    Serial.print(F("Rotate Negative ")); Serial.print(encoder_counter); Serial.print(" - "); Serial.print(previousEncoderValue); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
+    Serial.print(F("Rotate Negative ")); Serial.print(encoder_counter); Serial.print(" - "); Serial.print(previous_encoder_value); Serial.print(" < -"); Serial.println(TICKS_PER_ROTATION);
 #endif
-    previousEncoderValue = encoder_counter;
+    previous_encoder_value = encoder_counter;
     rotate(true);
     pixels.show();
   }
@@ -1003,21 +1003,21 @@ void doReflectionalMode(){
     }
   
 
-    if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION && is_encoder_button_down)
+    if(abs(encoder_counter - previous_encoder_value) > TICKS_PER_ROTATION && is_encoder_button_down)
     {
       #ifdef DEBUG_PRINT
       Serial.println(F("Change reflection axis"));
       #endif
-      previousEncoderValue = encoder_counter;
+      previous_encoder_value = encoder_counter;
       incrementAxis(1);
       set_cycle_presets();
 
       pixels.show();
-    } else if(abs(encoder_counter - previousEncoderValue) > TICKS_PER_ROTATION) {
+    } else if(abs(encoder_counter - previous_encoder_value) > TICKS_PER_ROTATION) {
       #ifdef DEBUG_PRINT
       Serial.println(F("Reflect"));
       #endif
-      previousEncoderValue = encoder_counter;
+      previous_encoder_value = encoder_counter;
       rotate(false);
       pixels.show();
     }
