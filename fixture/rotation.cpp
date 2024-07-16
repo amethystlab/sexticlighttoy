@@ -479,8 +479,10 @@ void set_missing_in_cycles(uint8_t missingIndex){
 
 
 void setSymmetryModeFromButtons(){
-  
+  #ifdef DEBUG_PRINT
   Serial.println(F("getting symm mode from buttons"));
+  #endif
+  
   g_previous_symmetry = g_symmetry; // cache the old one
 
   if (is_button_pressed(0)&&is_button_pressed(1)){

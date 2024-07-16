@@ -46,7 +46,9 @@ bool setNextFrameTime(Time duration){
 
 
 bool setNextFrameColor(Cone cone, Color color){
+  #ifdef DEBUG_PRINT 
   Serial.print(F("setting next frame color for cone "));Serial.print(cone);Serial.print(F(" to "));Serial.println(color);
+  #endif
   frame_colors[1][cone] = color;
 }
 

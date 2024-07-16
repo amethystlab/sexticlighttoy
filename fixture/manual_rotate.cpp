@@ -53,8 +53,9 @@ void manual_rotate_connected_cones(){
 
 
 void manual_rotate_twofold(bool highlight_axis){
-
+  #ifdef DEBUG_PRINT
   Serial.println(F("twofold manual_rotate"));
+  #endif
   
   uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
 
