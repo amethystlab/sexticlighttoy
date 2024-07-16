@@ -80,6 +80,9 @@ void print_state()
   Serial.print(pot2);    Serial.print(" ");
   Serial.println("");
 
+  Serial.print(F("g_mode: ")); Serial.print(g_mode);
+  Serial.println("");
+
   Serial.println("");
 
 }
