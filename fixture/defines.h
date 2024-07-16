@@ -61,17 +61,25 @@
 
 // which mode is the light fixture in?  stored in a global.  see globals.h
  enum ObjectMode {
-  ManualRotateHighlight=0,
+  AutoRotate=0,
   AutoRotateHighlight=1,
-  AutoRotate=5,
-  Pulse=6,
-  ManualRotate=7,
 
-    ColorSet=10,
+  ManualRotate=2,
+  ManualRotateHighlight=3,
+  
+  Something1 = 4, // should be no-highlight automatic
+  Something2 = 5, // i don't know
+  Something3 = 6, // i don't know
+
+  Pulse=7,
+
+
+  
+  ColorSet=10,
   Rotational=11,
-  Reflectional=12,
+  Reflectional=12
   // EventMode=13,
-  Start=14
+  
 };
 
 using Cone = uint8_t;

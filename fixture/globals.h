@@ -26,7 +26,7 @@ int32_t previous_encoder_value = 0;
 
 
 
-ObjectMode g_mode = Start;
+ObjectMode g_mode = AutoRotate;
 ObjectMode previousMode;
 
 uint16_t g_auto_color_rotation = 0;

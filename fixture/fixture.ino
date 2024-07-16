@@ -77,10 +77,16 @@ void loop() {
       {doManualRotate(true); break;}
     case AutoRotateHighlight:
       {doAutoRotate(true); break;}
+      
     case ManualRotate:
       {doManualRotate(false); break;}
     case AutoRotate:
       {doAutoRotate(false); break;}
+
+    // lots of switch positions make it pulse.  i hate it.
+    case Something1:
+    case Something2:
+    case Something3:
     case Pulse:
       {doPulseMode(); break;}
 
