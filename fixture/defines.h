@@ -5,7 +5,7 @@
 
 
 //////////// USER-SET
-#define FIXTURE 3  // select which physical wiring path you implemented.  see globals.h  
+#define FIXTURE 1  // select which physical wiring path you implemented.  see globals.h  
 ////////////////
 
 
@@ -61,13 +61,16 @@
 
 // which mode is the light fixture in?  stored in a global.  see globals.h
  enum ObjectMode {
+  ManualRotateHighlight=0,
+  AutoRotateHighlight=1,
   AutoRotate=5,
   Pulse=6,
   ManualRotate=7,
+
     ColorSet=10,
   Rotational=11,
   Reflectional=12,
-  EventMode=13,
+  // EventMode=13,
   Start=14
 };
 

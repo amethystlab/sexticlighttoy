@@ -6,15 +6,15 @@
 
 
 
-void auto_rotate_twofold();
-void auto_rotate_threefold();
-void auto_rotate_fivefold();
+void auto_rotate_twofold(bool highlight_axis);
+void auto_rotate_threefold(bool highlight_axis);
+void auto_rotate_fivefold(bool highlight_axis);
 
 
 
 
 // contains the code to select the symmetry you want.
-void doAutoRotate();
+void doAutoRotate(bool highlight_axis);
 
 
 

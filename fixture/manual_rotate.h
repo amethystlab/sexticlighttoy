@@ -11,12 +11,12 @@ void manual_rotate_twofold();
 
 
 void set_twofold_colors_by_level();
-void set_twofold_colors_by_cycle_position(uint16_t color_offset);
+void set_twofold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis);
 void set_threefold_colors_by_level();
-void set_threefold_colors_by_cycle_position(uint16_t color_offset);
+void set_threefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis);
 
 void set_fivefold_colors_by_level();
-void set_fivefold_colors_by_cycle_position(uint16_t color_offset);
+void set_fivefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis);
 
-void doManualRotate();
+void doManualRotate(bool highlight_axis);
 #endif

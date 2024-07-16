@@ -73,10 +73,14 @@ void loop() {
     //   {doColorSetMode(); break;}
     // case EventMode:
     //   {doEventMode(); break;}
+    case ManualRotateHighlight:
+      {doManualRotate(true); break;}
+    case AutoRotateHighlight:
+      {doAutoRotate(true); break;}
     case ManualRotate:
-      {doManualRotate(); break;}
+      {doManualRotate(false); break;}
     case AutoRotate:
-      {doAutoRotate(); break;}
+      {doAutoRotate(false); break;}
     case Pulse:
       {doPulseMode(); break;}
 

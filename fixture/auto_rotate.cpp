@@ -1,22 +1,22 @@
 #include "auto_rotate.h"
 
 
-void doAutoRotate(){
+void doAutoRotate(bool highlight_axis){
 
 	setSymmetryModeFromButtons();
 	
 	switch (g_symmetry){
 	  
 	  case TwoFold:
-	    auto_rotate_twofold();
+	    auto_rotate_twofold(highlight_axis);
 	    break;
 
 	  case ThreeFold:
-	    auto_rotate_threefold();
+	    auto_rotate_threefold(highlight_axis);
 	    break;
 
 	  case FiveFold:
-	    auto_rotate_fivefold();
+	    auto_rotate_fivefold(highlight_axis);
 	    break;
 
 	  case Reflect:
@@ -30,7 +30,7 @@ void doAutoRotate(){
 
 
 
-void auto_rotate_twofold(){
+void auto_rotate_twofold(bool highlight_axis){
 
 	Serial.println(F("twofold auto_rotate"));
 	
@@ -61,7 +61,7 @@ void auto_rotate_twofold(){
 	  setStartConeColorsFromCurrent();
 	  setNextFrameTime(0);
 
-	  set_twofold_colors_by_cycle_position(g_auto_color_rotation);//level();
+	  set_twofold_colors_by_cycle_position(g_auto_color_rotation, highlight_axis);
 	}
 
 	
@@ -70,7 +70,7 @@ void auto_rotate_twofold(){
 }	
 
 
-void auto_rotate_threefold(){
+void auto_rotate_threefold(bool highlight_axis){
 	Serial.println(F("threefold auto_rotate"));
 
 	g_auto_color_rotation = g_auto_color_rotation + 2000*(float(pot2) / MAX_POT_VALUE) + 100;
@@ -94,7 +94,7 @@ void auto_rotate_threefold(){
 	  setNextFrameTime(0);
 	  
 	  // set the appropriate cycles in the cycles array
-	  set_threefold_colors_by_cycle_position(g_auto_color_rotation);//level();
+	  set_threefold_colors_by_cycle_position(g_auto_color_rotation, highlight_axis);
 	}
 
 	
@@ -103,7 +103,7 @@ void auto_rotate_threefold(){
 
 
 
-void auto_rotate_fivefold(){
+void auto_rotate_fivefold(bool highlight_axis){
 	Serial.println(F("fivefold auto_rotate"));
 
 	g_auto_color_rotation = g_auto_color_rotation + 2000*(float(pot2) / MAX_POT_VALUE) + 100;
@@ -131,7 +131,7 @@ void auto_rotate_fivefold(){
 	  setStartConeColorsFromCurrent();
 	  setNextFrameTime(0);
 
-	  set_fivefold_colors_by_cycle_position(g_auto_color_rotation);
+	  set_fivefold_colors_by_cycle_position(g_auto_color_rotation, highlight_axis);
 	}
 
 	

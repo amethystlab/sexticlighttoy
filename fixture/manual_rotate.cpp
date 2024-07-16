@@ -52,7 +52,7 @@ void manual_rotate_connected_cones(){
 
 
 
-void manual_rotate_twofold(){
+void manual_rotate_twofold(bool highlight_axis){
 
   Serial.println(F("twofold manual_rotate"));
   
@@ -84,7 +84,7 @@ void manual_rotate_twofold(){
     setStartConeColorsFromCurrent();
     setNextFrameTime(500* (float(pot2)/MAX_POT_VALUE));
 
-    set_twofold_colors_by_cycle_position(color_offset);//level();
+    set_twofold_colors_by_cycle_position(color_offset, highlight_axis);
   }
 
   
@@ -96,7 +96,7 @@ void manual_rotate_twofold(){
 
 
 
-void manual_rotate_threefold(){
+void manual_rotate_threefold(bool highlight_axis){
 
   Serial.println(F("threefold manual_rotate"));
 
@@ -121,7 +121,7 @@ void manual_rotate_threefold(){
     setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
 
     // set the appropriate cycles in the cycles array
-    set_threefold_colors_by_cycle_position(color_offset);//level();
+    set_threefold_colors_by_cycle_position(color_offset, highlight_axis);
   }
 
   transitionAllCones();
@@ -131,7 +131,7 @@ void manual_rotate_threefold(){
 
 
 
-void manual_rotate_fivefold(){
+void manual_rotate_fivefold(bool highlight_axis){
 
   Serial.println(F("fivefold manual_rotate"));
 
@@ -161,7 +161,7 @@ void manual_rotate_fivefold(){
     setStartConeColorsFromCurrent();
     setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
     
-    set_fivefold_colors_by_cycle_position(color_offset);
+    set_fivefold_colors_by_cycle_position(color_offset, highlight_axis);
   }
 
   transitionAllCones();
@@ -176,7 +176,7 @@ void manual_rotate_fivefold(){
 
 
 
-void set_twofold_colors_by_cycle_position(uint16_t color_offset){
+void set_twofold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
   pixels.clear();
   
 
@@ -187,9 +187,13 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
     hues[ii] = positive_mod(twofold_angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
   }
 
-  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    saturations[ii] = (twofold_distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * MAX_UINT8;
-  }
+  if (highlight_axis)
+    for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
+      saturations[ii] = (twofold_distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * MAX_UINT8;
+  else  
+    for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
+      saturations[ii] = MAX_UINT8;
+
 
   uint8_t value = MAX_UINT8;
 
@@ -203,7 +207,7 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset){
 
 
 
-void set_threefold_colors_by_cycle_position(uint16_t color_offset){
+void set_threefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
   pixels.clear();
   
   // const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
@@ -218,9 +222,12 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset){
     hues[ii] = positive_mod(threefold_angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
   }
 
-  for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
-    saturations[ii] = threefold_distances[ii]/1.6329931618555373 * MAX_UINT8;
-  }
+  if (highlight_axis)
+    for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
+      saturations[ii] = threefold_distances[ii]/1.6329931618555373 * MAX_UINT8;
+  else
+    for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
+      saturations[ii] = MAX_UINT8;
 
   uint8_t value = MAX_UINT8;
 
@@ -235,7 +242,7 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset){
 
 
 
-void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
+void set_fivefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
   pixels.clear();
   
   const uint8_t cycle_lengths[4] = {5,5,5,5};
@@ -245,12 +252,24 @@ void set_fivefold_colors_by_cycle_position(uint16_t color_offset){
   
 
   uint16_t hues[NUM_CONES];
-  uint8_t saturations[NUM_CONES]= {
-    0,0,0,0,0,
-    MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,
-    MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,MAX_UINT8,
-    0,0,0,0,0
-  };
+  uint8_t saturations[NUM_CONES];
+
+
+  if (highlight_axis)
+  {
+    for (uint8_t ii{0}; ii<5; ++ii)
+      saturations[ii] = 0;
+    for (uint8_t ii{5}; ii<10; ++ii)
+      saturations[ii] = MAX_UINT8;
+    for (uint8_t ii{10}; ii<15; ++ii)
+      saturations[ii] = MAX_UINT8;
+    for (uint8_t ii{15}; ii<20; ++ii)
+      saturations[ii] = 0;
+  }
+  else
+    for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
+      saturations[ii] = MAX_UINT8;
+
 
   for (uint8_t ii{0}; ii<NUM_CONES; ++ii){
     hues[ii] = positive_mod(fivefold_angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
@@ -335,7 +354,7 @@ void set_fivefold_colors_by_level(){
 
 
 
-void doManualRotate(){
+void doManualRotate(bool highlight_axis){
   // test_hsvrgb();
 
   setSymmetryModeFromButtons();
@@ -343,15 +362,15 @@ void doManualRotate(){
   switch (g_symmetry){
     
     case TwoFold:
-      manual_rotate_twofold();
+      manual_rotate_twofold(highlight_axis);
       break;
 
     case ThreeFold:
-      manual_rotate_threefold();
+      manual_rotate_threefold(highlight_axis);
       break;
 
     case FiveFold:
-      manual_rotate_fivefold();
+      manual_rotate_fivefold(highlight_axis);
       break;
 
     case Reflect:
