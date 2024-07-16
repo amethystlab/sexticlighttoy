@@ -23,7 +23,7 @@ void manual_rotate_connected_cones(){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
+    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
 
 
     // set the current cones to green
@@ -83,7 +83,7 @@ void manual_rotate_twofold(bool highlight_axis){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(500* (float(pot2)/MAX_POT_VALUE));
+    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
 
     set_twofold_colors_by_cycle_position(color_offset, highlight_axis);
   }
@@ -119,7 +119,7 @@ void manual_rotate_threefold(bool highlight_axis){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
+    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
 
     // set the appropriate cycles in the cycles array
     set_threefold_colors_by_cycle_position(color_offset, highlight_axis);
@@ -160,7 +160,7 @@ void manual_rotate_fivefold(bool highlight_axis){
     getCurrentTime();
     setStartTimeToNow();
     setStartConeColorsFromCurrent();
-    setNextFrameTime(500*float(pot2)/MAX_POT_VALUE);
+    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
     
     set_fivefold_colors_by_cycle_position(color_offset, highlight_axis);
   }
