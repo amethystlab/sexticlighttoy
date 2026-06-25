@@ -5,6 +5,8 @@
 // since the previous frame, so the visible speed does not change when the
 // frame rate does.  pot2 scales the rate; see AUTO_ROTATE_HUE_RATE_* in defines.h.
 void advance_auto_color_rotation(){
+	static float carry = 0.0; // fractional hue steps left over from previous frames
+
 	Time delta_ms = g_current_time - g_previous_auto_rotate_time;
 	g_previous_auto_rotate_time = g_current_time;
 
@@ -12,7 +14,14 @@ void advance_auto_color_rotation(){
 		delta_ms = AUTO_ROTATE_MAX_FRAME_MS;
 
 	float rate = AUTO_ROTATE_HUE_RATE_MIN + AUTO_ROTATE_HUE_RATE_SPAN * (float(pot2) / MAX_POT_VALUE);
-	g_auto_color_rotation = positive_mod(g_auto_color_rotation + (int32_t)(rate * delta_ms), MAX_UINT16);
+
+	// carry the fractional remainder to the next frame so truncation can't make
+	// slow rotations run systematically slow -- the average rate stays exact.
+	float advance = rate * delta_ms + carry;
+	int32_t whole = (int32_t)advance;
+	carry = advance - whole;
+
+	g_auto_color_rotation = positive_mod(g_auto_color_rotation + whole, MAX_UINT16);
 }
 
 
