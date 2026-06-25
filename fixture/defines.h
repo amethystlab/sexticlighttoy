@@ -149,6 +149,16 @@ using Time = unsigned long;
 // hue steps, so these give ~1 rev/minute at pot2=0 and ~1 rev/second at pot2=max.
 #define AUTO_ROTATE_HUE_RATE_MIN 1.092   // 65535 / 60000 ms  -> 1 revolution / minute
 #define AUTO_ROTATE_HUE_RATE_SPAN 64.443 // MIN+SPAN = 65.535 -> 1 revolution / second
+
+// manual-rotate: turning the encoder rotates the colors; pot2 sets how far each
+// detent rotates (the per-detent angle delta, in hue steps -- a full revolution
+// is MAX_UINT16). encoder motion is accumulated so pot2 only affects future
+// detents, and the displayed offset glides toward that target (the same
+// time-based mechanism as auto-rotate) so each step is a smooth sweep.
+#define MANUAL_ROTATE_STEP_MIN 500    // pot2 low:  ~130 detents / revolution
+#define MANUAL_ROTATE_STEP_SPAN 1500  // pot2 high: step 2000 -> ~33 detents / revolution
+#define MANUAL_ROTATE_GLIDE_RATE 50.0 // hue steps/ms the colors glide toward the target (smoothing speed)
+#define MANUAL_ROTATE_MAX_DELTA 50    // encoder counts/frame above this are a glitched I2C reading -> ignored
 #define AUTO_ROTATE_MAX_FRAME_MS 100 // cap dt so a long pause (e.g. mode change) is one small step, not a jump
 
 #define NO_EVENT_PLANNED 0 // i think this should be 0 or the max for unsigned long (Time)

@@ -3,6 +3,49 @@
 #include "externs.h"
 
 
+// turn the encoder to rotate the colors. pot2 sets how far each detent rotates.
+// encoder motion is accumulated into a target (so pot2 only scales future
+// detents, never moving colors already set), and the displayed offset glides
+// toward that target -- the same time-based mechanism as auto-rotate -- so each
+// step is a smooth sweep. returns the wrapped offset to render this frame.
+uint16_t manual_color_offset(){
+  int32_t step = MANUAL_ROTATE_STEP_MIN
+               + (int32_t)(MANUAL_ROTATE_STEP_SPAN * (float(pot2) / MAX_POT_VALUE));
+
+  // accumulate this frame's encoder motion, scaled by the current step. reject
+  // implausibly large jumps: encoder_counter arrives over I2C and an occasional
+  // corrupt reading would otherwise be integrated permanently (flash/revert).
+  int32_t enc_delta = encoder_counter - g_manual_last_encoder;
+  g_manual_last_encoder = encoder_counter;
+  if (enc_delta <= MANUAL_ROTATE_MAX_DELTA && enc_delta >= -MANUAL_ROTATE_MAX_DELTA)
+    g_manual_target += enc_delta * step;
+
+  // never let the target lead the display by more than one detent's worth, so
+  // the colors settle within one smooth step after you stop turning instead of
+  // coasting onward (which confuses first-time users). a fast spin then just
+  // rotates steadily while turning and stops promptly.
+  float lead = (float)g_manual_target - g_manual_color_offset;
+  if (lead >  step) g_manual_target = (int32_t)(g_manual_color_offset + step);
+  if (lead < -step) g_manual_target = (int32_t)(g_manual_color_offset - step);
+
+  // glide the displayed offset toward the target at a fixed rate (auto-rotate
+  // style). rate-limiting also keeps any surviving glitch to a small nudge.
+  Time delta_ms = g_current_time - g_previous_manual_rotate_time;
+  g_previous_manual_rotate_time = g_current_time;
+  if (delta_ms > AUTO_ROTATE_MAX_FRAME_MS) // e.g. just switched into this mode
+    delta_ms = AUTO_ROTATE_MAX_FRAME_MS;
+
+  float max_step = MANUAL_ROTATE_GLIDE_RATE * delta_ms;
+  float diff = (float)g_manual_target - g_manual_color_offset;
+  if (diff <= max_step && diff >= -max_step)
+    g_manual_color_offset = g_manual_target;
+  else
+    g_manual_color_offset += (diff > 0) ? max_step : -max_step;
+
+  return positive_mod((int32_t)g_manual_color_offset, MAX_UINT16);
+}
+
+
 
 void manual_rotate_connected_cones(){
   Serial.println(F("manual_rotate showing connected cones"));
@@ -57,38 +100,32 @@ void manual_rotate_twofold(bool highlight_axis){
   Serial.println(F("twofold manual_rotate"));
   #endif
   
-  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
+  getCurrentTime();
+  uint16_t color_offset = manual_color_offset();
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
 
 
   // infer the second cone.  the node between them is on the line of symmetry
-  Cone second_cone = get_connection(root_cone, connection_num); 
+  Cone second_cone = get_connection(root_cone, connection_num);
 
   bool need_compute_cycles = (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry;
-  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
-
-  previous_encoder_value = encoder_counter;
 
   if (need_compute_cycles){
     current_cone[0] = root_cone;
     current_cone[1] = second_cone;
     current_cone[2] = connection_num;
-    
+
     set_twofold_cycles(root_cone, second_cone);// set the appropriate cycles in the cycles array
   }
 
-  if (need_compute_colors){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
+  // snap straight to the offset colors (no cross-fade); the encoder drives the
+  // rotation directly.
+  setStartTimeToNow();
+  setNextFrameTime(0);
+  set_twofold_colors_by_cycle_position(color_offset, highlight_axis);
 
-    set_twofold_colors_by_cycle_position(color_offset, highlight_axis);
-  }
-
-  
   transitionAllCones();
 }
 
@@ -99,31 +136,26 @@ void manual_rotate_twofold(bool highlight_axis){
 
 void manual_rotate_threefold(bool highlight_axis){
 
+  #ifdef DEBUG_PRINT
   Serial.println(F("threefold manual_rotate"));
+  #endif
 
-  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
+  getCurrentTime();
+  uint16_t color_offset = manual_color_offset();
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
 
   bool need_compute_cycles = (root_cone != current_cone[0]) || g_previous_symmetry!=g_symmetry;
-  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
-
-  previous_encoder_value = encoder_counter;
 
   if (need_compute_cycles){
     current_cone[0] = root_cone;
     set_threefold_cycles(root_cone);
   }
 
-  if (need_compute_colors){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
-
-    // set the appropriate cycles in the cycles array
-    set_threefold_colors_by_cycle_position(color_offset, highlight_axis);
-  }
+  // snap straight to the offset colors (no cross-fade); the encoder drives it.
+  setStartTimeToNow();
+  setNextFrameTime(0);
+  set_threefold_colors_by_cycle_position(color_offset, highlight_axis);
 
   transitionAllCones();
 }
@@ -134,20 +166,21 @@ void manual_rotate_threefold(bool highlight_axis){
 
 void manual_rotate_fivefold(bool highlight_axis){
 
+  #ifdef DEBUG_PRINT
   Serial.println(F("fivefold manual_rotate"));
+  #endif
 
-  uint16_t color_offset = positive_mod(encoder_counter*1000,MAX_UINT16);
+  getCurrentTime();
+  uint16_t color_offset = manual_color_offset();
 
   Cone root_cone = (NUM_CONES-1)*float(pot0)/MAX_POT_VALUE; // the active root of the rotation.
   Connection connection_num = (MAX_CONNECTION_NUM-1)*float(pot1)/MAX_POT_VALUE; // indexes the connected cones to the root
 
 
   // infer the second cone.  the node between them is on the line of symmetry
-  Cone second_cone = get_connection(root_cone, connection_num); 
+  Cone second_cone = get_connection(root_cone, connection_num);
 
   bool need_compute_cycles = (root_cone != current_cone[0]) || (connection_num != current_cone[2]) || g_previous_symmetry!=g_symmetry;
-  bool need_compute_colors = need_compute_cycles || previous_encoder_value!=encoder_counter;
-  previous_encoder_value = encoder_counter;
 
   if (need_compute_cycles){
     current_cone[0] = root_cone;
@@ -156,14 +189,10 @@ void manual_rotate_fivefold(bool highlight_axis){
     set_fivefold_cycles(root_cone, second_cone, POSITIVE);// set the appropriate cycles in the cycles array
   }
 
-  if (need_compute_colors){
-    getCurrentTime();
-    setStartTimeToNow();
-    setStartConeColorsFromCurrent();
-    setNextFrameTime(500*(1-float(pot2)/MAX_POT_VALUE));
-    
-    set_fivefold_colors_by_cycle_position(color_offset, highlight_axis);
-  }
+  // snap straight to the offset colors (no cross-fade); the encoder drives it.
+  setStartTimeToNow();
+  setNextFrameTime(0);
+  set_fivefold_colors_by_cycle_position(color_offset, highlight_axis);
 
   transitionAllCones();
 }

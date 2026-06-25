@@ -51,6 +51,10 @@ extern ObjectMode previousMode;
 
 extern uint16_t g_auto_color_rotation;
 extern Time g_previous_auto_rotate_time;
+extern int32_t g_manual_target;
+extern int32_t g_manual_last_encoder;
+extern float g_manual_color_offset;
+extern Time g_previous_manual_rotate_time;
 
 extern SymmetryType g_symmetry;
 extern SymmetryType g_previous_symmetry; 

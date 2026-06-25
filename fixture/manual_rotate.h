@@ -4,6 +4,10 @@
 #include "externs.h"
 #include "rotation.h"
 
+// maps the encoder position to a hue offset, with pot2 setting the per-detent
+// angle delta. stateless, so a glitched I2C encoder reading self-corrects.
+uint16_t manual_color_offset();
+
 void manual_rotate_connected_cones();
 void manual_rotate_threefold();
 void manual_rotate_fivefold();

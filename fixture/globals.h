@@ -32,6 +32,11 @@ ObjectMode previousMode;
 uint16_t g_auto_color_rotation = 0;
 Time g_previous_auto_rotate_time = 0; // timestamp of the previous auto-rotate frame, for time-based hue advance
 
+int32_t g_manual_target = 0;            // accumulated manual-rotate target offset (sum of encoder deltas * step)
+int32_t g_manual_last_encoder = 0;      // encoder_counter at the previous manual frame, for deltas + glitch rejection
+float g_manual_color_offset = 0;        // displayed manual-rotate offset; glides toward g_manual_target
+Time g_previous_manual_rotate_time = 0; // timestamp of the previous manual-rotate frame
+
 SymmetryType g_symmetry = TwoFold;
 SymmetryType g_previous_symmetry = FiveFold;
 
