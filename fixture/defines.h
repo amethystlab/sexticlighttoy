@@ -145,9 +145,10 @@ using Time = unsigned long;
 
 // auto-rotate hue advance is time-based, so the visible rotation speed is
 // independent of frame rate. units: hue steps (out of MAX_UINT16) per millisecond.
-// pot2 scales the rate from MIN up to MIN+SPAN. tune to taste.
-#define AUTO_ROTATE_HUE_RATE_MIN 10.0
-#define AUTO_ROTATE_HUE_RATE_SPAN 200.0
+// pot2 scales the rate from MIN up to MIN+SPAN. a full revolution is MAX_UINT16
+// hue steps, so these give ~1 rev/minute at pot2=0 and ~1 rev/second at pot2=max.
+#define AUTO_ROTATE_HUE_RATE_MIN 1.092   // 65535 / 60000 ms  -> 1 revolution / minute
+#define AUTO_ROTATE_HUE_RATE_SPAN 64.443 // MIN+SPAN = 65.535 -> 1 revolution / second
 #define AUTO_ROTATE_MAX_FRAME_MS 100 // cap dt so a long pause (e.g. mode change) is one small step, not a jump
 
 #define NO_EVENT_PLANNED 0 // i think this should be 0 or the max for unsigned long (Time)
