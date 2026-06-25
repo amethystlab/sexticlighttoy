@@ -50,8 +50,9 @@ extern int32_t previous_encoder_value;
 extern ObjectMode previousMode;
 
 extern uint16_t g_auto_color_rotation;
+extern Time g_previous_auto_rotate_time;
 
-extern SymmetryType g_symmetry; 
+extern SymmetryType g_symmetry;
 extern SymmetryType g_previous_symmetry; 
 extern uint16_t connections[NUM_LED_GROUPS];
 

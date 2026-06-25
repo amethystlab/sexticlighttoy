@@ -30,8 +30,9 @@ ObjectMode g_mode = AutoRotate;
 ObjectMode previousMode;
 
 uint16_t g_auto_color_rotation = 0;
+Time g_previous_auto_rotate_time = 0; // timestamp of the previous auto-rotate frame, for time-based hue advance
 
-SymmetryType g_symmetry = TwoFold; 
+SymmetryType g_symmetry = TwoFold;
 SymmetryType g_previous_symmetry = FiveFold;
 
 

@@ -12,7 +12,11 @@
 
 
 
-//#define DEBUG_PRINT // uncomment to make tons of things print. 
+//#define DEBUG_PRINT // uncomment to make tons of things print.
+
+// uncomment to periodically print just the controller inputs (pots, buttons,
+// switches, encoder, mode) from loop() -- no color/frame spam. see loop().
+//#define DEBUG_CONTROLLER_STATE
 #define WILLIAM_DEBUG
 #define TEST(actual, expected) Serial.print("expected: "); Serial.print(expected); Serial.print("actual: "); Serial.println(actual)
 
@@ -138,6 +142,13 @@ using Time = unsigned long;
 
 #define GRADUAL_TRANSITION
 #define CUBIC_INTERP // if this is not defined, we'll use linear interpolation.
+
+// auto-rotate hue advance is time-based, so the visible rotation speed is
+// independent of frame rate. units: hue steps (out of MAX_UINT16) per millisecond.
+// pot2 scales the rate from MIN up to MIN+SPAN. tune to taste.
+#define AUTO_ROTATE_HUE_RATE_MIN 10.0
+#define AUTO_ROTATE_HUE_RATE_SPAN 200.0
+#define AUTO_ROTATE_MAX_FRAME_MS 100 // cap dt so a long pause (e.g. mode change) is one small step, not a jump
 
 #define NO_EVENT_PLANNED 0 // i think this should be 0 or the max for unsigned long (Time)
 #define MAX_NUM_EVENTS 22 // makes things not render if 23 or higher.

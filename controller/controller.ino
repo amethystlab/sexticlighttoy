@@ -76,6 +76,8 @@ uint16_t pot0, pot1, pot2; // the values of the potentiometers, between 0 and 10
 uint8_t buttons[3]; // perhaps these should be just one integer, and use bitwise ops.  that would be an optimization.
 uint8_t switches[3]; // perhaps these should be just one integer, and use bitwise ops.  that would be an optimization.
 
+uint8_t last_i2c_status = 0xFF; // return code of the last Wire.endTransmission(); 0 == fixture ACKed the send
+
 #define pot0_PIN A1
 #define pot1_PIN A2
 #define pot2_PIN A3
@@ -216,6 +218,12 @@ void print_state()
   Serial.print(pot2);    Serial.print("\t");
   Serial.println("");
 
+  // result of the last I2C send. 0 = fixture acknowledged (link is good).
+  // 2 = no ACK on address (fixture not answering: wiring/address/power).
+  Serial.print("i2c send status:\t");
+  Serial.print(last_i2c_status);
+  Serial.println(last_i2c_status == 0 ? "  (OK, fixture ACKed)" : "  (NO ACK!)");
+
   Serial.println("");
 }
 
@@ -238,7 +246,7 @@ void SendAll()
   WriteButtons();
   WriteSwitches();
   WriteEncoder();
-  Wire.endTransmission();    // stop transmitting
+  last_i2c_status = Wire.endTransmission();    // stop transmitting; 0 == slave ACKed
 }
 
 

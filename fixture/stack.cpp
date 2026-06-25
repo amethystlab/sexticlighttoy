@@ -27,7 +27,9 @@ void printConeColorsFromMemory(){
 
 
 void setStartConeColorsFromCurrent(){
+#ifdef DEBUG_PRINT
   Serial.println(F("setting start colors from current"));
+#endif
   for (Cone i{0}; i<NUM_CONES; ++i){
     frame_colors[0][i] = most_recent_colors[i];
   }

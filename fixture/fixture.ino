@@ -57,11 +57,19 @@ void setup() {
 // called ad nauseum
 void loop() {
   // doPulseMode();
-  // print_state();
 
   // doManualRotate();
- 
-  
+
+#ifdef DEBUG_CONTROLLER_STATE
+  // throttled dump of the latest controller inputs received over I2C, so we can
+  // verify the controller is actually talking to the fixture without flooding.
+  static unsigned long last_state_print = 0;
+  if (millis() - last_state_print >= 300) {
+    last_state_print = millis();
+    print_state();
+  }
+#endif
+
   getModeFromSwitches();
   // 
   switch(g_mode){

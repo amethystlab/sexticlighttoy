@@ -178,8 +178,8 @@ void manual_rotate_fivefold(bool highlight_axis){
 
 
 void set_twofold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
-  pixels.clear();
-  
+  // no pixels.clear() needed: every cone is assigned a color below, so the
+  // whole strip is overwritten each frame by transitionAllCones().
 
   uint16_t hues[NUM_CONES];
   uint8_t saturations[NUM_CONES];
@@ -209,10 +209,9 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset, bool highlight_
 
 
 void set_threefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
-  pixels.clear();
-  
+  // no pixels.clear() needed: every cone is assigned a color below.
   // const uint8_t cycle_lengths[8] = {1,3,3,3,3,3,3,1};
-  
+
 
 
 
@@ -244,8 +243,7 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset, bool highligh
 
 
 void set_fivefold_colors_by_cycle_position(uint16_t color_offset, bool highlight_axis){
-  pixels.clear();
-  
+  // no pixels.clear() needed: every cone is assigned a color below.
   const uint8_t cycle_lengths[4] = {5,5,5,5};
   
 
