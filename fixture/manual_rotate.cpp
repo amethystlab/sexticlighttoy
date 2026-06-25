@@ -188,10 +188,16 @@ void set_twofold_colors_by_cycle_position(uint16_t color_offset, bool highlight_
     hues[ii] = positive_mod(twofold_angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
   }
 
-  if (highlight_axis)
+  if (highlight_axis){
+    // desaturate only the axis cones (closest to the rotation axis) to white so
+    // they stand out; every other cone stays fully saturated.
+    float min_distance = twofold_distances[0];
+    for (uint8_t ii{1}; ii<NUM_CONES; ++ii)
+      if (twofold_distances[ii] < min_distance) min_distance = twofold_distances[ii];
     for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
-      saturations[ii] = (twofold_distances[ii]-(phi-1))/(sqrt(3)-(phi-1)) * MAX_UINT8;
-  else  
+      saturations[ii] = (twofold_distances[ii] <= min_distance + 0.01) ? 0 : MAX_UINT8;
+  }
+  else
     for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
       saturations[ii] = MAX_UINT8;
 
@@ -222,9 +228,15 @@ void set_threefold_colors_by_cycle_position(uint16_t color_offset, bool highligh
     hues[ii] = positive_mod(threefold_angles[ii]/(2*pi)*MAX_UINT16+color_offset,MAX_UINT16);
   }
 
-  if (highlight_axis)
+  if (highlight_axis){
+    // desaturate only the axis cones (closest to the rotation axis) to white so
+    // they stand out; every other cone stays fully saturated.
+    float min_distance = threefold_distances[0];
+    for (uint8_t ii{1}; ii<NUM_CONES; ++ii)
+      if (threefold_distances[ii] < min_distance) min_distance = threefold_distances[ii];
     for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
-      saturations[ii] = threefold_distances[ii]/1.6329931618555373 * MAX_UINT8;
+      saturations[ii] = (threefold_distances[ii] <= min_distance + 0.01) ? 0 : MAX_UINT8;
+  }
   else
     for (uint8_t ii{0}; ii<NUM_CONES; ++ii)
       saturations[ii] = MAX_UINT8;
