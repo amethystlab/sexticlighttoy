@@ -28,6 +28,7 @@ int32_t previous_encoder_value = 0;
 
 ObjectMode g_mode = AutoRotate;
 ObjectMode previousMode;
+ObjectMode g_previous_dispatch_mode = Pulse; // mode dispatched last loop, for carrying color offset across auto<->manual
 
 uint16_t g_auto_color_rotation = 0;
 Time g_previous_auto_rotate_time = 0; // timestamp of the previous auto-rotate frame, for time-based hue advance

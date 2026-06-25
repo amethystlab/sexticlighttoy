@@ -71,7 +71,31 @@ void loop() {
 #endif
 
   getModeFromSwitches();
-  // 
+
+  // keep the color rotation continuous when switching between auto and manual
+  // rotate. both render the same way and differ only in which offset drives the
+  // hue, so hand the offset across on the transition instead of letting it jump.
+  if (g_mode != g_previous_dispatch_mode){
+    bool now_manual = (g_mode == ManualRotate || g_mode == ManualRotateHighlight);
+    bool now_auto   = (g_mode == AutoRotate   || g_mode == AutoRotateHighlight);
+    bool was_manual = (g_previous_dispatch_mode == ManualRotate || g_previous_dispatch_mode == ManualRotateHighlight);
+    bool was_auto   = (g_previous_dispatch_mode == AutoRotate   || g_previous_dispatch_mode == AutoRotateHighlight);
+
+    if (now_manual && !was_manual){
+      // entering manual: start the encoder-driven offset right where the colors are.
+      g_manual_color_offset = g_auto_color_rotation;
+      g_manual_target       = (int32_t)g_auto_color_rotation;
+      g_manual_last_encoder = encoder_counter;
+      g_previous_manual_rotate_time = getCurrentTime();
+    }
+    else if (now_auto && !was_auto){
+      // entering auto: continue rotating from where manual left the colors.
+      g_auto_color_rotation = positive_mod((int32_t)g_manual_color_offset, MAX_UINT16);
+      g_previous_auto_rotate_time = getCurrentTime();
+    }
+    g_previous_dispatch_mode = g_mode;
+  }
+
   switch(g_mode){
     // case Rotational:
     //   {doRotationalMode(); break;}
